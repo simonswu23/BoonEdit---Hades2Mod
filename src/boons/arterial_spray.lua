@@ -1,0 +1,84 @@
+---@meta _
+---@diagnostic disable: lowercase-global
+
+-- Arterial Spray (Poseidon x Ares): the second splash wave always lands, at reduced power.
+
+mod.tuning.ArterialSpray = {
+	SecondWavePower = 0.30,
+}
+
+once('ArterialSprayAlwaysDouble', function()
+	if config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then
+		local arterial = game.TraitData.DoubleSplashBoon
+		arterial.ConeModifier.DoubleWaveChance = 1.0
+
+		arterial.BoonEditSecondWavePower = mod.tuning.ArterialSpray.SecondWavePower
+		arterial.StatLines = { 'BoonEditSecondSplashStatDisplay' }
+		arterial.ExtractValues = {
+			{ Key = 'BoonEditSecondWavePower', ExtractAs = 'TooltipSecondWave', Format = 'Percent', HideSigns = true },
+		}
+	end
+
+	local function withArterialSpray(base, functionArgs, ...)
+		arterial_spray_begin(functionArgs)
+		local ok, err = pcall(base, ...)
+		arterial_spray_end()
+		if not ok then error(err) end
+	end
+
+	modutil.mod.Path.Wrap("CheckPoseidonSplash", function(base, victim, functionArgs, triggerArgs)
+		withArterialSpray(base, functionArgs, victim, functionArgs, triggerArgs)
+	end)
+
+	modutil.mod.Path.Wrap("PoseidonAttackPunish", function(base, unit, functionArgs)
+		withArterialSpray(base, functionArgs, unit, functionArgs)
+	end)
+
+	modutil.mod.Path.Wrap("CreateProjectileFromUnit", function(base, args)
+		if arterial_spray_weaken then
+			args = arterial_spray_weaken(args)
+		end
+		return base(args)
+	end)
+end)
+
+
+-- The game fires the second wave itself, so it keeps the red River Styx graphic.
+arterial_spray_projectile = nil
+
+function arterial_spray_begin(functionArgs)
+	arterial_spray_projectile = nil
+	if not config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then return end
+	if not game.HeroHasTrait('DoubleSplashBoon') then return end
+	arterial_spray_projectile = functionArgs and functionArgs.ProjectileName
+end
+
+function arterial_spray_end()
+	arterial_spray_projectile = nil
+end
+
+-- Runs for every projectile, so it bails unless a splash is in flight.
+function arterial_spray_weaken(args)
+	if not arterial_spray_projectile then return args end
+	if not args or args.Name ~= arterial_spray_projectile then return args end
+
+	local startDelay = args.DataProperties and args.DataProperties.StartDelay
+	if not startDelay or startDelay <= 0 then return args end
+
+	args.DamageMultiplier = (args.DamageMultiplier or 1) * mod.tuning.ArterialSpray.SecondWavePower
+	return args
+end
+
+
+if config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then
+	boon_text({
+		Traits = {
+			DoubleSplashBoon = {
+				Description = 'Your splash effects from {#BoldFormatGraft}Poseidon {#Prev}hit a second time with reduced power {#ItalicLightFormat}(and take the color of the River Styx).',
+			},
+		},
+		StatLines = {
+			BoonEditSecondSplashStatDisplay = 'Second Splash Damage:',
+		},
+	})
+end

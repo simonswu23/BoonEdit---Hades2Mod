@@ -1,0 +1,73 @@
+---@meta _
+---@diagnostic disable: lowercase-global
+
+-- Harm for the Afflicted (Medea) fires for every new curse landing on a foe. Vanilla already
+-- checked each curse on its own; what held it to one hit was a cooldown shared by every foe in the
+-- room. Keyed per foe and per curse instead.
+
+mod.tuning.HarmForTheAfflicted = {
+	Interval = 0.3,
+}
+
+once('HarmForTheAfflictedEveryStatus', function()
+	if not config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then return end
+
+	local harm = game.TraitData.NewStatusDamage
+	harm.OnEffectApplyFunction.FunctionName = _PLUGIN.guid .. '.HarmForTheAfflicted'
+	harm.OnEffectApplyFunction.FunctionArgs.Cooldown = mod.tuning.HarmForTheAfflicted.Interval
+end)
+
+
+-- The name the game groups a curse under, so two effects shown as one status pay out once. No
+-- DisplaySuffix means vanilla skipped it, and so do we.
+local function harm_curse_category(effectName)
+	local effect = game.EffectData[effectName]
+	if not effect or not effect.DisplaySuffix then return nil end
+	return effect.SharedVulnerabilityCategory or effect.DisplaySuffix
+end
+
+---@diagnostic disable-next-line: unused-local
+function mod.HarmForTheAfflicted(_, functionArgs, triggerArgs)
+	if not config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then return end
+	if not triggerArgs or not triggerArgs.IsVulnerabilityEffect or triggerArgs.Reapplied then return end
+
+	local victim = triggerArgs.Victim
+	if not victim or not victim.ObjectId then return end
+
+	local category = harm_curse_category(triggerArgs.EffectName)
+	if not category then return end
+
+	if not game.CheckCooldown('BoonEditHarmAfflicted' .. victim.ObjectId .. category, functionArgs.Cooldown) then
+		return
+	end
+
+	game.CreateProjectileFromUnit({
+		Name = functionArgs.ProjectileName,
+		Id = game.CurrentRun.Hero.ObjectId,
+		DestinationId = victim.ObjectId,
+		DamageMultiplier = functionArgs.DamageMultiplier,
+	})
+
+	local trait = game.GetHeroTrait('NewStatusDamage')
+	if trait then
+		game.TraitUIActivateTrait(trait, { FlashOnActive = true, Duration = functionArgs.Cooldown })
+	end
+
+	if not victim.IsDead then
+		game.CreateAnimation({ Name = 'MedeaPoisonDamage', DestinationId = victim.ObjectId })
+		victim.CreatedAnimations = victim.CreatedAnimations or {}
+		table.insert(victim.CreatedAnimations, 'MedeaPoisonDamage')
+	end
+end
+
+
+if config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then
+	boon_text({
+		Traits = {
+			NewStatusDamage = {
+				-- No interval in the text: at 0.3 sec. per foe and per curse it almost never bites.
+				Description = 'Inflicting a {$Keywords.Status} deals {#BoldFormat}{$TooltipData.ExtractData.Damage} {#Prev}damage.',
+			},
+		},
+	})
+end

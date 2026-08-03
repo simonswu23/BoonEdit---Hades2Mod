@@ -1,0 +1,199 @@
+---@meta _
+---@diagnostic disable: lowercase-global
+
+-- Premium Service (Hephaestus legendary) keeps its Aspect rank bump, raises every hammer upgrade
+-- you hold to Legendary, and drops an Anvil of Fates. The Anvil itself is reworked: give up one of
+-- 3 of your hammer upgrades, then choose new ones from 3 options, twice.
+
+mod.tuning.AnvilOfFates = {
+	SacrificeChoices = 3,
+	Discoveries = 2,
+}
+
+once('PremiumServiceHammers', function()
+	if config.BoonChanges.PremiumServiceHammers.Enabled then
+		game.TraitData.WeaponUpgradeBoon.AcquireFunctionName = _PLUGIN.guid .. '.PremiumServiceAcquire'
+
+		local anvil = game.ConsumableData.ChaosWeaponUpgrade
+
+		anvil.UseFunctionName = _PLUGIN.guid .. '.AnvilOfFates'
+		anvil.UseFunctionArgs = {
+			Thread = true,
+			NumTraits = mod.tuning.AnvilOfFates.Discoveries,
+			ReportValues = { ReportedNumTraits = 'NumTraits' },
+		}
+
+		-- vanilla gates the Anvil on already holding a hammer; ours works from zero
+		anvil.PurchaseRequirements = nil
+	end
+
+	modutil.mod.Path.Wrap("AddTraitToHero", function(base, args)
+		local added = base(args)
+		premium_service_rank_hammer(added or (args and args.TraitData))
+		return added
+	end)
+
+	-- On the Anvil's sacrifice menu, picking a button means "give this up" rather than "take this".
+	modutil.mod.Path.Wrap("HandleUpgradeChoiceSelection", function(base, screen, button, args)
+		if not (screen and screen.Source and screen.Source.BoonEditAnvilSacrifice) then
+			return base(screen, button, args)
+		end
+		return anvil_sacrifice_selected(screen, button)
+	end)
+end)
+
+
+-- UpgradeHammers stops when its list runs dry, so a big number means "all of them".
+local PREMIUM_SERVICE_HAMMER_COUNT = 99
+
+function mod.PremiumServiceAcquire(args, traitData)
+	game.UpgradeAspect(args, traitData)
+
+	if not config.BoonChanges.PremiumServiceHammers.Enabled then return end
+
+	game.UpgradeHammers({ Count = PREMIUM_SERVICE_HAMMER_COUNT })
+
+	game.thread(game.GiveRandomConsumables, {
+		Delay = 0.5,
+		NotRequiredPickup = true,
+		ForceToValidLocation = true,
+		KeepCollision = true,
+		LootOptions = {
+			{ Name = 'ChaosWeaponUpgrade', Amount = 1 },
+		},
+	})
+end
+
+-- Raises one newly acquired hammer, since the Anvil hands you hammers after the acquire has run.
+function premium_service_rank_hammer(trait)
+	if mod.PremiumServiceRanking then return end
+	if not config.BoonChanges.PremiumServiceHammers.Enabled then return end
+	if not game.CurrentRun or not game.CurrentRun.Hero then return end
+
+	if not trait or not trait.Name or not trait.IsHammerTrait then return end
+	if not trait.RarityLevels or not trait.RarityLevels.Legendary then return end
+	if trait.Rarity == 'Legendary' or trait.RemainingUses then return end
+
+	if not game.HeroHasTrait('WeaponUpgradeBoon') then return end
+
+	game.thread(premium_service_rank_hammer_deferred, trait.Name)
+end
+
+-- Deferred out of the AddTraitToHero wrap: ranking up re-adds the trait mid-call.
+function premium_service_rank_hammer_deferred(traitName)
+	game.waitUnmodified(0.1)
+
+	local trait = game.GetHeroTrait(traitName)
+	if not trait or trait.Rarity == 'Legendary' then return end
+
+	mod.PremiumServiceRanking = true
+	game.AddRarityToTraits(nil, {
+		ForceUpgrade = { trait },
+		TargetRarityName = 'Legendary',
+		Silent = true,
+	})
+	mod.PremiumServiceRanking = nil
+
+	game.thread(game.IncreasedHammerRarityPresentation, { [traitName] = true }, 1)
+end
+
+
+function anvil_hammer_traits()
+	local held = {}
+	local hero = game.CurrentRun and game.CurrentRun.Hero
+	if not hero then return held end
+
+	for _, trait in ipairs(hero.Traits or {}) do
+		if game.LootData.WeaponUpgrade.TraitIndex[trait.Name] and not trait.RemainingUses then
+			table.insert(held, trait)
+		end
+	end
+	return held
+end
+
+-- A stand-in for the loot object these menus normally hang off; without one the menu errors.
+function anvil_menu_source()
+	local source = game.DeepCopyTable(game.LootData.WeaponUpgrade)
+	source.ObjectId = game.SpawnObstacle({
+		Name = 'InvisibleTarget',
+		Group = 'Standing',
+		DestinationId = game.CurrentRun.Hero.ObjectId,
+	})
+	source.DestroyOnPickup = true
+	source.CanDuplicate = false
+	source.StackNum = 1
+	source.BlockReroll = true
+	return source
+end
+
+-- Asks which upgrade to give up. UpgradeOptions is what makes the menu show these traits.
+function anvil_open_sacrifice_menu()
+	local held = anvil_hammer_traits()
+	if game.IsEmpty(held) then return false end
+
+	held = game.FYShuffle(held)
+	local options = {}
+	for i = 1, math.min(mod.tuning.AnvilOfFates.SacrificeChoices, #held) do
+		table.insert(options, { ItemName = held[i].Name, Rarity = held[i].Rarity or 'Common' })
+	end
+
+	local source = anvil_menu_source()
+	source.UpgradeOptions = options
+	source.BoonEditAnvilSacrifice = true
+
+	mod.AnvilSacrificed = nil
+	game.OpenUpgradeChoiceMenu(source)
+	return true
+end
+
+-- Stands in for HandleUpgradeChoiceSelection: the chosen trait is taken away, not granted.
+function anvil_sacrifice_selected(screen, button)
+	local chosen = button and button.Data and button.Data.Name
+	if chosen then
+		game.RemoveWeaponTrait(chosen)
+		mod.AnvilSacrificed = chosen
+	end
+
+	local source = screen.Source
+	if source and source.ObjectId then
+		game.Destroy({ Id = source.ObjectId })
+	end
+
+	game.CloseUpgradeChoiceScreen(screen, button)
+end
+
+function anvil_open_discover_menu()
+	local source = anvil_menu_source()
+	source.UpgradeOptions = nil
+	game.OpenUpgradeChoiceMenu(source)
+end
+
+-- Give one up, then choose replacements twice; with nothing to give up that menu is skipped.
+function mod.AnvilOfFates(args)
+	if not config.BoonChanges.PremiumServiceHammers.Enabled then
+		return game.ChaosHammerUpgrade(args)
+	end
+
+	if anvil_open_sacrifice_menu() then
+		game.waitUnmodified(0.1)
+	end
+
+	for _ = 1, mod.tuning.AnvilOfFates.Discoveries do
+		anvil_open_discover_menu()
+		game.waitUnmodified(0.1)
+	end
+
+	game.InvalidateCheckpoint()
+end
+
+
+if config.BoonChanges.PremiumServiceHammers.Enabled then
+	boon_text({
+		Traits = {
+			WeaponUpgradeBoon = {
+				Description = 'Your {$Keywords.Aspect} of the {#BoldFormatGraft}Nocturnal Arms {#Prev}is even stronger, '
+					.. 'your {!Icons.RandomHammer} upgrades all gain rank if possible, and an {#BoldFormatGraft}Anvil of Fate {#Prev}appears.',
+			},
+		},
+	})
+end
