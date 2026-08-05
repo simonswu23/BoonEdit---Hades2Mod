@@ -23,23 +23,4 @@ once('SeismicHammer', function()
 	}
 	hammer.OnProjectileCreationFunction.ValidProjectilesLookup =
 		game.ToLookup(hammer.OnProjectileCreationFunction.ValidProjectiles)
-
-	game.TraitRequirements.MassiveCastBoon = {
-		OneFromEachSet = {
-			{ 'HephaestusWeaponBoon', 'HephaestusSpecialBoon' },
-			{ 'PoseidonExCastBoon' },
-		},
-	}
 end)
-
-
-if config.BoonChanges.SeismicHammer.Enabled then
-	boon_text({
-		Traits = {
-			MassiveCastBoon = {
-				DisplayName = 'Seismic Hammer',
-				Description = 'Your blast effects from {#BoldFormatGraft}Hephaestus {#Prev}make your {$Keywords.Cast} erupt like your {$Keywords.CastEX}.',
-			},
-		},
-	})
-end

@@ -4,12 +4,6 @@
 -- Fire Away (Hestia legendary) becomes "Burning Meteor": Hestia's fireballs are half again as large
 -- and as strong, and inflict Scorch equal to the damage they deal. Its old effect is parked on
 -- mod.FireAwayEffect, with no boon left to sit on.
-
-mod.tuning.BurningMeteor = {
-	FireballMultiplier = 1.5,
-	SizeMultiplier = 1.5,
-}
-
 once('BurningMeteor', function()
 	local combustion = game.TraitData.BurnSprintBoon
 
@@ -53,14 +47,6 @@ once('BurningMeteor', function()
 		Name = _PLUGIN.guid .. '.BurningMeteorSize',
 		Args = {
 			AreaMultiplier = mod.tuning.BurningMeteor.SizeMultiplier,
-		},
-	}
-
-	game.TraitRequirements.BurnSprintBoon = {
-		OneFromEachSet = {
-			{ 'HestiaWeaponBoon', 'HestiaSpecialBoon', 'HestiaCastBoon' },   -- Flame Strike / Flourish / Smolder Ring
-			{ 'CastProjectileBoon', 'FireballManaSpecialBoon' },             -- Glowing Coal / Controlled Burn
-			{ 'BurnExplodeBoon', 'BurnArmorBoon', 'AloneDamageBoon' },       -- Flash Fry / Hot Pot / Snuffed Candle
 		},
 	}
 
@@ -113,20 +99,5 @@ function mod.BurningMeteorSize(triggerArgs, args)
 		Id = triggerArgs.ProjectileId,
 		Fraction = args and args.AreaMultiplier or 1,
 		Duration = 0,
-	})
-end
-
-
-if config.BoonChanges.BurningMeteor.Enabled then
-	boon_text({
-		Traits = {
-			BurnSprintBoon = {
-				DisplayName = 'Burning Meteor',
-				Description = 'Your fireball effects from {#BoldFormatGraft}Hestia {#Prev}are larger, deal more damage, and inflict {$Keywords.Burn} equal to the damage they deal.',
-			},
-		},
-		StatLines = {
-			BoonEditMeteorDamageStatDisplay = 'Fireball Damage:',
-		},
 	})
 end

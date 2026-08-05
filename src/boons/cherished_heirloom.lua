@@ -3,12 +3,6 @@
 
 -- Cherished Heirloom (Demeter x Hera) keeps its rank bonus and gains two effects: Keepsakes stop
 -- running out for the night, and taking it lets you wear a second one.
-
-mod.tuning.CherishedHeirloom = {
-	ExtraKeepsake = true,
-	ExtraKeepsakeInMenuOnly = true,
-}
-
 once('CherishedHeirloom', function()
 	if config.BoonChanges.CherishedHeirloom.Enabled then
 		game.TraitData.KeepsakeLevelBoon.AcquireFunctionName = _PLUGIN.guid .. '.CherishedHeirloomAcquire'
@@ -150,20 +144,4 @@ function cherished_heirloom_open_rack()
 	game.wait(HEIRLOOM_MENU_DELAY)
 	if not cherished_heirloom_extra_pending() then return end
 	game.OpenKeepsakeRackScreen(nil)
-end
-
-
-if config.BoonChanges.CherishedHeirloom.Enabled then
-	local extra = ''
-	if mod.tuning.CherishedHeirloom.ExtraKeepsake then
-		extra = ' Equip {#AltUpgradeFormat}1 {#Prev}more of them at once.'
-	end
-
-	boon_text({
-		Traits = {
-			KeepsakeLevelBoon = {
-				Description = 'Your {$Keywords.Keepsakes} are stronger {#ItalicFormat}(if possible) {#Prev}and do not expire this night.' .. extra,
-			},
-		},
-	})
 end

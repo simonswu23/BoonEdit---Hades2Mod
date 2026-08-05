@@ -3,14 +3,6 @@
 
 -- Natural Selection (Demeter x Poseidon) hands out Poms instead of spreading levels: a batch on
 -- pickup, then one more every few encounters.
-
-mod.tuning.NaturalSelection = {
-	PomsOnPickup = 3,
-	-- also picks which Pom item drops: 1 single, 2 pair, 3 cluster
-	LevelsPerPom = 3,
-	EncountersPerPom = 10,
-}
-
 once('NaturalSelectionPoms', function()
 	if config.BoonChanges.NaturalSelectionPoms.Enabled then
 		local selection = game.TraitData.GoodStuffBoon
@@ -109,18 +101,4 @@ function natural_selection_check_pom()
 	if trait.CurrentRoom ~= 0 then return end
 
 	game.thread(natural_selection_drop_poms, 1, mod.tuning.NaturalSelection.LevelsPerPom)
-end
-
-
-if config.BoonChanges.NaturalSelectionPoms.Enabled then
-	local poms = mod.tuning.NaturalSelection
-	boon_text({
-		Traits = {
-			GoodStuffBoon = {
-				Description = 'Gain {#AltUpgradeFormat}' .. poms.PomsOnPickup .. '{!Icons.Pom} {#Prev}worth {#AltUpgradeFormat}+'
-					.. poms.LevelsPerPom .. '{#Prev}{$Keywords.PomLevel} each, then {#AltUpgradeFormat}1 {#Prev}more every {#AltUpgradeFormat}'
-					.. poms.EncountersPerPom .. ' {#Prev}{$Keywords.EncounterAlt}s.',
-			},
-		},
-	})
 end

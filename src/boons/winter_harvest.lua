@@ -4,11 +4,6 @@
 -- Winter Harvest (Demeter legendary) executes from higher up, and against a boss measures that
 -- against the whole fight rather than the current health bar, so it can end the fight in an
 -- earlier phase. Prometheus loses his execute immunity.
-
-mod.tuning.WinterHarvest = {
-	ExecuteThreshold = 0.15,
-}
-
 once('WinterHarvestBosses', function()
 	-- ReportedThreshold carries the number, so the tooltip follows.
 	if config.BoonChanges.WinterHarvestBosses.Enabled then

@@ -3,14 +3,6 @@
 
 -- Anvil Ring (Hephaestus) inflicts Glow, paid for with 10 base damage; Smithy Rush fires the same
 -- strike at half damage on starting and stopping a Dash. Glow also stacks here.
-
-mod.tuning.AnvilRush = {
-	-- Both are whole multipliers, not additions to the 1.2 Glow starts at. The ceiling is on the
-	-- vulnerability only -- stacks past it keep the Glow up rather than deepen it.
-	GlowPerStack = 0.05,
-	GlowMax = 1.35,
-}
-
 once('AnvilGlowAndDash', function()
 	if not config.BoonChanges.AnvilGlowAndDash.Enabled then return end
 
@@ -83,45 +75,6 @@ once('AnvilGlowAndDash', function()
 			BaseProperty = 'Damage',
 		},
 	}
-
-	-- Smithy Rush is no longer a massive blast, so it stops earning the offers that need one.
-	local function withoutAnvilRush(list)
-		local kept, dropped = {}, false
-		for _, candidate in ipairs(list) do
-			if candidate == 'HephaestusSprintBoon' then
-				dropped = true
-			else
-				table.insert(kept, candidate)
-			end
-		end
-		return kept, dropped
-	end
-
-	-- Premium Service is left in: it upgrades hammers, not blasts.
-	for _, traitName in ipairs({
-		'MassiveDamageBoon',       -- Grand Caldera
-		'MassiveKnockupBoon',      -- Furnace Blast
-		'BlindClearBoon',          -- Rude Awakening
-		'ClearRootBoon',           -- Cryo Pounder
-		'DoubleMassiveAttackBoon', -- Chain Reaction
-	}) do
-		local requirements = game.TraitRequirements[traitName]
-		if requirements then
-			if requirements.OneOf then
-				local kept, dropped = withoutAnvilRush(requirements.OneOf)
-				if dropped then
-					requirements.OneOf = kept
-				end
-			end
-			local sets = requirements.OneFromEachSet
-			for i, set in ipairs(sets or {}) do
-				local kept, dropped = withoutAnvilRush(set)
-				if dropped then
-					sets[i] = kept
-				end
-			end
-		end
-	end
 end)
 
 
@@ -240,18 +193,4 @@ function mod.AnvilGlow(victim, _victimId, triggerArgs)
 	victim.BoonEditGlowStacks = (victim.BoonEditGlowStacks or 0) + 1
 	glow_apply(victim)
 	game.thread(glow_expire, victim)
-end
-
-
-if config.BoonChanges.AnvilGlowAndDash.Enabled then
-	boon_text({
-		Traits = {
-			HephaestusCastBoon = {
-				Description = 'Your {$Keywords.CastSet} deal damage {$TooltipData.ExtractData.Detonations} times in succession to foes in the binding circle, inflicting {$Keywords.DelayedKnockback}.',
-			},
-			HephaestusSprintBoon = {
-				Description = '{$Keywords.DashSet} damages surrounding foes and inflicts {$Keywords.DelayedKnockback}, and again once you stop.',
-			},
-		},
-	})
 end

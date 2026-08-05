@@ -7,8 +7,9 @@ local config = {
   -- ReturnOfModding/config/.
   BoonChanges = {
 
-    -- Rousing Reception (Hera) also inflicts the status curse belonging to whichever Cast
-    -- you are running.
+    -- Rousing Reception (Hera) also inflicts Hitch on the foes it damages. Switching
+    -- mod.tuning.RousingReception.HitchOnly off in src/boons/rousing_reception.lua goes back to
+    -- inflicting the status curse belonging to whichever Cast you are running.
     RousingReceptionCastCurse = {
       Enabled = true;
     };
@@ -17,6 +18,12 @@ local config = {
     -- the same strike at half damage on starting and stopping a Dash, also inflicting Glow, and no
     -- longer counts as a blast boon for offer requirements.
     AnvilGlowAndDash = {
+      Enabled = true;
+    };
+
+    -- Molten Touch (Hephaestus) deals its bonus damage to foes with Glow as well as to Armor, at
+    -- half the amount.
+    MoltenTouchGlow = {
       Enabled = true;
     };
 
@@ -115,9 +122,9 @@ local config = {
       Enabled = true;
     };
 
-    -- Carnal Pleasure (Aphrodite x Ares) stops creating Heartthrobs and instead makes yours hit
-    -- harder, by more the more Plasma you hold this room.
-    CarnalPleasureDamage = {
+    -- Carnal Pleasure (Aphrodite x Ares) still rolls for a Heartthrob on each Plasma you collect,
+    -- and now restores 1 health alongside it.
+    CarnalPleasureHealing = {
       Enabled = true;
     };
 
@@ -158,9 +165,9 @@ local config = {
       Enabled = true;
     };
 
-    -- Love Handles (Aphrodite x Hephaestus): heartthrobs come from hammer strikes landing --
-    -- Anvil Ring's and Smithy Rush's -- rather than from volcanic blasts going off.
-    LoveHandlesHammerStrikes = {
+    -- Love Handles (Aphrodite x Hephaestus) becomes "Smoldering Forge": no Heartthrobs from
+    -- volcanic blasts, and instead +50% damage of any kind to nearby foes with Glow.
+    SmolderingForge = {
       Enabled = true;
     };
 
@@ -184,10 +191,10 @@ local config = {
       Enabled = true;
     };
 
-    -- Paid Dues (Hermes legendary) becomes "Double Time": two Casts down at once, and a second
+    -- Paid Dues (Hermes legendary) becomes "Second Wind": two Casts down at once, and a second
     -- Dash before the recharge.
     -- Hermes' legendary chance is also raised from 1% to the 10% every other god uses.
-    DoubleTime = {
+    SecondWind = {
       Enabled = true;
     };
 

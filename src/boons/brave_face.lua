@@ -3,12 +3,6 @@
 
 -- Brave Face (Hephaestus x Hera) resists half of every hit rather than a third, at 5 Magick a point
 -- instead of 10.
-
-mod.tuning.BraveFace = {
-	DamageBlocked = 0.50,
-	ManaPerDamage = 5,
-}
-
 once('BraveFace', function()
 	if not config.BoonChanges.BraveFace.Enabled then return end
 

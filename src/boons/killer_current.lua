@@ -3,12 +3,6 @@
 
 -- Killer Current (Zeus x Poseidon): instead of amplifying lightning against Froth-afflicted foes,
 -- damaging one has a chance to call a bolt down on it.
-
-mod.tuning.KillerCurrent = {
-	BoltChance = 0.30,
-	BoltPower = 50,
-}
-
 once('KillerCurrentBolt', function()
 	if not config.BoonChanges.KillerCurrentBolt.Enabled then return end
 
@@ -47,16 +41,5 @@ function mod.KillerCurrentBolt(victim, functionArgs, triggerArgs)
 		DestinationId = victim.ObjectId,
 		FireFromTarget = true,
 		DamageMultiplier = mod.tuning.KillerCurrent.BoltPower / baseDamage,
-	})
-end
-
-
-if config.BoonChanges.KillerCurrentBolt.Enabled then
-	boon_text({
-		Traits = {
-			LightningVulnerabilityBoon = {
-				Description = 'Damaging a {$Keywords.KnockbackAmplify}-afflicted foe may strike it with lightning.',
-			},
-		},
 	})
 end

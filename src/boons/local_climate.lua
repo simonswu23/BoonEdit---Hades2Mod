@@ -25,14 +25,3 @@ once('LocalClimateCoversCastBoons', function()
 	modifiers.ValidWeaponsLookup = game.ToLookup(game.WeaponSets.HeroRangedWeapons)
 	modifiers.WeaponOrProjectileRequirement = true
 end)
-
-
-if config.BoonChanges.LocalClimateCoversCastBoons.Enabled then
-	boon_text({
-		Traits = {
-			CastAttachBoon = {
-				Description = 'Your {$Keywords.CastSet} deal more damage. If you are in the binding circle, the bonus is doubled.',
-			},
-		},
-	})
-end

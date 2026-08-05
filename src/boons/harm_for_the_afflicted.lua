@@ -4,11 +4,6 @@
 -- Harm for the Afflicted (Medea) fires for every new curse landing on a foe. Vanilla already
 -- checked each curse on its own; what held it to one hit was a cooldown shared by every foe in the
 -- room. Keyed per foe and per curse instead.
-
-mod.tuning.HarmForTheAfflicted = {
-	Interval = 0.3,
-}
-
 once('HarmForTheAfflictedEveryStatus', function()
 	if not config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then return end
 
@@ -58,16 +53,4 @@ function mod.HarmForTheAfflicted(_, functionArgs, triggerArgs)
 		victim.CreatedAnimations = victim.CreatedAnimations or {}
 		table.insert(victim.CreatedAnimations, 'MedeaPoisonDamage')
 	end
-end
-
-
-if config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then
-	boon_text({
-		Traits = {
-			NewStatusDamage = {
-				-- No interval in the text: at 0.3 sec. per foe and per curse it almost never bites.
-				Description = 'Inflicting a {$Keywords.Status} deals {#BoldFormat}{$TooltipData.ExtractData.Damage} {#Prev}damage.',
-			},
-		},
-	})
 end

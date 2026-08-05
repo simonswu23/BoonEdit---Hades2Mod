@@ -12,14 +12,3 @@ once('CryoPounderHammers', function()
 	table.insert(modifiers.ValidProjectiles, 'HephCastBlast')
 	modifiers.ValidProjectilesLookup = game.ToLookup(modifiers.ValidProjectiles)
 end)
-
-
-if config.BoonChanges.CryoPounderHammers.Enabled then
-	boon_text({
-		Traits = {
-			ClearRootBoon = {
-				Description = 'Your blast effects and hammer strikes from {#BoldFormatGraft}Hephaestus {#Prev}deal more damage to {$Keywords.Root}-afflicted foes.',
-			},
-		},
-	})
-end

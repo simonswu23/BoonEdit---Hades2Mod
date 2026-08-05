@@ -23,23 +23,6 @@ once('HardTargetBecomesPostHaste', function()
 			Heroic = { Multiplier = speedup(1.35) },
 		}
 
-		-- offered off any boon this actually speeds up
-		game.TraitRequirements.SlowProjectileBoon = {
-			OneOf = {
-				'TimedCritVulnerabilityBoon',    -- Death Warrant
-				'RetaliateInvulnerabilityBoon',  -- Defensive Posture
-				'AthenaProjectileBoon',          -- Phalanx Shot
-				'PowerDrinkBoon',                -- Bottomless Drink
-				'FogDamageBonusBoon',            -- Happy Haze
-				'HephaestusWeaponBoon',          -- Volcanic Strike
-				'HephaestusSpecialBoon',         -- Volcanic Flourish
-				'PoseidonManaBoon',              -- Flood Gain
-				'ZeusManaBoon',                  -- Ionic Gain
-				'AutoRevengeBoon',               -- Heinous Affront
-				'HadesInvisibilityRetaliateBoon',-- Unseen Ire
-			},
-		}
-
 		haste.StatLines = { 'RechargeSpeedStatDisplay' }
 		haste.ExtractValues = {
 			{
@@ -67,16 +50,4 @@ function post_haste_recharge(args)
 	local scaled = game.ShallowCopyTable(args)
 	scaled.Cooldown = args.Cooldown * multiplier
 	return scaled
-end
-
-
-if config.BoonChanges.HardTargetBecomesPostHaste.Enabled then
-	boon_text({
-		Traits = {
-			SlowProjectileBoon = {
-				DisplayName = 'Post Haste',
-				Description = 'Any {$Keywords.GodBoon} effects that recharge over time recharge faster.',
-			},
-		},
-	})
 end

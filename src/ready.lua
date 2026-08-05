@@ -22,3 +22,13 @@ modutil.mod.Path.Wrap("SetupMap", function(base, ...)
 	prefix_SetupMap()
 	return base(...)
 end)
+
+
+-- Carnal Pleasure heals as each Plasma is collected. There is no trait field for it -- vanilla's
+-- own per-drop restore is Magick only -- so the pickup itself is wrapped.
+modutil.mod.Path.Wrap("BloodDropUse", function(base, args, consumable)
+	local result = base(args, consumable)
+	---@diagnostic disable-next-line: undefined-global
+	carnal_pleasure_heal(game.GetTotalHeroTraitValue('BloodDropMultiplier', { IsMultiplier = true }))
+	return result
+end)

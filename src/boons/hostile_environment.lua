@@ -47,14 +47,3 @@ function familiar_cast_follows_familiar()
 
 	game.AttachProjectiles({ Ids = { projectileId }, DestinationId = anchorId })
 end
-
-
-if config.BoonChanges.HostileEnvironmentCastFollows.Enabled then
-	boon_text({
-		Traits = {
-			SelfCastBoon = {
-				Description = 'Your {$Keywords.CastEX} is stronger, and your {$Keywords.CastSet} always follows you.',
-			},
-		},
-	})
-end

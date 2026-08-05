@@ -3,11 +3,6 @@
 
 -- Chain Reaction (Hestia x Hephaestus) no longer makes blasts strike twice; instead anything that
 -- recharges over time -- the same effects Post Haste speeds up -- may skip its recharge outright.
-
-mod.tuning.ChainReaction = {
-	SkipChance = 0.30,
-}
-
 once('ChainReactionCooldownSkip', function()
 	if config.BoonChanges.ChainReactionCooldownSkip.Enabled then
 		local chain = game.TraitData.DoubleMassiveAttackBoon
@@ -43,18 +38,4 @@ function chain_reaction_skips()
 	if not game.CurrentRun or not game.CurrentRun.Hero then return false end
 	if not game.HeroHasTrait('DoubleMassiveAttackBoon') then return false end
 	return rolls(mod.tuning.ChainReaction.SkipChance)
-end
-
-
-if config.BoonChanges.ChainReactionCooldownSkip.Enabled then
-	boon_text({
-		Traits = {
-			DoubleMassiveAttackBoon = {
-				Description = 'Any {$Keywords.GodBoon} effects that recharge over time may skip their recharge entirely, becoming ready at once.',
-			},
-		},
-		StatLines = {
-			BoonEditCooldownSkipStatDisplay = 'Recharge Skip Chance:',
-		},
-	})
 end

@@ -40,14 +40,3 @@ once('AirQualityAdditiveFloor', function()
 		return damage
 	end)
 end)
-
-
-if config.BoonChanges.AirQualityAdditiveFloor.Enabled then
-	boon_text({
-		Traits = {
-			ElementalDamageFloorBoon = {
-				Description = 'While you have at least {$TraitData.ElementalDamageFloorBoon.ActivationRequirements.1.Value}{!Icons.CurseAir}, your base damage is never less than the limit.',
-			},
-		},
-	})
-end

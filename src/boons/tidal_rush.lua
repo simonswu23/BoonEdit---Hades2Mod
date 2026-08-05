@@ -3,13 +3,6 @@
 
 -- Breaker Rush (Poseidon) gains Tidal Ring's splash on starting a Dash and again on stopping,
 -- knocking foes away and inflicting Froth. It keeps its own name; only what it does is changed.
-
-mod.tuning.TidalRush = {
-	WaveDamage = { Common = 20, Rare = 25, Epic = 30, Heroic = 35 },
-	Radius = 400,
-	Knockback = 2000,
-}
-
 once('BreakerRushWaves', function()
 	if not config.BoonChanges.BreakerRushWaves.Enabled then return end
 
@@ -111,16 +104,4 @@ end
 function mod.BreakerRushEnd(args, triggerArgs)
 	if not game.SessionMapState.BoonEditBreakerRushStarted then return end
 	fire_breaker_rush_wave(args, triggerArgs)
-end
-
-
-if config.BoonChanges.BreakerRushWaves.Enabled then
-	boon_text({
-		Traits = {
-			-- keeps its own name; only what it does is changed
-			PoseidonSprintBoon = {
-				Description = '{$Keywords.DashSet} damages surrounding foes and inflicts {$Keywords.KnockbackAmplify}, and again once you stop.',
-			},
-		},
-	})
 end

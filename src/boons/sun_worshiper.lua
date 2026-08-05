@@ -3,11 +3,6 @@
 
 -- Sun Worshiper (Apollo x Hera): after the first foe is raised in an encounter, later slain foes
 -- have a chance to rise too, and the servants are Hitched for as long as they last.
-
-mod.tuning.SunWorshiper = {
-	RepeatChance = 0.30,
-}
-
 once('SunWorshiper', function()
 	local raiseDead = game.TraitData.RaiseDeadBoon
 
@@ -78,34 +73,4 @@ function mod.SunWorshiperHitch(hero, args)
 
 		game.wait(interval, game.RoomThreadName)
 	end
-end
-
-
-if config.BoonChanges.SunWorshiperRepeat.Enabled or config.BoonChanges.SunWorshiperHitch.Enabled then
-	local hitched = ''
-	if config.BoonChanges.SunWorshiperHitch.Enabled then
-		hitched = ' with {$Keywords.Link}'
-	end
-
-	local repeated = ''
-	if config.BoonChanges.SunWorshiperRepeat.Enabled then
-		repeated = '; later slain foes may as well'
-	end
-
-	boon_text({
-		Traits = {
-			RaiseDeadBoon = {
-				Description = 'In each {$Keywords.EncounterAlt}, the first foe you slay returns to fight for you'
-					.. hitched .. repeated .. '.',
-			},
-		},
-	})
-end
-
-if config.BoonChanges.SunWorshiperRepeat.Enabled then
-	boon_text({
-		StatLines = {
-			BoonEditRepeatRaiseStatDisplay = { Name = 'Repeat Revival Chance:', Index = 2 },
-		},
-	})
 end

@@ -3,12 +3,6 @@
 
 -- Ecstatic Obsession (Aphrodite x Hera) becomes "Obsessive Devotion": Weak foes and your summons
 -- are Hitched, and you deal more damage for each Hitched foe.
-
-mod.tuning.ObsessiveDevotion = {
-	DamagePerFoe = 0.10,
-	MaxBonus = 1.00,
-}
-
 once('ObsessiveDevotion', function()
 	if not config.BoonChanges.ObsessiveDevotion.Enabled then return end
 
@@ -80,20 +74,4 @@ function mod.ObsessiveDevotion(hero, args)
 
 	-- the modifier outlives the loop, so losing the boon mid-room would leave the bonus standing
 	devotion_set_bonus(0)
-end
-
-
-if config.BoonChanges.ObsessiveDevotion.Enabled then
-	boon_text({
-		Traits = {
-			CharmCrowdBoon = {
-				DisplayName = 'Obsessive Devotion',
-				Description = '{$Keywords.Weak} foes are also afflicted with {$Keywords.Link}, and you deal more damage for each.',
-			},
-		},
-		StatLines = {
-			BoonEditDevotionDamageStatDisplay = 'Damage per {$Keywords.Link}ed Foe:',
-			BoonEditDevotionMaxStatDisplay = { Name = 'Maximum Bonus:', Index = 2 },
-		},
-	})
 end

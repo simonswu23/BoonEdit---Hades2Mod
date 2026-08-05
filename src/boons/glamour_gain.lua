@@ -85,17 +85,3 @@ function mod.GlamourGainPulse(hero, args)
 		game.wait(interval, game.RoomThreadName)
 	end
 end
-
-
-if config.BoonChanges.GlamourGainPulse.Enabled then
-	boon_text({
-		Traits = {
-			AphroditeManaBoon = {
-				Description = 'You pulse to inflict {$Keywords.Weak} on nearby foes, restoring {!Icons.Mana} for {#AltUpgradeFormat}each {#Prev}foe caught.',
-			},
-		},
-		StatLines = {
-			BoonEditGlamourManaStatDisplay = 'Magick per Foe:',
-		},
-	})
-end

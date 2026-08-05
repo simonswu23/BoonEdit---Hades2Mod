@@ -15,10 +15,6 @@ local LIGHTNING = {
 	'ZeusRetaliateStrike',
 }
 
-mod.tuning.ThermalDynamics = {
-	ScorchFraction = 0.60,
-}
-
 once('ThermalDynamicsAllLightning', function()
 	if not config.BoonChanges.ThermalDynamicsAllLightning.Enabled then return end
 
@@ -68,19 +64,4 @@ function mod.ThermalDynamics(args, attacker, victim, triggerArgs)
 	if stacks <= 0 then return end
 
 	game.ApplyBurn(victim, { EffectName = 'BurnEffect', NumStacks = stacks }, triggerArgs)
-end
-
-
-if config.BoonChanges.ThermalDynamicsAllLightning.Enabled then
-	boon_text({
-		Traits = {
-			EchoBurnBoon = {
-				Description = 'Your lightning effects from {#BoldFormatGraft}Zeus {#Prev}inflict ' ..
-					'{$Keywords.Burn} for a share of the damage they deal.',
-			},
-		},
-		StatLines = {
-			BoonEditThermalScorchStatDisplay = 'Scorch per Damage Dealt:',
-		},
-	})
 end

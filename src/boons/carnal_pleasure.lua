@@ -1,95 +1,35 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Carnal Pleasure (Aphrodite x Ares) stops making Heartthrobs and instead makes the ones you have
--- hit harder, by more the more Plasma you are holding.
-
-mod.tuning.CarnalPleasure = {
-	DamageBonus = 0.30,
-}
-
-once('CarnalPleasureDamage', function()
-	if not config.BoonChanges.CarnalPleasureDamage.Enabled then return end
+-- Carnal Pleasure (Aphrodite x Ares) keeps its vanilla Heartthrob roll and picks up the healing
+-- that used to sit on MoreDuos' Boiling Blood: each Plasma collected restores a little health.
+once('CarnalPleasureHealing', function()
+	if not config.BoonChanges.CarnalPleasureHealing.Enabled then return end
 
 	local carnal = game.TraitData.BloodManaBurstBoon
 
-	carnal.DropManaBurstChance = nil
-	carnal.ManaBurstArgs = nil
+	carnal.BoonEditHealPerDrop = mod.tuning.CarnalPleasure.HealPerDrop
 
-	carnal.SetupFunction = {
-		Threaded = true,
-		Name = _PLUGIN.guid .. '.CarnalPleasure',
-		Args = {
-			Interval = 0.3,
-		},
-	}
-
-	carnal.BoonEditHeartthrobDamage = mod.tuning.CarnalPleasure.DamageBonus
-	carnal.StatLines = { 'BoonEditHeartthrobDamageStatDisplay' }
-	carnal.ExtractValues = {
-		{
-			Key = 'BoonEditHeartthrobDamage',
-			ExtractAs = 'Damage',
-			Format = 'Percent',
-			HideSigns = true,
-		},
-	}
+	-- Second stat line, not fourth: StatDisplayN counts only the ExtractValues entries that are
+	-- auto-extracted, and vanilla's last two both carry SkipAutoExtract.
+	table.insert(carnal.StatLines, 'BoonEditCarnalPleasureHealStatDisplay')
+	table.insert(carnal.ExtractValues, {
+		Key = 'BoonEditHealPerDrop',
+		ExtractAs = 'Healing',
+	})
 end)
 
 
--- Plasma changes as you collect it, so the modifier is rewritten on a loop.
-local HEARTTHROB_PROJECTILES = { 'AphroditeBurst' }
+-- Rides the pickup itself, alongside vanilla's own per-drop Magick restore. The count is how many
+-- drops the pickup was worth, which is what BloodDropUse itself counts.
+function carnal_pleasure_heal(count)
+	if not config.BoonChanges.CarnalPleasureHealing.Enabled then return end
+	if not game.CurrentRun or not game.CurrentRun.Hero then return end
+	if not game.HeroHasTrait('BloodManaBurstBoon') then return end
 
-function carnal_pleasure_set_bonus(bonus)
-	local hero = game.CurrentRun and game.CurrentRun.Hero
-	if not hero then return end
-	hero.OutgoingDamageModifiers = hero.OutgoingDamageModifiers or {}
-
-	local entry
-	for _, modifier in ipairs(hero.OutgoingDamageModifiers) do
-		if modifier.BoonEditCarnalPleasure then
-			entry = modifier
-			break
-		end
+	local trait = game.GetHeroTrait('BloodManaBurstBoon')
+	local amount = (count or 1) * ((trait and trait.BoonEditHealPerDrop) or mod.tuning.CarnalPleasure.HealPerDrop)
+	if amount > 0 then
+		game.Heal(game.CurrentRun.Hero, { HealAmount = amount, SourceName = 'BoonEditCarnalPleasure' })
 	end
-	if not entry then
-		entry = {
-			BoonEditCarnalPleasure = true,
-			ValidProjectiles = HEARTTHROB_PROJECTILES,
-			ValidProjectilesLookup = game.ToLookup(HEARTTHROB_PROJECTILES),
-			ValidWeaponMultiplier = 1,
-		}
-		game.AddOutgoingDamageModifier(hero, entry)
-	end
-
-	entry.ValidWeaponMultiplier = 1 + bonus
-end
-
-function mod.CarnalPleasure(hero, args)
-	local interval = (args and args.Interval) or 0.3
-
-	while game.CurrentRun and game.CurrentRun.CurrentRoom and game.CurrentRun.Hero
-		and not game.CurrentRun.Hero.IsDead and game.HeroHasTrait('BloodManaBurstBoon') do
-
-		-- BloodDropBonus is already in percentage points
-		local plasma = (game.CurrentRun.CurrentRoom.BloodDropBonus or 0) / 100
-		carnal_pleasure_set_bonus(mod.tuning.CarnalPleasure.DamageBonus + plasma)
-		game.wait(interval, game.RoomThreadName)
-	end
-
-	carnal_pleasure_set_bonus(0)
-end
-
-
-if config.BoonChanges.CarnalPleasureDamage.Enabled then
-	boon_text({
-		Traits = {
-			BloodManaBurstBoon = {
-				Description = 'Your {$Keywords.HeartBurst} effects deal more damage, and more still for each {$Keywords.BloodDrop} you hold.',
-			},
-		},
-		StatLines = {
-			BoonEditHeartthrobDamageStatDisplay = 'Base Heartthrob Damage:',
-		},
-	})
 end

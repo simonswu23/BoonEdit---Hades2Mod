@@ -14,18 +14,3 @@ once('AllTogetherDoubleElements', function()
 	end
 	allTogether.Elements = doubled
 end)
-
-
-if config.BoonChanges.AllTogetherDoubleElements.Enabled then
-	boon_text({
-		Traits = {
-			AllElementalBoon = {
-				Description = 'Gain {#BoldFormatGraft}2 {#Prev}of each {$Keywords.AllElements}, and {#BoldFormatGraft}1 {#Prev}{$Keywords.Synergy} {$Keywords.GodBoonNoTooltip} for each.',
-			},
-			-- this stat line hardcodes "+1"
-			AllElementStatDisplay = {
-				Description = '{#UpgradeFormat}+2',
-			},
-		},
-	})
-end

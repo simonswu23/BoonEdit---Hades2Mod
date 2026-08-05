@@ -3,11 +3,6 @@
 
 -- Tranquil Gain (Demeter) pays out for holding an Omega Move; MovePenaltyDuration is reused as the
 -- hold.
-
-mod.tuning.TranquilGain = {
-	HoldSeconds = 0.5,
-}
-
 once('TranquilGainChannel', function()
 	if not config.BoonChanges.TranquilGainChannel.Enabled then return end
 
@@ -80,15 +75,4 @@ function mod.TranquilGainChannel(hero, args)
 	end
 
 	tranquil_gain_stop(args)
-end
-
-
-if config.BoonChanges.TranquilGainChannel.Enabled then
-	boon_text({
-		Traits = {
-			DemeterManaBoon = {
-				Description = 'While channeling an {$Keywords.OmegaAlt} for {#BoldFormat}{$TooltipData.ExtractData.TooltipMovePenaltyDuration} Sec.{#Prev}, rapidly restore {!Icons.Mana} until you release it.',
-			},
-		},
-	})
 end

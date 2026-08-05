@@ -2,11 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 -- Arterial Spray (Poseidon x Ares): the second splash wave always lands, at reduced power.
-
-mod.tuning.ArterialSpray = {
-	SecondWavePower = 0.30,
-}
-
 once('ArterialSprayAlwaysDouble', function()
 	if config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then
 		local arterial = game.TraitData.DoubleSplashBoon
@@ -67,18 +62,4 @@ function arterial_spray_weaken(args)
 
 	args.DamageMultiplier = (args.DamageMultiplier or 1) * mod.tuning.ArterialSpray.SecondWavePower
 	return args
-end
-
-
-if config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then
-	boon_text({
-		Traits = {
-			DoubleSplashBoon = {
-				Description = 'Your splash effects from {#BoldFormatGraft}Poseidon {#Prev}hit a second time with reduced power {#ItalicLightFormat}(and take the color of the River Styx).',
-			},
-		},
-		StatLines = {
-			BoonEditSecondSplashStatDisplay = 'Second Splash Damage:',
-		},
-	})
 end

@@ -1,24 +1,17 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Paid Dues (Hermes legendary) becomes "Double Time": two Casts down at once, and a second Dash
+-- Paid Dues (Hermes legendary) becomes "Second Wind": two Casts down at once, and a second Dash
 -- before the recharge.
+once('SecondWind', function()
+	if config.BoonChanges.SecondWind.Enabled then
+		local secondWind = game.TraitData.TimeStopLastStandBoon
 
-mod.tuning.DoubleTime = {
-	ExtraCasts = 1,
-	ExtraDashes = 1,
-	DashRechargeMultiplier = 0.90,
-}
-
-once('DoubleTime', function()
-	if config.BoonChanges.DoubleTime.Enabled then
-		local doubleTime = game.TraitData.TimeStopLastStandBoon
-
-		doubleTime.MoneyShieldData = nil
+		secondWind.MoneyShieldData = nil
 
 		-- All the Cast variants, since only one is live at a time. WeaponCastArm is left out: it arms
 		-- a Cast already down.
-		doubleTime.PropertyChanges = {}
+		secondWind.PropertyChanges = {}
 		for _, weaponName in ipairs({
 			'WeaponCast',                -- the plain Cast
 			'WeaponAnywhereCast',        -- Lightning Lance
@@ -26,68 +19,52 @@ once('DoubleTime', function()
 			'WeaponCastProjectile',      -- Glowing Coal
 			'WeaponCastProjectileHades', -- Howling Soul
 		}) do
-			table.insert(doubleTime.PropertyChanges, {
+			table.insert(secondWind.PropertyChanges, {
 				WeaponName = weaponName,
 				WeaponProperty = 'ActiveProjectileCap',
-				ChangeValue = mod.tuning.DoubleTime.ExtraCasts,
+				ChangeValue = mod.tuning.SecondWind.ExtraCasts,
 				ChangeType = 'Add',
 			})
 		end
 
 		-- ClipSize is the Dash's charge count. ExcludeLinked keeps it off WeaponSprint.
-		table.insert(doubleTime.PropertyChanges, {
+		table.insert(secondWind.PropertyChanges, {
 			WeaponName = 'WeaponBlink',
 			WeaponProperty = 'ClipSize',
-			ChangeValue = mod.tuning.DoubleTime.ExtraDashes,
+			ChangeValue = mod.tuning.SecondWind.ExtraDashes,
 			ChangeType = 'Add',
 			ExcludeLinked = true,
 		})
 
-		table.insert(doubleTime.PropertyChanges, {
+		table.insert(secondWind.PropertyChanges, {
 			WeaponName = 'WeaponBlink',
 			WeaponProperty = 'ClipRegenInterval',
-			ChangeValue = mod.tuning.DoubleTime.DashRechargeMultiplier,
+			ChangeValue = mod.tuning.SecondWind.DashRechargeMultiplier,
 			ChangeType = 'Multiply',
 			ExcludeLinked = true,
 		})
 
-		doubleTime.FlavorText = 'BoonEditDoubleTimeFlavorText'
-		doubleTime.StatLines = {}
-		doubleTime.ExtractValues = {}
+		secondWind.FlavorText = 'BoonEditSecondWindFlavorText'
+		secondWind.StatLines = {}
+		secondWind.ExtractValues = {}
 
 		-- Hermes is the only god with a rarity table of his own, and it puts his legendary at 1%
 		game.HeroData.HermesData.RarityChances.Legendary = game.HeroData.BoonData.RarityChances.Legendary
 	end
 
 	modutil.mod.Path.Wrap("DemeterCastBlast", function(base, weaponData, traitArgs, triggerArgs)
-		double_time_extend_nova(traitArgs)
+		second_wind_extend_nova(traitArgs)
 		return base(weaponData, traitArgs, triggerArgs)
 	end)
 end)
 
 
 -- Arctic Gale caps its Cast on its own MaxProjectiles rather than the weapon property.
-function double_time_extend_nova(traitArgs)
-	if not config.BoonChanges.DoubleTime.Enabled then return end
+function second_wind_extend_nova(traitArgs)
+	if not config.BoonChanges.SecondWind.Enabled then return end
 	if not traitArgs then return end
 	if not game.CurrentRun or not game.CurrentRun.Hero then return end
 	if not game.HeroHasTrait('TimeStopLastStandBoon') then return end
 
-	traitArgs.MaxProjectiles = (traitArgs.MaxProjectiles or 1) + mod.tuning.DoubleTime.ExtraCasts
-end
-
-
-if config.BoonChanges.DoubleTime.Enabled then
-	boon_text({
-		Traits = {
-			TimeStopLastStandBoon = {
-				DisplayName = 'Double Time',
-				Description = 'Gain an extra {$Keywords.Cast} and {$Keywords.Dash}.',
-			},
-		},
-		-- Paid Dues' flavour was about its money shield, which Double Time no longer has.
-		Flavor = {
-			BoonEditDoubleTimeFlavorText = 'Not enough time? Try two!',
-		},
-	})
+	traitArgs.MaxProjectiles = (traitArgs.MaxProjectiles or 1) + mod.tuning.SecondWind.ExtraCasts
 end

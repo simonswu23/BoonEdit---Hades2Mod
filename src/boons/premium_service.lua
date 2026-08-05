@@ -4,12 +4,6 @@
 -- Premium Service (Hephaestus legendary) keeps its Aspect rank bump, raises every hammer upgrade
 -- you hold to Legendary, and drops an Anvil of Fates. The Anvil itself is reworked: give up one of
 -- 3 of your hammer upgrades, then choose new ones from 3 options, twice.
-
-mod.tuning.AnvilOfFates = {
-	SacrificeChoices = 3,
-	Discoveries = 2,
-}
-
 once('PremiumServiceHammers', function()
 	if config.BoonChanges.PremiumServiceHammers.Enabled then
 		game.TraitData.WeaponUpgradeBoon.AcquireFunctionName = _PLUGIN.guid .. '.PremiumServiceAcquire'
@@ -184,16 +178,4 @@ function mod.AnvilOfFates(args)
 	end
 
 	game.InvalidateCheckpoint()
-end
-
-
-if config.BoonChanges.PremiumServiceHammers.Enabled then
-	boon_text({
-		Traits = {
-			WeaponUpgradeBoon = {
-				Description = 'Your {$Keywords.Aspect} of the {#BoldFormatGraft}Nocturnal Arms {#Prev}is even stronger, '
-					.. 'your {!Icons.RandomHammer} upgrades all gain rank if possible, and an {#BoldFormatGraft}Anvil of Fate {#Prev}appears.',
-			},
-		},
-	})
 end

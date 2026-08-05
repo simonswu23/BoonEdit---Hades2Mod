@@ -18,8 +18,11 @@ function once(key, setup)
 end
 
 
--- Numbers behind the boon changes, filled in by each boon file; the config only decides what is on.
-mod.tuning = {}
+-- The three files a boon change is described by, kept apart so each is easy to find: every number,
+-- every word, and what the game will offer you. `tuning.lua` loads here, ahead of the boons that
+-- read it; `requirements.lua` and `text.lua` load at the foot of this file, after them.
+---@diagnostic disable-next-line: undefined-global
+import 'tuning.lua'
 
 
 function prefix_SetupMap()
@@ -218,7 +221,7 @@ end
 
 import 'boons/glamour_gain.lua'
 import 'boons/carnal_pleasure.lua'
-import 'boons/love_handles.lua'
+import 'boons/smoldering_forge.lua'
 import 'boons/obsessive_devotion.lua'
 
 import 'boons/stabbing_rush.lua'
@@ -236,6 +239,7 @@ import 'boons/cryo_pounder.lua'
 import 'boons/unseen_ire.lua'
 
 import 'boons/anvil_rush.lua'
+import 'boons/molten_touch.lua'
 import 'boons/premium_service.lua'
 import 'boons/chain_reaction.lua'
 import 'boons/seismic_hammer.lua'
@@ -246,14 +250,13 @@ import 'boons/all_together.lua'
 import 'boons/cherished_heirloom.lua'
 
 import 'boons/post_haste.lua'
-import 'boons/double_time.lua'
+import 'boons/second_wind.lua'
 
 import 'boons/burning_meteor.lua'
 import 'boons/cardio_gain.lua'
 import 'boons/scalding_vapor.lua'
 
 import 'boons/tidal_rush.lua'
-import 'boons/poseidon_froth_requirements.lua'
 import 'boons/arterial_spray.lua'
 import 'boons/ripple_effect.lua'
 
@@ -264,3 +267,9 @@ import 'boons/air_quality.lua'
 import 'boons/thermal_dynamics.lua'
 
 import 'boons/harm_for_the_afflicted.lua'
+
+
+-- After the boons, both on purpose: requirements get the last word on what the game will offer, and
+-- the text blocks need `boon_text` defined and `mod.tuning` filled before they can build wording.
+import 'requirements.lua'
+import 'text.lua'

@@ -4,14 +4,6 @@
 -- Ripple Effect (Hera x Poseidon) stops doubling its own two projectiles only, and instead covers
 -- every boon that surcharges your Omega Moves in exchange for an extra effect. Each repeat rolls
 -- again at half the chance, so a run of them can carry on up to four deep.
-
-mod.tuning.RippleEffect = {
-	RepeatChance = 0.50,
-	-- each repeat is this much as likely as the one before it
-	Falloff = 0.5,
-	MaxRepeats = 4,
-}
-
 once('RippleEffectOmegaBoons', function()
 	if config.BoonChanges.RippleEffectOmegaBoons.Enabled then
 		local ripple = game.TraitData.MoneyDamageBoon
@@ -99,20 +91,4 @@ function ripple_effect_refire(args, repeats)
 			return
 		end
 	end
-end
-
-
-if config.BoonChanges.RippleEffectOmegaBoons.Enabled then
-	boon_text({
-		Traits = {
-			MoneyDamageBoon = {
-				Description = 'The bonus effects your {$Keywords.Omega} trigger may occur again, up to '
-					.. '{#AltUpgradeFormat}' .. mod.tuning.RippleEffect.MaxRepeats .. ' {#Prev}more times '
-					.. '{#ItalicLightFormat}(each half as likely as the last).',
-			},
-		},
-		StatLines = {
-			BoonEditRippleRepeatStatDisplay = 'Repeat Chance:',
-		},
-	})
 end

@@ -2,12 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 -- Cardio Gain (Hestia) also restores Magick on Sprint, not just on hit.
-
-mod.tuning.CardioGain = {
-	-- a quarter of the old flat 3, banked as a fraction since Magick pays out in whole numbers
-	SprintManaGain = 0.75,
-}
-
 once('CardioGainSprintMana', function()
 	if not config.BoonChanges.CardioGainSprintMana.Enabled then return end
 
@@ -51,18 +45,4 @@ function mod.CardioGainSprintMana(args, triggerArgs)
 		game.CreateAnimation({ Name = 'FireFootstepL', DestinationId = hero.ObjectId, OffsetX = -20 })
 		game.CreateAnimation({ Name = 'FireFootstepR', DestinationId = hero.ObjectId, OffsetX = 20 })
 	end
-end
-
-
-if config.BoonChanges.CardioGainSprintMana.Enabled then
-	boon_text({
-		Traits = {
-			HestiaManaBoon = {
-				Description = 'Whenever your {$Keywords.Attack} or {$Keywords.Special} deal damage, or you {$Keywords.Dash}, restore {!Icons.Mana}.',
-			},
-		},
-		StatLines = {
-			BoonEditCardioGainSprintStatDisplay = { Name = 'Magick on Sprint:', Index = 2 },
-		},
-	})
 end

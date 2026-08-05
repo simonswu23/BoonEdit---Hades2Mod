@@ -1,14 +1,9 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Rousing Reception (Hera) additionally inflicts the status curse belonging to whichever Cast you
--- are running. Casts that deliver a strike of their own take that path instead.
-
-mod.tuning.RousingReception = {
-	UseCastStrikes = true,
-	DamageScaledCurseMultiplier = 1.0,
-}
-
+-- Rousing Reception (Hera) additionally curses the foes it damages. With HitchOnly it is always
+-- Hitch; otherwise it is the status curse belonging to whichever Cast you are running, and Casts
+-- that deliver a strike of their own take that path instead.
 once('RousingReceptionCastCurse', function()
 	local summonProjectile = game.ProjectileData.HeraCastSummonProjectile
 	summonProjectile.OnHitFunctionNames = summonProjectile.OnHitFunctionNames or {}
@@ -154,6 +149,11 @@ end
 ---@diagnostic disable-next-line: unused-local
 function mod.RousingReceptionCurse(victim, _victimId, triggerArgs)
 	if not config.BoonChanges.RousingReceptionCastCurse.Enabled then return end
+
+	if mod.tuning.RousingReception.HitchOnly then
+		apply_hitch(victim)
+		return
+	end
 
 	if mod.tuning.RousingReception.UseCastStrikes then
 		for traitName, strike in pairs(cast_strikes) do

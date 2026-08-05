@@ -3,11 +3,6 @@
 
 -- Shocking Loss (Zeus legendary) no longer passes over Guardians. They take a large hit instead of
 -- being immune outright, and that hit scales with your damage modifiers.
-
-mod.tuning.ShockingLoss = {
-	GuardianDamage = 999,
-}
-
 once('ShockingLossGuardians', function()
 	if config.BoonChanges.ShockingLossGuardians.Enabled then
 		-- ZeusOnSpawn is the same projectile with IgnoreAllModifiers, which would strip that scaling
@@ -79,19 +74,5 @@ function mod.ShockingLossGuardianStrike(enemy, traitArgs)
 		SourceProjectile = 'BoonEditZeusGuardianStrike',
 		DamageAmount = traitArgs.BoonEditGuardianDamage or mod.tuning.ShockingLoss.GuardianDamage,
 		Silent = false,
-	})
-end
-
-
-if config.BoonChanges.ShockingLossGuardians.Enabled then
-	boon_text({
-		Traits = {
-			SpawnKillBoon = {
-				Description = 'Whenever you first deal damage to susceptible foes, you may destroy them outright, or deal heavy damage to {#BoldFormatGraft}Guardians{#Prev}.',
-			},
-		},
-		StatLines = {
-			BoonEditGuardianDamageStatDisplay = { Name = 'Damage to Guardians:', Index = 2 },
-		},
 	})
 end
