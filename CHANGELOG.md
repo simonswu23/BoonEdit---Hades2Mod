@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 Every change below can be switched off independently in
-`ReturnOfModding/config/SWu-BoonEdits.cfg`; the config key is given in brackets.
+`ReturnOfModding/config/SWu-BoonEdits.cfg`, where each one is described in in-game terms.
 
 ### Aphrodite
 
@@ -16,6 +16,7 @@ Every change below can be switched off independently in
 
 ### Ares
 
+- **Profuse Bleeding** — Reverted: foes with wounds have a small chance to drop plasma after taking damage.
 - **Stabbing Rush** — Falling blades keep dropping for the whole duration of your sprint, rather than a fixed three at the start.
 
 ### Demeter
@@ -30,7 +31,7 @@ Every change below can be switched off independently in
 ### Hephaestus
 
 - **Anvil Ring** — Additionally inflicts Glow in exchange for a slight decrease in power.
-- **Smithy Rush → Anvil Rush** — New Effect: when you start and stop dashing, a briefly delayed hammer strikes the area, dealing damage and inflicting Glow.
+- **Smithy Rush** — New Effect: when you start and stop dashing, a hammer strikes the area, dealing damage and inflicting Glow.
 
 ### Hera
 
@@ -38,24 +39,23 @@ Every change below can be switched off independently in
 
 ### Hermes
 
-- **Hard Target → Divine Haste** — Replaced: reduces boon effect cooldowns by 20%/2%5/30%/35%.
-
-### Poseidon
-
-- **Breaker Rush → Tidal Rush** — New Effect: when you start and stop dashing, deal damage with a watery splash that knocks back foes and inflicts Froth.
-
-### Zeus
-- **Air Quality** — now floors all additive damage, instead of flooring after all multipliers.
+- **Hard Target → Post Haste** — Replaced: reduces boon effect cooldowns by 20%/2%5/30%/35%.
 
 ### Hestia
-- **Cardio Gain** — also restores mana when sprinting.
 
-### Ares
-- **Profuse Bleeding** — Reverted: foes with wounds have a small chance to drop plasma after taking damage.
+- **Cardio Gain** — also restores mana when sprinting.
 
 ### Medea
 
 - **Harm for the Afflicted** — Damage triggers on every new curse inflicted on a foe. The interval is reduced from 1 second to 0.3, and is now counted separately for each foe and each curse, rather than being shared across the encounter.
+
+### Poseidon
+
+- **Breaker Rush** — New Effect: when you start and stop dashing, deal damage with a watery splash that knocks back foes and inflicts Froth.
+
+### Zeus
+
+- **Air Quality** — now floors your base damage, instead of flooring the finished hit after all multipliers.
 
 ### Duo Boons
 
@@ -73,13 +73,14 @@ Every change below can be switched off independently in
 - **Ripple Effect** (Hera × Poseidon) — New Effect: the bonus effects your Omega Moves trigger have a 50% chance to occur again, and each repeat rolls again at half the chance — 50% / 25% / 12.5% / 6.25%, up to 4 extra times. Covers Ocean Swell, Fine Line, Controlled Burn, Cut Above and Explosive Intent.
 - **Seismic Servo → Seismic Hammer** (Hephaestus × Poseidon) — Replaced: Your cast erupts into your omega cast after being struck by a Hephaestus explosion.
 - **Sun Worshiper** (Apollo × Hera) — Additional foes have a 30% chance to also be summoned in combat after being slain. Summons are Hitched.
-- **Scalding Vapor** (Hestia × Poseidon) — This additionally halves the cooldown for Froth Activation, and Steam itself can now proc Froth.
+- **Scalding Vapor** (Hestia × Poseidon) — Additionally halves the cooldown for Froth Activation, and Steam itself can now proc Froth without consuming the curse.
+- **Thermal Dynamics** (Hestia × Zeus) — Now applies to every lightning effect from Zeus rather than only Blitz, and the Scorch inflicted is 60% of the damage.
 
 ### Legendary Boons
 
 - **All Together** (Hera) — Gain an additional essence of each type upon pickup.
 - **Fire Away → Burning Meteor** (Hestia) — Replaced: Fireball effects from Hestia are 50% larger and stronger, and inflict Scorch equal to the damage they deal.
-- **Paid Dues → Double Time** (Hermes) — Replaced: You can cast and dash an additional time.
+- **Paid Dues → Double Time** (Hermes) — Replaced: You can cast and dash an additional time. Hermes' legendary chance is also raised from 1% to the 10% every other god uses.
 - **Premium Service** (Hephaestus) — Additionally, all weapon upgrades increase in rank tonight, and gain an Anvil of Fates on pickup.
 - **Shocking Loss** (Zeus) — If this activates against a guardian, they take 999 damage instead.
 - **Winter Harvest** (Demeter) — Executes from 15% rather than 10%, and sums boss HP across all phases for calculation. Can now skip more boss phases (Prometheus, Zagreus, Typhon).
@@ -87,3 +88,4 @@ Every change below can be switched off independently in
 ### Other
 
 - **Anvil of Fates** — Instead of random chance, choose from up to 3 hammer upgrades to sacrifice / gain.
+- **Glow** — Now stacks: each further application makes a foe take 5% more damage, up to 35%. Each stack expires independently.

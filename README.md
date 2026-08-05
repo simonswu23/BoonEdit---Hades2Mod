@@ -28,3 +28,9 @@ Launch the game once to generate `ReturnOfModding/config/SWu-BoonEdits.cfg`, the
 
 `src/boons/` holds one file per boon, containing its trait edits, hooks, runtime logic and tooltip
 text. `src/reload.lua` imports them and holds the shared helpers; `src/ready.lua` is plumbing only.
+
+## Credits
+
+Licence notices for everything this mod depends on, and a note on assets, are in
+[CREDITS.md](CREDITS.md). No game art or another modder's code is redistributed here — everything is
+referenced from Hades II's own data.

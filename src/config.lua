@@ -1,14 +1,3 @@
--- On disk rather than through `rom.mods`, which may not have loaded it yet this early. A plugin
--- folder is only written for a mod that is both installed and enabled.
-local function plugin_present(guid)
-  ---@diagnostic disable-next-line: undefined-global
-  local manifest = rom.path.combine(rom.paths.plugins(), guid, 'manifest.json')
-  local file = io.open(manifest, 'r')
-  if not file then return false end
-  file:close()
-  return true
-end
-
 local config = {
   version = 1;
   enabled = true;
@@ -24,9 +13,9 @@ local config = {
       Enabled = true;
     };
 
-    -- Anvil Ring inflicts Glow on hit, for 10 less base damage at every rarity; Smithy Rush becomes
-    -- Anvil Rush -- the same strike at half damage on starting and stopping a Dash, also inflicting
-    -- Glow. Anvil Rush no longer counts as a blast boon for offer requirements.
+    -- Anvil Ring inflicts Glow on hit, for 10 less base damage at every rarity. Smithy Rush fires
+    -- the same strike at half damage on starting and stopping a Dash, also inflicting Glow, and no
+    -- longer counts as a blast boon for offer requirements.
     AnvilGlowAndDash = {
       Enabled = true;
     };
@@ -83,7 +72,7 @@ local config = {
     };
 
     -- Chain Reaction (Hestia x Hephaestus) no longer makes blasts strike twice. Instead any
-    -- boon effect that recharges over time -- the same ones Divine Haste speeds up -- has a
+    -- boon effect that recharges over time -- the same ones Post Haste speeds up -- has a
     -- chance to skip that recharge outright and come back ready at once.
     ChainReactionCooldownSkip = {
       Enabled = true;
@@ -107,13 +96,13 @@ local config = {
       Enabled = true;
     };
 
-    -- Hard Target (Hermes) becomes "Divine Haste": instead of slowing enemy shots, it speeds up
+    -- Hard Target (Hermes) becomes "Post Haste": instead of slowing enemy shots, it speeds up
     -- anything that recharges.
-    HardTargetBecomesDivineHaste = {
+    HardTargetBecomesPostHaste = {
       Enabled = true;
     };
 
-    -- Seismic Servo (Poseidon x Hephaestus) becomes "Seismic Hammer": Divine Haste covers its old
+    -- Seismic Servo (Poseidon x Hephaestus) becomes "Seismic Hammer": Post Haste covers its old
     -- recharge effect, so instead Volcanic Strike and Flourish blasts erupt your Cast into an Omega.
     SeismicHammer = {
       Enabled = true;
@@ -170,18 +159,18 @@ local config = {
     };
 
     -- Love Handles (Aphrodite x Hephaestus): heartthrobs come from hammer strikes landing --
-    -- Anvil Ring's and Anvil Rush's -- rather than from volcanic blasts going off.
+    -- Anvil Ring's and Smithy Rush's -- rather than from volcanic blasts going off.
     LoveHandlesHammerStrikes = {
       Enabled = true;
     };
 
-    -- Breaker Rush (Poseidon) becomes "Tidal Rush": Tidal Ring's splash when you start a Dash and
-    -- again when you stop, knocking foes away and inflicting Froth.
+    -- Breaker Rush (Poseidon) gains Tidal Ring's splash when you start a Dash and again when you
+    -- stop, knocking foes away and inflicting Froth.
     BreakerRushWaves = {
       Enabled = true;
     };
 
-    -- Tidal Rush counts as a Froth boon alongside Tidal Ring and Slippery Slope, so it can earn
+    -- Breaker Rush counts as a Froth boon alongside Tidal Ring and Slippery Slope, so it can earn
     -- Steam and Killer Current. King Tide also regroups: Geyser Spout shares a set with High Surf
     -- and Ocean Swell, the last set becomes the Froth boons, and Hydraulic Might and Flood Gain no
     -- longer count towards it.
@@ -219,8 +208,8 @@ local config = {
       Enabled = true;
     };
 
-    -- Air Quality (Elemental legendary): floors only the flat bonus damage from other boons
-    -- rather than the whole hit, so Crit and Double Damage still apply on top.
+    -- Air Quality (Elemental legendary): floors your base damage rather than the finished hit, so
+    -- your multipliers, Crit and Double Damage all still apply on top of the limit.
     AirQualityAdditiveFloor = {
       Enabled = true;
     };
@@ -234,6 +223,20 @@ local config = {
     -- collect a Blood Drop, a Rend-afflicted foe taking damage may now spill a Blood Drop
     -- (10/15/20/25% by rarity).
     ProfuseBleedingBloodSpill = {
+      Enabled = true;
+    };
+
+    -- Profuse Bleeding (Ares) is offered for holding Vicious Strike or Vicious Flourish, rather
+    -- than for any one of those two plus Grisly Gain and Visceral Impact. In return it counts as a
+    -- Plasma boon itself, so it can earn Sanguinary Savor, Universal Donor and Carnal Pleasure the
+    -- way the other two do.
+    ProfuseBleedingRequirements = {
+      Enabled = true;
+    };
+
+    -- Thermal Dynamics (Hestia x Zeus): every bolt Zeus throws inflicts Scorch, not only Blitz,
+    -- and the amount is 60% of the damage the bolt dealt rather than a flat count.
+    ThermalDynamicsAllLightning = {
       Enabled = true;
     };
 
@@ -268,15 +271,5 @@ local config = {
     GrantPomLevel = 1;
   };
 }
-
-if plugin_present('Wistiti-WrathOfOlympus') then
-
-  -- Cindered Ritual becomes "Spontaneous Combustion": the Scorch you inflict lands half again as
-  -- hard and has no ceiling, and a foe carrying more Scorch than life bursts, spreading its whole
-  -- Scorch. Off by default, and only offered while that mod is installed.
-  config.BoonChanges.SpontaneousCombustionWrath = {
-    Enabled = false;
-  };
-end
 
 return config

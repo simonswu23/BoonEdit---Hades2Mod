@@ -1,11 +1,11 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Hard Target (Hermes) becomes "Divine Haste": instead of slowing enemy shots, anything that
+-- Hard Target (Hermes) becomes "Post Haste": instead of slowing enemy shots, anything that
 -- recharges over time recharges faster.
 
-once('HardTargetBecomesDivineHaste', function()
-	if config.BoonChanges.HardTargetBecomesDivineHaste.Enabled then
+once('HardTargetBecomesPostHaste', function()
+	if config.BoonChanges.HardTargetBecomesPostHaste.Enabled then
 		local haste = game.TraitData.SlowProjectileBoon
 
 		haste.EnemyProjectileSpeedMultiplier = nil
@@ -51,14 +51,14 @@ once('HardTargetBecomesDivineHaste', function()
 	end
 
 	modutil.mod.Path.Wrap("HadesRetaliate", function(base, unit, args, triggerArgs)
-		return base(unit, divine_haste_recharge(args), triggerArgs)
+		return base(unit, post_haste_recharge(args), triggerArgs)
 	end)
 end)
 
 
 -- Unseen Ire checks its own cooldown directly, so the recharge multiplier never reached it.
-function divine_haste_recharge(args)
-	if not config.BoonChanges.HardTargetBecomesDivineHaste.Enabled then return args end
+function post_haste_recharge(args)
+	if not config.BoonChanges.HardTargetBecomesPostHaste.Enabled then return args end
 	if not args or not args.Cooldown then return args end
 
 	local multiplier = game.GetTotalHeroTraitValue('OlympianRechargeMultiplier', { IsMultiplier = true })
@@ -70,11 +70,11 @@ function divine_haste_recharge(args)
 end
 
 
-if config.BoonChanges.HardTargetBecomesDivineHaste.Enabled then
+if config.BoonChanges.HardTargetBecomesPostHaste.Enabled then
 	boon_text({
 		Traits = {
 			SlowProjectileBoon = {
-				DisplayName = 'Divine Haste',
+				DisplayName = 'Post Haste',
 				Description = 'Any {$Keywords.GodBoon} effects that recharge over time recharge faster.',
 			},
 		},

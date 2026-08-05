@@ -61,13 +61,22 @@ function natural_selection_drop_poms(count, levels)
 
 	local lootName, stackNum = natural_selection_pom_loot(levels)
 
+	-- Spawned against a marker left where Melinoe stands, not against Melinoe. Loot placed on her
+	-- keeps her as its spawn point and trails her around the room instead of staying put.
+	local where = game.GetLocation({ Id = hero.ObjectId })
+	local anchorId = game.SpawnObstacle({
+		Name = 'InvisibleTarget',
+		LocationX = where.X,
+		LocationY = where.Y,
+	})
+
 	for _ = 1, count do
 		local pom = game.CreateLoot({
 			Name = lootName,
 			StackNum = stackNum,
 			AutoLoadPackages = true,
 			DoesNotBlockExit = true,
-			SpawnPoint = hero.ObjectId,
+			SpawnPoint = anchorId,
 			OffsetX = game.RandomFloat(-NATURAL_SELECTION_POM_SPREAD, NATURAL_SELECTION_POM_SPREAD),
 			OffsetY = game.RandomFloat(-NATURAL_SELECTION_POM_SPREAD, NATURAL_SELECTION_POM_SPREAD),
 		})

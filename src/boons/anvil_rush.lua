@@ -1,8 +1,15 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Anvil Ring (Hephaestus) inflicts Glow, paid for with 10 base damage; Smithy Rush becomes Anvil
--- Rush, firing the same strike at half damage on starting and stopping a Dash.
+-- Anvil Ring (Hephaestus) inflicts Glow, paid for with 10 base damage; Smithy Rush fires the same
+-- strike at half damage on starting and stopping a Dash. Glow also stacks here.
+
+mod.tuning.AnvilRush = {
+	-- Both are whole multipliers, not additions to the 1.2 Glow starts at. The ceiling is on the
+	-- vulnerability only -- stacks past it keep the Glow up rather than deepen it.
+	GlowPerStack = 0.05,
+	GlowMax = 1.35,
+}
 
 once('AnvilGlowAndDash', function()
 	if not config.BoonChanges.AnvilGlowAndDash.Enabled then return end
@@ -77,7 +84,7 @@ once('AnvilGlowAndDash', function()
 		},
 	}
 
-	-- Anvil Rush is no longer a massive blast, so it stops earning the offers that need one.
+	-- Smithy Rush is no longer a massive blast, so it stops earning the offers that need one.
 	local function withoutAnvilRush(list)
 		local kept, dropped = {}, false
 		for _, candidate in ipairs(list) do
@@ -134,7 +141,7 @@ function anvil_rush_presentation(locationX, locationY)
 	game.DestroyOnDelay({ centerId }, 1)
 end
 
--- Fires one strike. Args come off the live trait, since the dash-end hooks are not handed any.
+-- Args come off the live trait, since the dash-end hooks are not handed any.
 function fire_anvil_rush_strike(args, triggerArgs)
 	if args and args.CheckSprint and game.ConfigOptionCache.SprintAutoHold and game.SessionMapState.SprintActive then
 		return
@@ -184,17 +191,55 @@ function mod.AnvilRushEnd(args, triggerArgs)
 	fire_anvil_rush_strike(args, triggerArgs)
 end
 
----@diagnostic disable-next-line: unused-local
-function mod.AnvilGlow(victim, _victimId, triggerArgs)
-	if not config.BoonChanges.AnvilGlowAndDash.Enabled then return end
+-- Vanilla Glow only refreshes itself, so the count is kept on the foe. There is no hook for a status
+-- wearing off, so every stack runs its own thread that sleeps the Glow's duration and gives that one
+-- back -- which is why the vulnerability steps down rather than dropping at once. Threads are tagged
+-- to the room so none outlive it.
+local GLOW_EFFECT = 'DelayedKnockbackEffect'
 
-	local effectName = 'DelayedKnockbackEffect'
+local function glow_data()
+	local effect = game.EffectData[GLOW_EFFECT]
+	return effect and effect.EffectData
+end
+
+local function glow_apply(victim)
+	local base = glow_data()
+	if not base or not victim or not victim.ObjectId then return end
+
+	local stacks = victim.BoonEditGlowStacks or 0
+	if stacks <= 0 then
+		game.ClearEffect({ Id = victim.ObjectId, Name = GLOW_EFFECT })
+		return
+	end
+
+	local tuning = mod.tuning.AnvilRush
+	local modifier = math.min(base.Modifier + (stacks - 1) * tuning.GlowPerStack, tuning.GlowMax)
+
 	game.ApplyEffect({
 		DestinationId = victim.ObjectId,
 		Id = game.CurrentRun.Hero.ObjectId,
-		EffectName = effectName,
-		DataProperties = game.EffectData[effectName].EffectData,
+		EffectName = GLOW_EFFECT,
+		DataProperties = game.MergeAllTables({ base, { Modifier = modifier } }),
 	})
+end
+
+function glow_expire(victim)
+	local base = glow_data()
+	game.wait((base and base.Duration) or 5, game.RoomThreadName)
+
+	if not victim or victim.IsDead then return end
+	victim.BoonEditGlowStacks = math.max((victim.BoonEditGlowStacks or 1) - 1, 0)
+	glow_apply(victim)
+end
+
+---@diagnostic disable-next-line: unused-local
+function mod.AnvilGlow(victim, _victimId, triggerArgs)
+	if not config.BoonChanges.AnvilGlowAndDash.Enabled then return end
+	if not victim or not victim.ObjectId then return end
+
+	victim.BoonEditGlowStacks = (victim.BoonEditGlowStacks or 0) + 1
+	glow_apply(victim)
+	game.thread(glow_expire, victim)
 end
 
 
@@ -205,7 +250,6 @@ if config.BoonChanges.AnvilGlowAndDash.Enabled then
 				Description = 'Your {$Keywords.CastSet} deal damage {$TooltipData.ExtractData.Detonations} times in succession to foes in the binding circle, inflicting {$Keywords.DelayedKnockback}.',
 			},
 			HephaestusSprintBoon = {
-				DisplayName = 'Anvil Rush',
 				Description = '{$Keywords.DashSet} damages surrounding foes and inflicts {$Keywords.DelayedKnockback}, and again once you stop.',
 			},
 		},

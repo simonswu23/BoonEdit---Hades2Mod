@@ -2,7 +2,7 @@
 ---@diagnostic disable: lowercase-global
 
 -- Chain Reaction (Hestia x Hephaestus) no longer makes blasts strike twice; instead anything that
--- recharges over time -- the same effects Divine Haste speeds up -- may skip its recharge outright.
+-- recharges over time -- the same effects Post Haste speeds up -- may skip its recharge outright.
 
 mod.tuning.ChainReaction = {
 	SkipChance = 0.30,

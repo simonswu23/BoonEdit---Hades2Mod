@@ -1,8 +1,8 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Breaker Rush (Poseidon) becomes "Tidal Rush": Tidal Ring's splash on starting a Dash and again on
--- stopping, knocking foes away and inflicting Froth.
+-- Breaker Rush (Poseidon) gains Tidal Ring's splash on starting a Dash and again on stopping,
+-- knocking foes away and inflicting Froth. It keeps its own name; only what it does is changed.
 
 mod.tuning.TidalRush = {
 	WaveDamage = { Common = 20, Rare = 25, Epic = 30, Heroic = 35 },
@@ -71,7 +71,7 @@ once('BreakerRushWaves', function()
 end)
 
 
--- Guards and latch mirror Anvil Rush's, but the two boons keep separate latches.
+-- Guards and latch mirror Smithy Rush's, but the two boons keep separate latches.
 function fire_breaker_rush_wave(args, triggerArgs)
 	if args and args.CheckSprint and game.ConfigOptionCache.SprintAutoHold and game.SessionMapState.SprintActive then
 		return
@@ -117,8 +117,8 @@ end
 if config.BoonChanges.BreakerRushWaves.Enabled then
 	boon_text({
 		Traits = {
+			-- keeps its own name; only what it does is changed
 			PoseidonSprintBoon = {
-				DisplayName = 'Tidal Rush',
 				Description = '{$Keywords.DashSet} damages surrounding foes and inflicts {$Keywords.KnockbackAmplify}, and again once you stop.',
 			},
 		},

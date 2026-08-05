@@ -2,7 +2,7 @@
 ---@diagnostic disable: lowercase-global
 
 -- Love Handles (Aphrodite x Hephaestus): heartthrobs come from hammer strikes landing -- Anvil
--- Ring's and Anvil Rush's -- rather than from volcanic blasts going off.
+-- Ring's and Smithy Rush's -- rather than from volcanic blasts going off.
 
 mod.tuning.LoveHandles = {
 	HeartthrobChance = 0.30,

@@ -62,23 +62,33 @@ function ripple_effect_repeat(args)
 	local hero = game.CurrentRun and game.CurrentRun.Hero
 	if not hero or args.Id ~= hero.ObjectId then return end
 
+	-- Counted out before any of it is fired, the way Divine Vengeance counts its bolts, rather than
+	-- rolling again after each shot lands.
+	local tuning = mod.tuning.RippleEffect
 	local chance = game.GetTotalHeroTraitValue('BoonEditRepeatChance')
-	if not rolls(chance) then return end
+	local repeats = 0
+
+	while repeats < tuning.MaxRepeats and rolls(chance) do
+		repeats = repeats + 1
+		chance = chance * tuning.Falloff
+	end
+	if repeats <= 0 then return end
 
 	local repeated = game.ShallowCopyTable(args)
 
-	-- Ocean Swell allows 2 waves, Cut Above 3 swords, so the cap gains room for the repeats.
+	-- Ocean Swell allows 2 waves, Cut Above 3 swords, so the cap gains room for exactly as many as
+	-- were rolled rather than for the most that could have been.
 	if repeated.ProjectileCap then
-		repeated.ProjectileCap = repeated.ProjectileCap + mod.tuning.RippleEffect.MaxRepeats
+		repeated.ProjectileCap = repeated.ProjectileCap + repeats
 	end
 
-	game.thread(ripple_effect_refire, repeated, chance)
+	game.thread(ripple_effect_refire, repeated, repeats)
 end
 
-function ripple_effect_refire(args, chance)
+function ripple_effect_refire(args, repeats)
 	local interval = game.GetTotalHeroTraitValue('DoubleOlympianProjectileInterval')
 
-	for count = 1, mod.tuning.RippleEffect.MaxRepeats do
+	for _ = 1, repeats do
 		game.waitUnmodified(interval)
 
 		mod.RippleFiring = true
@@ -88,11 +98,6 @@ function ripple_effect_refire(args, chance)
 			print('[' .. _PLUGIN.guid .. '] ripple repeat failed: ' .. tostring(err))
 			return
 		end
-
-		if count == mod.tuning.RippleEffect.MaxRepeats then return end
-
-		chance = chance * mod.tuning.RippleEffect.Falloff
-		if not rolls(chance) then return end
 	end
 end
 

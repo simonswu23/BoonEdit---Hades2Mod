@@ -1,7 +1,7 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Tidal Rush joins Tidal Ring and Slippery Slope as a Froth boon, so it can earn Steam and Killer
+-- Breaker Rush joins Tidal Ring and Slippery Slope as a Froth boon, so it can earn Steam and Killer
 -- Current. King Tide's second and third sets are regrouped around Geyser Spout and Froth, and
 -- Hydraulic Might and Flood Gain no longer count towards it.
 
@@ -22,7 +22,7 @@ once('PoseidonFrothRequirements', function()
 			{
 				'PoseidonCastBoon',   -- Tidal Ring
 				'PoseidonStatusBoon', -- Slippery Slope
-				'PoseidonSprintBoon', -- Tidal Rush
+				'PoseidonSprintBoon', -- Breaker Rush
 			},
 		},
 	}

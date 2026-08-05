@@ -1,7 +1,7 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Seismic Servo (Hephaestus x Poseidon) becomes "Seismic Hammer": Divine Haste covers its old
+-- Seismic Servo (Hephaestus x Poseidon) becomes "Seismic Hammer": Post Haste covers its old
 -- recharge effect, so instead Volcanic Strike and Volcanic Flourish blasts erupt your Cast into an
 -- Omega Cast.
 

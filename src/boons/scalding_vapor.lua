@@ -2,7 +2,7 @@
 ---@diagnostic disable: lowercase-global
 
 -- Scalding Vapor (Hestia x Poseidon): its Steam counts as a Froth proc rather than being passed
--- over, while you hold it Poseidon's Font comes round far more often, and the Steam no longer
+-- over, while you hold it Poseidon's Font comes round twice as often, and the Steam no longer
 -- strips the Froth that fed it.
 
 mod.tuning.SteamProcsFroth = {
@@ -67,24 +67,40 @@ function steam_froth_active()
 end
 
 
-if config.BoonChanges.SteamProcsFroth.Enabled then
+-- Froth's own keyword is left to vanilla: Scalding Vapor supplies FontChance, FontDamage and
+-- KnockbackAmplifyDuration itself, so those numbers already follow your luck and your other boons.
+-- Only Steam's keyword is wrong once either toggle is on, since vanilla has it removing the Froth.
+local procs_froth = config.BoonChanges.SteamProcsFroth.Enabled
+local keeps_froth = config.BoonChanges.ScaldingVaporKeepsFroth.Enabled
+
+if procs_froth or keeps_froth then
+	local held = ''
+	if procs_froth and keeps_froth then
+		held = ', which keeps the {$Keywords.KnockbackAmplify} and sets it off more often'
+	elseif keeps_froth then
+		held = ', which keeps the {$Keywords.KnockbackAmplify}'
+	else
+		held = ', which sets off the {$Keywords.KnockbackAmplify} more often'
+	end
+
+	local steam = 'A burning cloud that rapidly deals damage'
+	if not keeps_froth then
+		steam = 'A burning cloud that removes {$Keywords.KnockbackAmplify} from foes and rapidly deals damage'
+	end
+	if procs_froth then
+		steam = steam .. ', and counts as a hit for {$Keywords.KnockbackAmplify}'
+	end
+
 	boon_text({
 		Traits = {
 			SteamBoon = {
 				Description = 'If foes with {$Keywords.KnockbackAmplify} are struck by your fire effects from ' ..
-					'{#BoldFormatGraft}Hestia{#Prev}, they are engulfed in {$Keywords.Steam}, which keeps ' ..
-					'the {$Keywords.KnockbackAmplify} and sets it off more often.',
+					'{#BoldFormatGraft}Hestia{#Prev}, they are engulfed in {$Keywords.Steam}' .. held .. '.',
 			},
 		},
 		Keywords = {
-			KnockbackAmplify = {
-				Description = '{#ItalicBoldFormat}{$Keywords.Status}: {#Prev}When hit, afflicted foes have ' ..
-					'{#BoldFormatGraft}25% {#Prev}chance to take {#BoldFormatGraft}50 {#Prev}damage. ' ..
-					'Lasts {#BoldFormatGraft}3 Sec.',
-			},
 			Steam = {
-				Description = 'A burning cloud that rapidly deals damage, and counts as a hit for ' ..
-					'{$Keywords.KnockbackAmplify}. Lasts {#BoldFormatGraft}2 Sec.',
+				Description = steam .. '. Lasts {#BoldFormatGraft}{$TooltipData.ExtractData.Duration} Sec.',
 			},
 		},
 	})

@@ -29,9 +29,14 @@ function prefix_SetupMap()
 end
 
 -- Re-reads the .cfg so edits take effect on the next room load. Wrapped in a closure because
--- chalk.auto reads the caller's environment, and pcall's own frame has none.
+-- chalk.auto reads the caller's environment, and pcall's own frame has none. The result is put in a
+-- local first on purpose: `return chalk.auto(...)` is a tail call, which drops this frame and leaves
+-- chalk reading pcall instead, where it finds no plugin and looks for config.lua in the wrong place.
 function reload_config()
-	local ok, reloaded = pcall(function() return chalk.auto('config.lua') end)
+	local ok, reloaded = pcall(function()
+		local loaded = chalk.auto('config.lua')
+		return loaded
+	end)
 	if ok and reloaded then
 		config = reloaded
 		---@diagnostic disable-next-line: undefined-global
@@ -240,7 +245,7 @@ import 'boons/rousing_reception.lua'
 import 'boons/all_together.lua'
 import 'boons/cherished_heirloom.lua'
 
-import 'boons/divine_haste.lua'
+import 'boons/post_haste.lua'
 import 'boons/double_time.lua'
 
 import 'boons/burning_meteor.lua'
@@ -255,5 +260,7 @@ import 'boons/ripple_effect.lua'
 import 'boons/shocking_loss.lua'
 import 'boons/killer_current.lua'
 import 'boons/air_quality.lua'
+
+import 'boons/thermal_dynamics.lua'
 
 import 'boons/harm_for_the_afflicted.lua'
