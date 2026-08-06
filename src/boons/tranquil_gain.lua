@@ -59,7 +59,13 @@ function mod.TranquilGainChannel(hero, args)
 				local whole = math.floor(carried)
 				if whole > 0 then
 					carried = carried - whole
-					game.ManaDelta(whole)
+					-- `Silent = false` is how vanilla's own regen loops mark a tick, and is what tells
+					-- MoreDuos' Energy Overflow that this is a drip rather than a restore: it pays the
+					-- bonus on one but will not turn one into max Magick, since a payout every 0.05s
+					-- against a full meter would walk that ceiling to its cap on its own. False rather
+					-- than true so the Magick-gain flourish still plays -- ManaDelta reads the field
+					-- only as `not args.Silent`, so this is otherwise identical to passing nothing.
+					game.ManaDelta(whole, { Silent = false })
 				end
 			end
 		else
