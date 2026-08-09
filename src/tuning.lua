@@ -159,9 +159,9 @@ mod.tuning.BraveFace = {
 }
 
 mod.tuning.RousingReception = {
-	-- how much longer your Cast ring lasts. Its tick rate is untouched, so twice as long is twice
-	-- as many ticks.
-	CastDurationMultiplier = 2.0,
+	-- how much longer your Cast ring lasts. Its tick rate is untouched, so half again as long is half
+	-- again as many ticks.
+	CastDurationMultiplier = 1.5,
 	-- Switch this off to go back to reading the curse off your Cast boon.
 	HitchOnly = true,
 	UseCastStrikes = true,

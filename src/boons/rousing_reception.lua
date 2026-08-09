@@ -11,15 +11,16 @@ once('RousingReceptionCastCurse', function()
 end)
 
 
--- **Your Cast lasts twice as long.** `WeaponCast` is the one Cast every weapon and aspect uses -- it
+-- **Your Cast lasts half again as long.** `WeaponCast` is the one Cast every weapon and aspect uses
 -- sits in `WeaponPackages` alongside `WeaponBlink`, no aspect trait touches it, and Winner's Circle
 -- is a plain Hermes boon that shortens it by writing to exactly these two properties
 -- (`TraitData_Hermes.lua:329`). So this is Winner's Circle inverted, and it reaches the ring
 -- whatever you are holding.
 --
 -- Winner's Circle also carries `CastDurationMultiplier` and a `ChargeTime` change, deliberately not
--- copied: that field is a time *scale* pacing the tick rate, so mirroring it at 2 would stretch the
--- ring out, halve its ticks and slow the channel. Only the ring's own fuse is doubled.
+-- copied: that field is a time *scale* pacing the tick rate, so mirroring the multiplier onto it
+-- would stretch the ring out, thin its ticks and slow the channel. Only the ring's own fuse is
+-- lengthened.
 --
 -- A flat multiplier rather than `SourceIsMultiplier`: this trait's rarity Multiplier already scales
 -- its summon damage, and folding duration into it would reach 4x at Heroic.

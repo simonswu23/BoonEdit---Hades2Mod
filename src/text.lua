@@ -98,7 +98,6 @@ if config.BoonChanges.ObsessiveDevotion.Enabled then
 			-- A keyword expands to its own formatted run, so suffixing it with letters breaks the
 			-- format rather than reading "Charmed". Say "-afflicted".
 			BoonEditDevotionChanceStatDisplay = { Name = '{$Keywords.Charm} Chance:', Index = 1 },
-			BoonEditDevotionDamageStatDisplay = { Name = 'Damage per Nearby Ally:', Index = 2 },
 		},
 	})
 end

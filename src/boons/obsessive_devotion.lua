@@ -58,16 +58,16 @@ once('ObsessiveDevotion', function()
 	devotion.BoonEditDamagePerFriendly = mod.tuning.ObsessiveDevotion.DamagePerFriendly
 	devotion.BoonEditMaxDamageBonus = mod.tuning.ObsessiveDevotion.MaxDamageBonus
 
-	-- **Two, and never more.** The tray builds a fixed pair of stat-line boxes and walks the trait's
-	-- list against them (`TraitTrayLogic.lua:1598`), so a third entry indexes a nil box and takes the
-	-- game down the moment the boon is looked at.
+	-- **One line, and the Charm chance is it.** The damage-per-ally figure had one too, but as a
+	-- Legendary the boon carries flavour text saying the same thing, and two readings of one effect
+	-- is worse than none. Never more than two either way: the tray builds a fixed pair of boxes and
+	-- walks the trait's list against them (`TraitTrayLogic.lua:1598`), so a third indexes a nil box.
 	devotion.StatLines = {
 		'BoonEditDevotionChanceStatDisplay',
-		'BoonEditDevotionDamageStatDisplay',
 	}
 
-	-- The two with lines come first: anything past the second resolved to a raw token rather than
-	-- its figure, which is what printed "PercentNewTotal3" where the damage should have been.
+	-- The one with a line comes first: anything past the second resolved to a raw token rather than
+	-- its figure, which is what printed "PercentNewTotal3" where the damage used to be shown.
 	devotion.ExtractValues = {
 		{
 			Key = 'BoonEditCharmChance',
@@ -140,7 +140,16 @@ end
 -- there is no effect here, so the animation was simply left running and a Guardian kept the heart
 -- for the rest of the fight. It is stopped after `CharmDuration`, which is how long the heart would
 -- have meant something had the foe been charmable.
+--
+-- **The foe must be holding a weapon the game knows.** `EnemyAILogic.lua:2736` reads the flag behind
+-- a guard that explicitly tolerates `WeaponData[enemy.WeaponName] == nil` -- and then line 2737
+-- indexes that same nil anyway. Vanilla never trips it because everything vanilla sets this from is
+-- already mid-attack; this fires off a status landing, which can catch a foe between weapons or
+-- carrying one with no `WeaponData` entry at all. Setting the flag there is a hard crash.
 local function devotion_interrupt(unit)
+	local weaponName = unit.WeaponName
+	if not weaponName or not game.WeaponData[weaponName] then return false end
+
 	local cooldown = mod.tuning.ObsessiveDevotion.InterruptCooldown
 	if not game.CheckCooldown(devotion_interrupt_key(unit), cooldown) then return false end
 

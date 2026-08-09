@@ -14,8 +14,8 @@ local config = {
       Enabled = true;
     };
 
-    -- Rousing Reception also makes your Cast ring last twice as long. Its tick rate is unchanged,
-    -- so that is twice as many ticks, and it applies whichever weapon you are holding.
+    -- Rousing Reception also makes your Cast ring last half again as long. Its tick rate is
+    -- unchanged, so that is half again as many ticks, and it applies whichever weapon you hold.
     RousingReceptionCastDuration = {
       Enabled = true;
     };
