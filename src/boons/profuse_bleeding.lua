@@ -2,8 +2,8 @@
 ---@diagnostic disable: lowercase-global
 
 -- Profuse Bleeding (Ares): CheckAresBloodDrop already rolls to spill a Blood Drop; vanilla just
--- never points a trait at it. RarityLevels swaps to the standard 10/15/20/25% set.
--- Where it sits in the offer chain is set in `requirements.lua`.
+-- never points a trait at it. RarityLevels swaps to the standard set, and its place in the offer
+-- chain is set in `requirements.lua`.
 
 once('ProfuseBleedingBloodSpill', function()
 	if not config.BoonChanges.ProfuseBleedingBloodSpill.Enabled then return end

@@ -16,12 +16,9 @@ once('ShockingLossGuardians', function()
 		local shockingLoss = game.TraitData.SpawnKillBoon
 		shockingLoss.OnEnemyDamagedAction.Args.BoonEditGuardianDamage = mod.tuning.ShockingLoss.GuardianDamage
 
+		-- No stat line for the Guardian figure. It rendered as a raw token rather than the number,
+		-- and it is not a value worth a line of its own anyway -- the description carries it.
 		shockingLoss.BoonEditGuardianDamage = mod.tuning.ShockingLoss.GuardianDamage
-		table.insert(shockingLoss.StatLines, 'BoonEditGuardianDamageStatDisplay')
-		table.insert(shockingLoss.ExtractValues, {
-			Key = 'BoonEditGuardianDamage',
-			ExtractAs = 'TooltipGuardianDamage',
-		})
 	end
 
 	-- Wrapped rather than repointed, so both of the trait's dispatch paths keep working.

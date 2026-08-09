@@ -29,10 +29,7 @@ once('MoltenTouchGlow', function()
 		},
 	}
 
-	table.insert(moltenTouch.StatLines, 'BoonEditMoltenTouchGlowStatDisplay')
-	table.insert(moltenTouch.ExtractValues, {
-		Key = 'BoonEditReportedGlowMultiplier',
-		ExtractAs = 'DamageIncrease',
-		Format = 'PercentDelta',
-	})
+	-- No second stat line. Vanilla already shows the Armor figure, and the Glow bonus is a fixed
+	-- fraction of it -- "half as much" in the description says it without a number the player then
+	-- has to compare against the one above it.
 end)

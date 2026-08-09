@@ -1,10 +1,9 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Air Quality (Elemental legendary): the floor is put under the *base* damage rather than under the
--- finished figure. Vanilla clamps the total at the very end, after multipliers, Crit and Double
--- Damage -- so the floor was the most those could ever be worth on a weak hit. Held under the base
--- instead, everything still multiplies it, and the flat additions from other boons land on top.
+-- Air Quality (Elemental legendary): the floor goes under the *base* damage, not the finished
+-- figure. Vanilla clamps the total after multipliers, so the floor was the most those could be worth
+-- on a weak hit.
 
 once('AirQualityAdditiveFloor', function()
 	if config.BoonChanges.AirQualityAdditiveFloor.Enabled then

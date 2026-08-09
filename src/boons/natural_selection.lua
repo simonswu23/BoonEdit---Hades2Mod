@@ -15,8 +15,13 @@ once('NaturalSelectionPoms', function()
 			Amount = { BaseValue = mod.tuning.NaturalSelection.EncountersPerPom },
 		}
 
-		selection.StatLines = {}
-		selection.ExtractValues = {}
+		-- Vanilla's lines were about the leftmost-column levels this no longer grants, so they go --
+		-- but the interval is worth reading, since it is the only part of the boon you wait on.
+		selection.BoonEditEncountersPerPom = mod.tuning.NaturalSelection.EncountersPerPom
+		selection.StatLines = { 'BoonEditNaturalSelectionStatDisplay' }
+		selection.ExtractValues = {
+			{ Key = 'BoonEditEncountersPerPom', ExtractAs = 'TooltipEncounters' },
+		}
 	end
 
 	modutil.mod.Path.Wrap("CheckChamberTraits", function(base, ...)
@@ -44,6 +49,33 @@ function natural_selection_pom_loot(levels)
 	return 'StackUpgrade', levels
 end
 
+-- `CreateLoot` opens with a bare `RandomSynchronize()` and then rolls the loot's choices itself
+-- (`RoomLogic.lua`), so the stream is reset to the same point before every Pom -- three made in one
+-- breath land on the identical trio.
+--
+-- **Vanilla never trips over this**, which is why every other Pom looks fine: it drops them one at
+-- a time with the stream advancing in between, and a triple Pom reward is a single
+-- `StackUpgradeTriple` worth three levels rather than three separate items. Three `CreateLoot`
+-- calls in a row is a shape only this boon makes.
+--
+-- Each is therefore rolled again from an offset of its own. **The stride is what matters**:
+-- `RandomSynchronize(offset)` resets to seed zero and burns `offset` coin flips
+-- (`RandomLogic.lua:66`), so offsets of 1, 2 and 3 hand over streams a single flip apart and a
+-- selection making several draws lands on the same trio regardless. Spacing them properly is what
+-- makes the rolls diverge, while keeping the result seeded and reproducible rather than random.
+--
+-- Note this only spreads the choices as far as the pool allows: hold three pommable boons and three
+-- Poms will still show the same three, because those are all there are.
+local NATURAL_SELECTION_ROLL_STRIDE = 64
+
+function natural_selection_spread_choices(pom, index)
+	if not pom then return end
+
+	game.RandomSynchronize(index * NATURAL_SELECTION_ROLL_STRIDE)
+	pom.UpgradeOptions = nil
+	game.SetTraitsOnLoot(pom)
+end
+
 -- Real Poms of Power, not the random-Pom consumable.
 function natural_selection_drop_poms(count, levels)
 	game.wait(NATURAL_SELECTION_POM_DELAY)
@@ -62,7 +94,7 @@ function natural_selection_drop_poms(count, levels)
 		LocationY = where.Y,
 	})
 
-	for _ = 1, count do
+	for index = 1, count do
 		local pom = game.CreateLoot({
 			Name = lootName,
 			StackNum = stackNum,
@@ -72,6 +104,8 @@ function natural_selection_drop_poms(count, levels)
 			OffsetX = game.RandomFloat(-NATURAL_SELECTION_POM_SPREAD, NATURAL_SELECTION_POM_SPREAD),
 			OffsetY = game.RandomFloat(-NATURAL_SELECTION_POM_SPREAD, NATURAL_SELECTION_POM_SPREAD),
 		})
+
+		natural_selection_spread_choices(pom, index)
 
 		if pom and pom.ObjectId then
 			game.ApplyUpwardForce({ Id = pom.ObjectId, Speed = game.RandomFloat(500, 700) })

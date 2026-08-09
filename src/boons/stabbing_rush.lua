@@ -16,6 +16,11 @@ once('StabbingRushDuration', function()
 		local repeated = game.ShallowCopyTable(args)
 		repeated.StartSound = nil
 
+		-- Every blade carries `FizzleOldestProjectileCount = args.ProjectileCap`, so making one at the
+		-- cap cancels the oldest -- and a fizzled blade never detonates. Vanilla's three never near
+		-- its six, but a repeated volley clears it in a third of a second, so the cap is raised.
+		repeated.ProjectileCap = mod.tuning.StabbingRush.ProjectileCap
+
 		while stabbing_rush_sprinting() do
 			base(weaponData, repeated, triggerArgs)
 		end

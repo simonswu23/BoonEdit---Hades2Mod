@@ -68,3 +68,48 @@ function second_wind_extend_nova(traitArgs)
 
 	traitArgs.MaxProjectiles = (traitArgs.MaxProjectiles or 1) + mod.tuning.SecondWind.ExtraCasts
 end
+
+
+-- Hermes' own keepsake opens Second Wind up. `TimedBuffKeepsake` is the trait it grants.
+function second_wind_keepsake()
+	return config.BoonChanges.SecondWind.Enabled and game.HeroHasTrait('TimedBuffKeepsake')
+end
+
+
+-- **Two separate gates, so both have to be answered.**
+--
+-- `HasTraitRequirements` is where `TraitRequirements` is enforced, and Second Wind's is a long
+-- `OneOf` of Hermes boons -- answering it met is the whole of waiving them. Cleared this way rather
+-- than by deleting the entry, because `GetPriorityDependentTraits` needs the entry to exist before
+-- it will read the `PriorityChance` below.
+--
+-- That chance is vanilla's own lever for "offer this more often" (`UpgradeChoiceLogic.lua:753`): a
+-- trait carrying one is rolled for and forced into the options ahead of the ordinary draw. It is
+-- written unconditionally and gated at read time, since `TraitRequirements` outlives the run while
+-- the keepsake does not.
+once('SecondWindKeepsake', function()
+	if not config.BoonChanges.SecondWind.Enabled then return end
+
+	local requirements = game.TraitRequirements.TimeStopLastStandBoon
+	if requirements then
+		requirements.PriorityChance = mod.tuning.SecondWind.KeepsakeOfferChance
+	end
+
+	modutil.mod.Path.Wrap("HasTraitRequirements", function(base, traitName)
+		if traitName == 'TimeStopLastStandBoon' and second_wind_keepsake() then return true end
+		return base(traitName)
+	end)
+
+	-- Without this the PriorityChance would apply whether or not the keepsake is worn.
+	modutil.mod.Path.Wrap("GetPriorityDependentTraits", function(base, lootData)
+		local linked = base(lootData)
+		if second_wind_keepsake() then return linked end
+
+		for index = #(linked or {}), 1, -1 do
+			if linked[index].TraitName == 'TimeStopLastStandBoon' then
+				table.remove(linked, index)
+			end
+		end
+		return linked
+	end)
+end)

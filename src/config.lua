@@ -14,6 +14,12 @@ local config = {
       Enabled = true;
     };
 
+    -- Rousing Reception also makes your Cast ring last twice as long. Its tick rate is unchanged,
+    -- so that is twice as many ticks, and it applies whichever weapon you are holding.
+    RousingReceptionCastDuration = {
+      Enabled = true;
+    };
+
     -- Anvil Ring inflicts Glow on hit, for 10 less base damage at every rarity. Smithy Rush fires
     -- the same strike at half damage on starting and stopping a Dash, also inflicting Glow, and no
     -- longer counts as a blast boon for offer requirements.
@@ -49,10 +55,19 @@ local config = {
       Enabled = true;
     };
 
-    -- Sun Worshiper's servants are Hitched for as long as they last, without needing Obsessive
-    -- Devotion. They still count towards its damage bonus when you hold both.
-    SunWorshiperHitch = {
+    -- Ionic Gain (Zeus) also slowly restores Magick while you stand near the drop it spawns, rather
+    -- than only when you pick it up. Picking it up still restores the lot. The rate rises with the
+    -- boon's rarity, on the same ladder The Unseen uses.
+    IonicGainProximity = {
       Enabled = true;
+    };
+
+    -- Removed. It tried to make your summons strikeable and Hitchable, which never worked, and to
+    -- do it they were put on the enemy team -- so anything aimed there, Glamour Gain's pulse among
+    -- them, started cursing your own side. The key is kept so nothing reading it breaks; leave it
+    -- off, as there is no longer any code behind it.
+    SunWorshiperHitch = {
+      Enabled = false;
     };
 
     -- Fire Away (Hestia legendary) becomes "Burning Meteor": Hestia's fireballs are half again as
@@ -122,14 +137,23 @@ local config = {
       Enabled = true;
     };
 
-    -- Carnal Pleasure (Aphrodite x Ares) still rolls for a Heartthrob on each Plasma you collect,
-    -- and now restores 1 health alongside it.
+    -- Off: this healing moved back to MoreDuos' Boiling Blood, so only one boon answers for what a
+    -- Plasma pickup is worth. Turning it on alongside Boiling Blood's HealOnPlasma heals twice.
     CarnalPleasureHealing = {
+      Enabled = false;
+    };
+
+    -- Carnal Pleasure no longer throws a Heartthrob when you collect Plasma. Instead every
+    -- Heartthrob you make has twice the blast radius and deals +50% more damage, rising to +80%
+    -- with a full stack of Plasma. Heart Breaker and Smoldering Forge are what make them now.
+    CarnalPleasurePlasmaBursts = {
       Enabled = true;
     };
 
-    -- Ecstatic Obsession (Hera x Aphrodite) becomes "Obsessive Devotion": Weak foes and your own
-    -- summons are Hitched, and you deal more damage for each of them.
+    -- Ecstatic Obsession (Hera x Aphrodite) becomes "Obsessive Devotion": the Weak you inflict has
+    -- a chance to come out as Charm instead, turning the foe on the ones beside it. Foes that
+    -- cannot be Charmed, bosses among them, have their current attack interrupted instead. You also
+    -- deal more damage for every character fighting for you, Charmed foes counted among them.
     ObsessiveDevotion = {
       Enabled = true;
     };
@@ -165,8 +189,10 @@ local config = {
       Enabled = true;
     };
 
-    -- Love Handles (Aphrodite x Hephaestus) becomes "Smoldering Forge": no Heartthrobs from
-    -- volcanic blasts, and instead +50% damage of any kind to nearby foes with Glow.
+    -- Love Handles (Aphrodite x Hephaestus) becomes "Smoldering Forge": a 20% chance to throw a
+    -- Heartthrob whenever you damage a foe that has Glow, whatever you damaged it with, instead of
+    -- only from volcanic blasts. Also raises the Heartthrob cap from 6 to 12, which every Heartthrob
+    -- shares whichever boon made it.
     SmolderingForge = {
       Enabled = true;
     };
@@ -185,6 +211,18 @@ local config = {
       Enabled = true;
     };
 
+    -- Beach Ball (Apollo x Poseidon) hits for 400 when the globe goes off, rather than 300.
+    BeachBallDamage = {
+      Enabled = true;
+    };
+
+    -- Beach Ball (Apollo x Poseidon) counts as one of your Splash boons, so it can satisfy
+    -- Slippery Slope and King Tide. The game leaves it out of that list despite it being the boon
+    -- that makes your dash Splash.
+    BeachBallCountsAsSplash = {
+      Enabled = true;
+    };
+
     -- Cryo Pounder (Demeter x Hephaestus): the bonus damage it deals to Frozen foes now covers
     -- your hammer strikes as well, not only volcanic blasts.
     CryoPounderHammers = {
@@ -194,6 +232,8 @@ local config = {
     -- Paid Dues (Hermes legendary) becomes "Second Wind": two Casts down at once, and a second
     -- Dash before the recharge.
     -- Hermes' legendary chance is also raised from 1% to the 10% every other god uses.
+    -- Wearing Hermes' keepsake waives its requirements entirely and gives it a further 10% chance
+    -- of being offered.
     SecondWind = {
       Enabled = true;
     };
@@ -203,16 +243,23 @@ local config = {
       Enabled = true;
     };
 
-    -- Scalding Vapor's Steam counts as a Froth proc rather than being passed over, and while you
-    -- hold it Poseidon's Font comes round twice as often.
+    -- Off: Steam counting as a hit for Froth never actually happened in play, and leaving it on
+    -- only put the claim in Steam's tooltip. The Font cooldown halving is a separate toggle and is
+    -- unaffected.
     SteamProcsFroth = {
-      Enabled = true;
+      Enabled = false;
     };
 
-    -- Scalding Vapor (Hestia x Poseidon): Steam still never stacks, but no longer strips the
-    -- Froth that fed it.
+    -- Off: Scalding Vapor's Steam counts as a Froth proc rather than being passed over, so the
+    -- Steam itself can feed Poseidon's Font. Independent of the cooldown change above.
+    SteamCountsAsFrothProc = {
+      Enabled = false;
+    };
+
+    -- Off: Steam consumes the Froth that fed it again, and stacks, both the way the game means them
+    -- to. Scalding Vapor's only change now is the Font cooldown above.
     ScaldingVaporKeepsFroth = {
-      Enabled = true;
+      Enabled = false;
     };
 
     -- Air Quality (Elemental legendary): floors your base damage rather than the finished hit, so
@@ -260,6 +307,32 @@ local config = {
       Enabled = true;
     };
 
+    -- Glorious Disaster (Apollo x Zeus) can also be earned from Lucid Gain or Super Nova, not only
+    -- from Nova Burst. Its Zeus requirement is unchanged.
+    GloriousDisasterRequirements = {
+      Enabled = true;
+    };
+
+    -- Glorious Disaster also fires when the Aspect of Charon's axe detonates your Cast, which
+    -- normally skips it entirely because the second stage is decided as the Cast is laid.
+    GloriousDisasterAxe = {
+      Enabled = true;
+    };
+
+    -- Glorious Disaster no longer needs the extra Magick channelled into it: every Omega Cast is a
+    -- Glorious Disaster.
+    GloriousDisasterAlwaysSupercharged = {
+      Enabled = true;
+    };
+
+    -- Adds "Pandemonium", a new Legendary blessing from Chaos: every god may turn up however many
+    -- you have met, no boon requires another first, core boons stop taking each other's slots, and
+    -- doors offer blessings more often. Offered only once Chaos has already blessed you. Wearing Chaos' keepsake gives it a
+    -- further 10% chance of being offered.
+    Pandemonium = {
+      Enabled = true;
+    };
+
   };
 
   -- Testing aids, read on every room load: a name grants that boon once and is then left alone for
@@ -273,8 +346,8 @@ local config = {
     -- Rarity for anything granted above: Common, Rare, Epic or Heroic. Changing it re-grants.
     GrantRarity = 'Common';
 
-    -- Pom level for anything granted above. 1 is the base boon, 2 is one Pom, and so on.
-    -- Changing it re-grants.
+    -- Pom level for anything granted above: 1 is the base boon, 2 is one Pom, and so on. Changing
+    -- it re-grants.
     GrantPomLevel = 1;
   };
 }

@@ -5,12 +5,9 @@
 -- here changes what a boon does -- the numbers are in `tuning.lua`, the wording in `text.lua`, the
 -- behaviour in each boon's own file.
 --
--- Two shapes turn up. `game.TraitRequirements[trait]` is what the game checks before offering that
--- trait: `OneOf` for a single list, `OneFromEachSet` for one pick out of each of several.
--- `game.LinkedTraitData` holds the named groups those requirements are usually written against --
--- `AresBloodDropTraits`, `HephaestusMassiveTraits` and so on, all listed in `TRAIT_NAMES.md`.
--- Editing a group reaches every requirement that reads it, which is usually the point and is always
--- worth saying out loud.
+-- Two shapes turn up: `game.TraitRequirements[trait]`, with `OneOf` or `OneFromEachSet`, and
+-- `game.LinkedTraitData`, the named groups those are written against and listed in `TRAIT_NAMES.md`.
+-- Editing a group reaches every requirement reading it, which is worth saying out loud.
 --
 -- Imported from `reload.lua` after the boons, so it has the last word on any requirement they set.
 -- Each block carries the config guard of the change it belongs to.
@@ -29,13 +26,36 @@ once('BoonRequirements', function()
 		}
 	end
 
-	-- Ares -- Profuse Bleeding.
-	--
-	-- It moves in the offer chain: it asks for the attack or the special, and in exchange counts as
-	-- a Plasma source for the boons that want one. Vanilla offers it for any one of the attack, the
-	-- special, Grisly Gain or Visceral Impact -- the last two being the Plasma set that Sanguinary
-	-- Savor, Universal Donor and Carnal Pleasure read. Asking for the weapon boons instead makes it
-	-- the way into that set rather than a sibling of it.
+	-- Apollo x Zeus -- Glorious Disaster. Vanilla asks for Nova Burst alone on the Apollo side; this
+	-- accepts Lucid Gain or Super Nova too, leaving the Zeus set as written.
+	if config.BoonChanges.GloriousDisasterRequirements.Enabled then
+		game.TraitRequirements.ApolloSecondStageCastBoon = {
+			OneFromEachSet = {
+				{
+					'ApolloExCastBoon',   -- Nova Burst
+					'ApolloManaBoon',     -- Lucid Gain
+					'ApolloCastAreaBoon', -- Super Nova
+				},
+				{ 'ZeusWeaponBoon', 'ZeusSpecialBoon', 'ZeusCastBoon', 'ZeusSprintBoon' },
+			},
+		}
+	end
+
+	-- Aphrodite x Ares -- Carnal Pleasure. Heart Breaker makes Heartthrobs and this boon is about what
+	-- one does, so it is the only Aphrodite route in -- rebuilt rather than edited, since narrowing
+	-- the shared `AphroditeCoreTraits` would narrow every Aphrodite requirement with it.
+	if config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled then
+		game.TraitRequirements.BloodManaBurstBoon = {
+			OneFromEachSet = {
+				game.LinkedTraitData.AresBloodDropTraits,
+				{ 'ManaBurstBoon' }, -- Heart Breaker
+			},
+		}
+	end
+
+	-- Ares -- Profuse Bleeding moves in the offer chain: it asks for the attack or special, and in
+	-- exchange counts as a Plasma source. Vanilla offered it alongside the Plasma set; asking for the
+	-- weapon boons instead makes it the way *into* that set rather than a sibling of it.
 	if config.BoonChanges.ProfuseBleedingRequirements.Enabled then
 		game.TraitRequirements.RendBloodDropBoon = { OneOf = game.LinkedTraitData.AresRendTraits }
 
@@ -84,6 +104,18 @@ once('BoonRequirements', function()
 				{ 'BurnExplodeBoon', 'BurnArmorBoon', 'AloneDamageBoon' },       -- Flash Fry / Hot Pot / Snuffed Candle
 			},
 		}
+	end
+
+	-- Poseidon -- Beach Ball counts as a Splash boon. Vanilla leaves it out of `PoseidonSplashTraits`
+	-- in a trailing comment, so the Splash-on-dash boon satisfied neither Slippery Slope nor King
+	-- Tide, which both read this group.
+	--
+	-- An offer requirement, not a damage type: nothing marks a projectile as "Splash damage" for a
+	-- multiplier to find, so this is the only sense the game has of the phrase.
+	if config.BoonChanges.BeachBallCountsAsSplash.Enabled then
+		if not game.Contains(game.LinkedTraitData.PoseidonSplashTraits, 'PoseidonSplashSprintBoon') then
+			table.insert(game.LinkedTraitData.PoseidonSplashTraits, 'PoseidonSplashSprintBoon')
+		end
 	end
 
 	-- Poseidon -- Breaker Rush joins Tidal Ring and Slippery Slope as a Froth boon, so it can earn

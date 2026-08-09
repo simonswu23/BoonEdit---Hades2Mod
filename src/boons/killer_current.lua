@@ -9,7 +9,9 @@ once('KillerCurrentBolt', function()
 	local killerCurrent = game.TraitData.LightningVulnerabilityBoon
 	killerCurrent.AddOutgoingDamageModifiers = nil
 	killerCurrent.BoonEditBoltChance = mod.tuning.KillerCurrent.BoltChance
-	killerCurrent.StatLines = { 'DoubleBoltChanceStatDisplay1' }
+	-- Its own line rather than Double Bolt's `DoubleBoltChanceStatDisplay1`, which reads "Bonus Bolt
+	-- Chance" -- borrowed wording for a boon that no longer adds bolts to anything, it calls one down.
+	killerCurrent.StatLines = { 'BoonEditKillerCurrentStatDisplay' }
 	killerCurrent.ExtractValues = {
 		{
 			Key = 'BoonEditBoltChance',

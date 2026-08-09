@@ -1,9 +1,8 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Harm for the Afflicted (Medea) fires for every new curse landing on a foe. Vanilla already
--- checked each curse on its own; what held it to one hit was a cooldown shared by every foe in the
--- room. Keyed per foe and per curse instead.
+-- Harm for the Afflicted (Medea) fires for every new curse landing on a foe. Vanilla already checked
+-- each curse on its own; what held it to one hit was a room-wide cooldown, now keyed per foe.
 once('HarmForTheAfflictedEveryStatus', function()
 	if not config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then return end
 

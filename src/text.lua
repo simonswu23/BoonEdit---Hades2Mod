@@ -12,11 +12,11 @@ if config.BoonChanges.GlamourGainPulse.Enabled then
 	boon_text({
 		Traits = {
 			AphroditeManaBoon = {
-				Description = 'You pulse to inflict {$Keywords.Weak} on nearby foes, restoring {!Icons.Mana} for {#AltUpgradeFormat}each {#Prev}foe caught.',
+				Description = 'Every second, inflict {$Keywords.Weak} on nearby foes, restoring {!Icons.Mana} for {#AltUpgradeFormat}each {#Prev}.',
 			},
 		},
 		StatLines = {
-			BoonEditGlamourManaStatDisplay = 'Magick per Foe:',
+			BoonEditGlamourManaStatDisplay = { Name = 'Magick per Foe:', Index = 1 },
 		},
 	})
 end
@@ -34,18 +34,43 @@ if config.BoonChanges.CarnalPleasureHealing.Enabled then
 	})
 end
 
+if config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled then
+	boon_text({
+		Traits = {
+			BloodManaBurstBoon = {
+				-- No mention of creating one: the pickup roll is zeroed, so the boon is purely what
+				-- it does to Hearts made by Heart Breaker and Smoldering Forge. "Larger" is the flat
+				-- doubling, which carries no figure of its own on purpose.
+				Description = 'Your {$Keywords.HeartBurst} are larger and deal more damage, plus ' ..
+					'extra for any {!Icons.BloodDropIcon} you hold.',
+			},
+		},
+		-- The trait carries this line either way; without an entry here it printed its own text id.
+		-- Index 2, not 4: vanilla's last two ExtractValues both carry SkipAutoExtract, and
+		-- StatDisplayN counts only the ones actually extracted.
+		StatLines = {
+			BoonEditCarnalPleasurePlasmaStatDisplay = { Name = 'Bonus Damage:', Index = 2 },
+		},
+	})
+end
+
 if config.BoonChanges.SmolderingForge.Enabled then
 	boon_text({
 		Traits = {
 			SlamManaBurstBoon = {
 				DisplayName = 'Smoldering Forge',
-				Description = 'You deal much more damage to nearby foes with {$Keywords.DelayedKnockback}.',
+				-- Was "You deal much more damage to nearby foes with Glow" -- the close-range damage
+				-- bonus an earlier pass gave this boon. The Hearts replaced that bonus and the
+				-- wording never followed; the stat line named damage too, while the value beneath
+				-- it has always been the Heart chance.
+				Description = 'Damaging a foe with {$Keywords.DelayedKnockback} may create ' ..
+					'a {$Keywords.HeartBurst}.',
 			},
 		},
 		StatLines = {
-			BoonEditSmolderingForgeStatDisplay = { Name = 'Damage to Nearby Glowing Foes:', Index = 1 },
+			BoonEditSmolderingForgeStatDisplay = { Name = '{$Keywords.HeartBurst} Chance:', Index = 1 },
 		},
-		-- Love Handles' flavour was about the Heartthrobs it no longer makes.
+		-- Love Handles' flavour was about volcanic blasts; Hearts are what this throws now.
 		Flavor = {
 			BoonEditSmolderingForgeFlavorText = 'Struck while the iron is hot.',
 		},
@@ -55,14 +80,25 @@ end
 if config.BoonChanges.ObsessiveDevotion.Enabled then
 	boon_text({
 		Traits = {
-			CharmCrowdBoon = {
+			-- The Legendary carries Obsessive Devotion now, and the Duo carries Nervous Wreck. The
+			-- traits stay where they are -- only the name, wording and behaviour moved. See
+			-- `obsessive_devotion.lua`.
+			RandomStatusBoon = {
 				DisplayName = 'Obsessive Devotion',
-				Description = '{$Keywords.Weak} foes are also afflicted with {$Keywords.Link}, and you deal more damage for each.',
+				Description = 'When you inflict {$Keywords.Weak}, you may inflict {$Keywords.Charm} ' ..
+					'instead. You deal more damage for each nearby character fighting for you.',
+			},
+			CharmCrowdBoon = {
+				DisplayName = 'Nervous Wreck',
+				Description = 'Whenever you inflict {$Keywords.Weak}, also randomly inflict ' ..
+					'{$Keywords.StatusPlural} from other Olympians.',
 			},
 		},
 		StatLines = {
-			BoonEditDevotionDamageStatDisplay = 'Damage per {$Keywords.Link}ed Foe:',
-			BoonEditDevotionMaxStatDisplay = { Name = 'Maximum Bonus:', Index = 2 },
+			-- A keyword expands to its own formatted run, so suffixing it with letters breaks the
+			-- format rather than reading "Charmed". Say "-afflicted".
+			BoonEditDevotionChanceStatDisplay = { Name = '{$Keywords.Charm} Chance:', Index = 1 },
+			BoonEditDevotionDamageStatDisplay = { Name = 'Damage per Nearby Ally:', Index = 2 },
 		},
 	})
 end
@@ -78,7 +114,7 @@ if config.BoonChanges.ProfuseBleedingBloodSpill.Enabled then
 			},
 		},
 		StatLines = {
-			BoonEditBloodSpillChanceStatDisplay = 'Spill Chance:',
+			BoonEditBloodSpillChanceStatDisplay = { Name = 'Spill Chance:', Index = 1 },
 		},
 	})
 end
@@ -94,21 +130,20 @@ if config.BoonChanges.HostileEnvironmentCastFollows.Enabled then
 end
 
 if config.BoonChanges.SunWorshiperRepeat.Enabled or config.BoonChanges.SunWorshiperHitch.Enabled then
-	local hitched = ''
-	if config.BoonChanges.SunWorshiperHitch.Enabled then
-		hitched = ' with {$Keywords.Link}'
-	end
-
 	local repeated = ''
 	if config.BoonChanges.SunWorshiperRepeat.Enabled then
-		repeated = '; later slain foes may as well'
+		repeated = '; later ones may as well'
 	end
+
+	-- Nothing is said about the summons being strikeable or Hitchable. The toggle that would do it is
+	-- off and unfinished -- the Hitch never lands -- so promising it in the tooltip would be a lie.
+	local hitched = ''
 
 	boon_text({
 		Traits = {
 			RaiseDeadBoon = {
 				Description = 'In each {$Keywords.EncounterAlt}, the first foe you slay returns to fight for you'
-					.. hitched .. repeated .. '.',
+					.. repeated .. '.' .. hitched,
 			},
 		},
 	})
@@ -149,8 +184,13 @@ if config.BoonChanges.NaturalSelectionPoms.Enabled then
 			GoodStuffBoon = {
 				Description = 'Gain {#AltUpgradeFormat}' .. poms.PomsOnPickup .. '{!Icons.Pom} {#Prev}worth {#AltUpgradeFormat}+'
 					.. poms.LevelsPerPom .. '{#Prev}{$Keywords.PomLevel} each, then {#AltUpgradeFormat}1 {#Prev}more every {#AltUpgradeFormat}'
-					.. poms.EncountersPerPom .. ' {#Prev}{$Keywords.EncounterAlt}s.',
+					.. poms.EncountersPerPom .. ' {#Prev}{$Keywords.EncounterPlural}.',
 			},
+		},
+		-- The interval is the one part of this you wait on, so it gets the line; the Pom counts are
+		-- fixed and already spelled out above.
+		StatLines = {
+			BoonEditNaturalSelectionStatDisplay = { Name = '{$Keywords.EncounterPlural} per {!Icons.Pom}:', Index = 1 },
 		},
 	})
 end
@@ -182,11 +222,9 @@ if config.BoonChanges.MoltenTouchGlow.Enabled then
 	boon_text({
 		Traits = {
 			AntiArmorBoon = {
-				Description = 'Your {$Keywords.AttackSet} and {$Keywords.SpecialSet} deal more damage to {$Keywords.Armor}, and to foes with {$Keywords.DelayedKnockback}.',
+				Description = 'Your {$Keywords.AttackSet} and {$Keywords.SpecialSet} deal more damage to ' ..
+					'{$Keywords.Armor}, and half as much more to foes with {$Keywords.DelayedKnockback}.',
 			},
-		},
-		StatLines = {
-			BoonEditMoltenTouchGlowStatDisplay = { Name = 'Damage to Glowing Foes:', Index = 2 },
 		},
 	})
 end
@@ -196,7 +234,7 @@ if config.BoonChanges.PremiumServiceHammers.Enabled then
 		Traits = {
 			WeaponUpgradeBoon = {
 				Description = 'Your {$Keywords.Aspect} of the {#BoldFormatGraft}Nocturnal Arms {#Prev}is even stronger, '
-					.. 'your {!Icons.RandomHammer} upgrades all gain rank if possible, and an {#BoldFormatGraft}Anvil of Fate {#Prev}appears.',
+					.. 'your {!Icons.RandomHammer} upgrades all gain rank if possible. Gain an {#BoldFormatGraft}Anvil of Fate {#Prev}.',
 			},
 		},
 	})
@@ -206,11 +244,11 @@ if config.BoonChanges.ChainReactionCooldownSkip.Enabled then
 	boon_text({
 		Traits = {
 			DoubleMassiveAttackBoon = {
-				Description = 'Any {$Keywords.GodBoon} effects that recharge over time may skip their recharge entirely, becoming ready at once.',
+				Description = 'Any {$Keywords.GodBoon} effects that recharge over time have a chance to skip the recharge entirely.',
 			},
 		},
 		StatLines = {
-			BoonEditCooldownSkipStatDisplay = 'Recharge Skip Chance:',
+			BoonEditCooldownSkipStatDisplay = { Name = 'Recharge Skip Chance:', Index = 1 },
 		},
 	})
 end
@@ -220,8 +258,12 @@ if config.BoonChanges.SeismicHammer.Enabled then
 		Traits = {
 			MassiveCastBoon = {
 				DisplayName = 'Seismic Hammer',
-				Description = 'Your blast effects from {#BoldFormatGraft}Hephaestus {#Prev}make your {$Keywords.Cast} erupt like your {$Keywords.CastEX}.',
+				Description = 'Your blast effects from {#BoldFormatGraft}Hephaestus {#Prev}make your ' ..
+					'{$Keywords.Cast} erupt like your {$Keywords.CastEX}.',
 			},
+		},
+		StatLines = {
+			BoonEditSeismicHammerStatDisplay = { Name = 'Blast Recharge Reduction (Sec.):', Index = 1 },
 		},
 	})
 end
@@ -233,7 +275,7 @@ if config.BoonChanges.RousingReceptionCastCurse.Enabled and mod.tuning.RousingRe
 		Traits = {
 			SpawnCastDamageBoon = {
 				Description = 'Your {$Keywords.CastSet} damage any foes as they join the ' ..
-					'{$Keywords.EncounterAlt}, wherever they appear, and inflict {$Keywords.Link}.',
+					'{$Keywords.EncounterAlt}, wherever they appear.',
 			},
 		},
 	})
@@ -256,7 +298,7 @@ end
 if config.BoonChanges.CherishedHeirloom.Enabled then
 	local extra = ''
 	if mod.tuning.CherishedHeirloom.ExtraKeepsake then
-		extra = ' Equip {#AltUpgradeFormat}1 {#Prev}more of them at once.'
+		extra = ' Equip one now.'
 	end
 
 	boon_text({
@@ -289,7 +331,7 @@ if config.BoonChanges.SecondWind.Enabled then
 		},
 		-- Paid Dues' flavour was about its money shield, which Second Wind no longer has.
 		Flavor = {
-			BoonEditSecondWindFlavorText = 'One more breath, one more chance.',
+			BoonEditSecondWindFlavorText = 'Double Time, and enemies Double Pay the price.',
 		},
 	})
 end
@@ -303,7 +345,7 @@ if config.BoonChanges.BurningMeteor.Enabled then
 			},
 		},
 		StatLines = {
-			BoonEditMeteorDamageStatDisplay = 'Fireball Damage:',
+			BoonEditMeteorDamageStatDisplay = { Name = 'Fireball Damage:', Index = 1 },
 		},
 	})
 end
@@ -340,7 +382,7 @@ if config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then
 			},
 		},
 		StatLines = {
-			BoonEditSecondSplashStatDisplay = 'Second Splash Damage:',
+			BoonEditSecondSplashStatDisplay = { Name = 'Second Splash Damage:', Index = 1 },
 		},
 	})
 end
@@ -350,12 +392,11 @@ if config.BoonChanges.RippleEffectOmegaBoons.Enabled then
 		Traits = {
 			MoneyDamageBoon = {
 				Description = 'The bonus effects your {$Keywords.Omega} trigger may occur again, up to '
-					.. '{#AltUpgradeFormat}' .. mod.tuning.RippleEffect.MaxRepeats .. ' {#Prev}more times '
-					.. '{#ItalicLightFormat}(each half as likely as the last).',
+					.. '{#AltUpgradeFormat}' .. mod.tuning.RippleEffect.MaxRepeats .. ' {#Prev}more times.',
 			},
 		},
 		StatLines = {
-			BoonEditRippleRepeatStatDisplay = 'Repeat Chance:',
+			BoonEditRippleRepeatStatDisplay = { Name = 'Repeat Chance:', Index = 1 },
 		},
 	})
 end
@@ -364,11 +405,8 @@ if config.BoonChanges.ShockingLossGuardians.Enabled then
 	boon_text({
 		Traits = {
 			SpawnKillBoon = {
-				Description = 'Whenever you first deal damage to susceptible foes, you may destroy them outright, or deal heavy damage to {#BoldFormatGraft}Guardians{#Prev}.',
+				Description = 'Whenever you first deal damage to susceptible foes, you may destroy them outright.',
 			},
-		},
-		StatLines = {
-			BoonEditGuardianDamageStatDisplay = { Name = 'Damage to Guardians:', Index = 2 },
 		},
 	})
 end
@@ -379,6 +417,9 @@ if config.BoonChanges.KillerCurrentBolt.Enabled then
 			LightningVulnerabilityBoon = {
 				Description = 'Damaging a {$Keywords.KnockbackAmplify}-afflicted foe may strike it with lightning.',
 			},
+		},
+		StatLines = {
+			BoonEditKillerCurrentStatDisplay = { Name = 'Strike Chance:', Index = 1 },
 		},
 	})
 end
@@ -402,7 +443,38 @@ if config.BoonChanges.ThermalDynamicsAllLightning.Enabled then
 			},
 		},
 		StatLines = {
-			BoonEditThermalScorchStatDisplay = 'Scorch per Damage Dealt:',
+			BoonEditThermalScorchStatDisplay = { Name = 'Scorch per Damage Dealt:', Index = 1 },
+		},
+	})
+end
+
+-- Vanilla's wording is built around the charge that is gone: "You can Hold +45 Magick into your
+-- Omega Cast to...". With no rung left to hold, the Cast simply is the disaster.
+-- Nil-safe: this key may not be in the generated .cfg yet.
+local gloriousOn = config.BoonChanges.GloriousDisasterAlwaysSupercharged
+if gloriousOn ~= nil and gloriousOn.Enabled then
+	boon_text({
+		Traits = {
+			ApolloSecondStageCastBoon = {
+				Description = 'Your {$Keywords.CastEX} repeatedly strikes foes with lightning bolts.',
+			},
+		},
+	})
+end
+
+-- Nil-safe: this key may not be in the generated .cfg yet.
+local ionicGainOn = config.BoonChanges.IonicGainProximity
+if ionicGainOn ~= nil and ionicGainOn.Enabled then
+	boon_text({
+		Traits = {
+			ZeusManaBoon = {
+				Description = 'In each {$Keywords.EncounterAlt}, an {$Keywords.ManaDropZeus} appears in the ' ..
+					'area. Standing near it restores {!Icons.Mana}, and using it restores {#ItalicFormat}all ' ..
+					'{#Prev}{!Icons.Mana}.',
+			},
+		},
+		StatLines = {
+			BoonEditIonicGainRegenStatDisplay = { Name = 'Magick per Sec. Nearby:', Index = 2 },
 		},
 	})
 end
@@ -455,6 +527,24 @@ if procs_froth or keeps_froth then
 			Steam = {
 				Description = steam .. '. Lasts {#BoldFormatGraft}{$TooltipData.ExtractData.Duration} Sec.',
 			},
+		},
+	})
+end
+
+
+-- Not a rewrite of vanilla's text like the rest of this file: Pandemonium is a new boon, so without
+-- an entry here the game would print the raw text id.
+if config.BoonChanges.Pandemonium.Enabled then
+	boon_text({
+		Traits = {
+			---@diagnostic disable-next-line: undefined-global
+			[PANDEMONIUM] = {
+				DisplayName = 'Pandemonium',
+				Description = '???',
+			},
+		},
+		Flavor = {
+			BoonEditPandemoniumFlavorText = 'All of them at once, then. Why not?',
 		},
 	})
 end

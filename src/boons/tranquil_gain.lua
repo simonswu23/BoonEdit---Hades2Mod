@@ -22,6 +22,50 @@ function tranquil_gain_channelling()
 	return not game.IsEmpty(game.MapState.ChargedManaWeapons or {})
 end
 
+
+-- The hold scales with how fast you actually channel: a flat half-second was worth less the more
+-- channel speed you bought.
+--
+-- Channel speed comes from three places, none aware of the others, so all three are read here --
+-- catching only the first misses Racing Thoughts' larger half.
+--
+-- 1. The weapon's `ChargeTime` -- the Arcana, the hammers, Winner's Circle, and Racing Thoughts via
+--    `SpeedPropertyChanges`, whose default expands to exactly that property.
+-- 2. `WeaponSpeedMultiplier`, summed by `GetLuaWeaponSpeedMultiplier` and never written into
+--    ChargeTime. A duration multiplier, so it multiplies in.
+-- 3. The engine's `WeaponChargeMultiplier`, where Plasma speed and time slow go instead. A rate, so
+--    it divides out.
+--
+-- The fastest weapon held wins, since holding two is holding the shorter of the two.
+local function tranquil_gain_hold(base)
+	local hero = game.CurrentRun and game.CurrentRun.Hero
+	if not hero or base <= 0 then return base end
+
+	local fastest = nil
+	for weaponName in pairs(game.MapState.ChargedManaWeapons or {}) do
+		local current = game.GetWeaponDataValue({ Id = hero.ObjectId, WeaponName = weaponName, Property = 'ChargeTime' })
+		local baseCharge = game.GetBaseDataValue({ Type = 'Weapon', Name = weaponName, Property = 'ChargeTime' })
+
+		if current and baseCharge and baseCharge > 0 then
+			local ratio = (current / baseCharge) * (game.GetLuaWeaponSpeedMultiplier(weaponName) or 1)
+			if not fastest or ratio < fastest then fastest = ratio end
+		end
+	end
+
+	-- nothing measurable being held, so the threshold stands as written
+	if not fastest then return base end
+
+	local global = 1
+	for _, value in pairs((game.SessionMapState or {}).GlobalAttackSpecialSpeed or {}) do
+		global = global * value
+	end
+	if global > 0 then
+		fastest = fastest / global
+	end
+
+	return base * fastest
+end
+
 function tranquil_gain_stop(args)
 	local hero = game.CurrentRun and game.CurrentRun.Hero
 	if not hero then return end
@@ -43,7 +87,9 @@ function mod.TranquilGainChannel(hero, args)
 		if tranquil_gain_channelling() then
 			channelled = channelled + TRANQUIL_POLL_INTERVAL
 
-			if channelled >= hold then
+			-- read each tick rather than once: which weapon is being held can change mid-hold, and
+			-- so can the speed on it
+			if channelled >= tranquil_gain_hold(hold) then
 				if not flowing then
 					flowing = true
 					if args.ManaRegenStartSound then
@@ -59,12 +105,9 @@ function mod.TranquilGainChannel(hero, args)
 				local whole = math.floor(carried)
 				if whole > 0 then
 					carried = carried - whole
-					-- `Silent = false` is how vanilla's own regen loops mark a tick, and is what tells
-					-- MoreDuos' Energy Overflow that this is a drip rather than a restore: it pays the
-					-- bonus on one but will not turn one into max Magick, since a payout every 0.05s
-					-- against a full meter would walk that ceiling to its cap on its own. False rather
-					-- than true so the Magick-gain flourish still plays -- ManaDelta reads the field
-					-- only as `not args.Silent`, so this is otherwise identical to passing nothing.
+					-- `Silent = false` marks this as a drip, the way vanilla's regen loops do -- which is
+					-- what stops MoreDuos' Energy Overflow turning it into max Magick. False rather than
+					-- true so the gain flourish still plays; ManaDelta only reads `not args.Silent`.
 					game.ManaDelta(whole, { Silent = false })
 				end
 			end

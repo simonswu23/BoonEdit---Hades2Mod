@@ -144,10 +144,9 @@ function mod.AnvilRushEnd(args, triggerArgs)
 	fire_anvil_rush_strike(args, triggerArgs)
 end
 
--- Vanilla Glow only refreshes itself, so the count is kept on the foe. There is no hook for a status
--- wearing off, so every stack runs its own thread that sleeps the Glow's duration and gives that one
--- back -- which is why the vulnerability steps down rather than dropping at once. Threads are tagged
--- to the room so none outlive it.
+-- Vanilla Glow only refreshes itself, so the count is kept on the foe. With no hook for a status
+-- wearing off, each stack sleeps its own duration on a room-tagged thread and gives that one back --
+-- which is why the vulnerability steps down rather than dropping at once.
 local GLOW_EFFECT = 'DelayedKnockbackEffect'
 
 local function glow_data()

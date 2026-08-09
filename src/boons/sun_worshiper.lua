@@ -2,7 +2,16 @@
 ---@diagnostic disable: lowercase-global
 
 -- Sun Worshiper (Apollo x Hera): after the first foe is raised in an encounter, later slain foes
--- have a chance to rise too, and the servants are Hitched for as long as they last.
+-- have a chance to rise too.
+--
+-- **The `SunWorshiperHitch` half is gone.** It tried to make your summons behave as foes do where
+-- Hitch is concerned -- strikeable, Hitchable, sharing damage along the rope. Melinoe's blows did
+-- reach them, but nothing ever succeeded in Hitching one, so the rope half never happened.
+--
+-- It is deleted rather than left switched off because of what it did on the way: to make a summon
+-- strikeable it joined `EnemyTeam` and set `TriggersOnDamageEffects`, and anything aimed at that
+-- group then found your own side. Glamour Gain pulses at `DestinationName = 'EnemyTeam'`, so it was
+-- inflicting Weak on your summons. The config key stays, and stays off, so nothing reading it breaks.
 once('SunWorshiper', function()
 	local raiseDead = game.TraitData.RaiseDeadBoon
 
@@ -16,17 +25,6 @@ once('SunWorshiper', function()
 			Format = 'LuckModifiedPercent',
 			HideSigns = true,
 		})
-	end
-
-	-- Refreshed on a loop rather than applied on the raise, since the effect expires on its own.
-	if config.BoonChanges.SunWorshiperHitch.Enabled then
-		raiseDead.SetupFunction = {
-			Threaded = true,
-			Name = _PLUGIN.guid .. '.SunWorshiperHitch',
-			Args = {
-				Interval = 0.3,
-			},
-		}
 	end
 
 	-- Only the first kill of an encounter rises, gated on RaiseDeadCount. Clearing it lets more through.
@@ -46,31 +44,22 @@ end)
 
 
 -- The first raise is vanilla, so only roll once the counter is already set.
+--
+-- Capped per encounter. Clearing `RaiseDeadCount` is what lets a second servant rise at all, and
+-- with it cleared there is nothing left counting them -- so the tally is kept here instead. On
+-- `MapState`, which is the encounter's own table, so it empties itself between fights.
+--
+-- Counted on the roll succeeding rather than on the raise landing: `RaiseKilledEnemy` is what this
+-- answers, and it is called for exactly one servant each time it passes.
 function sun_worshiper_should_repeat()
 	if not config.BoonChanges.SunWorshiperRepeat.Enabled then return false end
 	if not game.MapState.RaiseDeadCount then return false end
-	return rolls(mod.tuning.SunWorshiper.RepeatChance)
-end
 
-function is_raised_summon(unit)
-	if not is_allied_summon(unit) then return false end
-	return not game.Contains(game.MapState.SpellSummons or {}, unit)
-end
+	local raised = game.MapState.BoonEditSunWorshiperRepeats or 0
+	if raised >= mod.tuning.SunWorshiper.MaxRepeats then return false end
 
--- Runs with or without Obsessive Devotion.
-function mod.SunWorshiperHitch(hero, args)
-	local interval = (args and args.Interval) or 0.3
+	if not rolls(mod.tuning.SunWorshiper.RepeatChance) then return false end
 
-	while game.CurrentRun and game.CurrentRun.CurrentRoom and game.CurrentRun.Hero
-		and not game.CurrentRun.Hero.IsDead and game.HeroHasTrait('RaiseDeadBoon') do
-
-		for _, unit in pairs(game.ActiveEnemies or {}) do
-			if unit and unit.ObjectId and not unit.IsDead and unit.ActiveEffects
-				and is_raised_summon(unit) then
-				apply_hitch(unit)
-			end
-		end
-
-		game.wait(interval, game.RoomThreadName)
-	end
+	game.MapState.BoonEditSunWorshiperRepeats = raised + 1
+	return true
 end

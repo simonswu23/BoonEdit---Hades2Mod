@@ -11,6 +11,36 @@ once('RousingReceptionCastCurse', function()
 end)
 
 
+-- **Your Cast lasts twice as long.** `WeaponCast` is the one Cast every weapon and aspect uses -- it
+-- sits in `WeaponPackages` alongside `WeaponBlink`, no aspect trait touches it, and Winner's Circle
+-- is a plain Hermes boon that shortens it by writing to exactly these two properties
+-- (`TraitData_Hermes.lua:329`). So this is Winner's Circle inverted, and it reaches the ring
+-- whatever you are holding.
+--
+-- Winner's Circle also carries `CastDurationMultiplier` and a `ChargeTime` change, deliberately not
+-- copied: that field is a time *scale* pacing the tick rate, so mirroring it at 2 would stretch the
+-- ring out, halve its ticks and slow the channel. Only the ring's own fuse is doubled.
+--
+-- A flat multiplier rather than `SourceIsMultiplier`: this trait's rarity Multiplier already scales
+-- its summon damage, and folding duration into it would reach 4x at Heroic.
+once('RousingReceptionCastDuration', function()
+	if not config.BoonChanges.RousingReceptionCastDuration.Enabled then return end
+
+	local reception = game.TraitData.SpawnCastDamageBoon
+	local multiplier = mod.tuning.RousingReception.CastDurationMultiplier
+
+	reception.PropertyChanges = reception.PropertyChanges or {}
+	for _, property in ipairs({ 'FuseStart', 'Fuse' }) do
+		table.insert(reception.PropertyChanges, {
+			WeaponName = 'WeaponCast',
+			ProjectileProperty = property,
+			BaseValue = multiplier,
+			ChangeType = 'Multiply',
+		})
+	end
+end)
+
+
 -- Map of Gods to Status Curses
 cast_curses = {
 	-- no Apply: DamageShareEffect is routed through apply_hitch in apply_cast_curse

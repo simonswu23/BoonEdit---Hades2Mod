@@ -16,6 +16,14 @@ sjson.hook(helpText, function(data)
 	return sjson_HelpText(data)
 end)
 
+-- Not text. A projectile's own numbers are data rather than Lua -- `ProjectileData_Gods.lua` carries
+-- little more than `InheritFrom` -- so this file is the only place they can be reached.
+local playerProjectiles = rom.path.combine(rom.paths.Content, 'Game/Projectiles/PlayerProjectiles.sjson')
+sjson.hook(playerProjectiles, function(data)
+	---@diagnostic disable-next-line: undefined-global
+	return sjson_PlayerProjectiles(data)
+end)
+
 
 modutil.mod.Path.Wrap("SetupMap", function(base, ...)
 	---@diagnostic disable-next-line: undefined-global
@@ -24,11 +32,6 @@ modutil.mod.Path.Wrap("SetupMap", function(base, ...)
 end)
 
 
--- Carnal Pleasure heals as each Plasma is collected. There is no trait field for it -- vanilla's
--- own per-drop restore is Magick only -- so the pickup itself is wrapped.
-modutil.mod.Path.Wrap("BloodDropUse", function(base, args, consumable)
-	local result = base(args, consumable)
-	---@diagnostic disable-next-line: undefined-global
-	carnal_pleasure_heal(game.GetTotalHeroTraitValue('BloodDropMultiplier', { IsMultiplier = true }))
-	return result
-end)
+-- Carnal Pleasure's per-Plasma healing lived here and has gone back to MoreDuos' Boiling Blood,
+-- which wraps `BloodDropUse` for it now. Nothing here needs the pickup any more: the Plasma scaling
+-- that replaced it is read live off the room's own count when a Heartthrob goes out.
