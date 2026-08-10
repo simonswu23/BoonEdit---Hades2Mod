@@ -1,11 +1,11 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Shocking Loss (Zeus legendary) no longer passes over Guardians. They take a large hit instead of
--- being immune outright, and that hit scales with your damage modifiers.
+-- Shocking Loss (Zeus legendary) no longer passes over Guardians: they take a large hit, scaled by your
+-- damage modifiers, instead of being immune outright.
+
 once('ShockingLossGuardians', function()
 	if config.BoonChanges.ShockingLossGuardians.Enabled then
-		-- ZeusOnSpawn is the same projectile with IgnoreAllModifiers, which would strip that scaling
 		game.OverwriteTableKeys(game.ProjectileData, {
 			BoonEditZeusGuardianStrike = {
 				InheritFrom = { 'ZeusColorProjectile' },
@@ -16,12 +16,9 @@ once('ShockingLossGuardians', function()
 		local shockingLoss = game.TraitData.SpawnKillBoon
 		shockingLoss.OnEnemyDamagedAction.Args.BoonEditGuardianDamage = mod.tuning.ShockingLoss.GuardianDamage
 
-		-- No stat line for the Guardian figure. It rendered as a raw token rather than the number,
-		-- and it is not a value worth a line of its own anyway -- the description carries it.
 		shockingLoss.BoonEditGuardianDamage = mod.tuning.ShockingLoss.GuardianDamage
 	end
 
-	-- Wrapped rather than repointed, so both of the trait's dispatch paths keep working.
 	modutil.mod.Path.Wrap("CheckSpawnZeusDamage", function(base, enemy, traitArgs, triggerArgs)
 		if not shocking_loss_guardian(enemy, traitArgs, triggerArgs) then
 			return base(enemy, traitArgs, triggerArgs)
@@ -30,7 +27,6 @@ once('ShockingLossGuardians', function()
 end)
 
 
--- Returns whether it handled the foe, so the wrap knows whether to fall through.
 function shocking_loss_guardian(enemy, traitArgs, triggerArgs)
 	if not config.BoonChanges.ShockingLossGuardians.Enabled then return false end
 	if not enemy or not enemy.ObjectId then return false end
@@ -47,7 +43,6 @@ function shocking_loss_guardian(enemy, traitArgs, triggerArgs)
 		return false
 	end
 
-	-- one attempt per Guardian per room, taken whether or not the roll lands
 	record[enemy.ObjectId] = true
 
 	local chance = traitArgs.Chance * game.GetTotalHeroTraitValue('LuckMultiplier', { IsMultiplier = true })
@@ -64,7 +59,6 @@ function mod.ShockingLossGuardianStrike(enemy, traitArgs)
 	game.wait(0.1, game.RoomThreadName)
 	game.CreateAnimation({ Name = traitArgs.Vfx, DestinationId = enemy.ObjectId, Group = 'FX_Standing_Top' })
 
-	-- no PureDamage, so this runs the whole pipeline and your modifiers apply
 	game.thread(game.Damage, enemy, {
 		AttackerId = hero.ObjectId,
 		AttackerTable = hero,

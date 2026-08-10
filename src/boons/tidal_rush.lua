@@ -1,8 +1,9 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Breaker Rush (Poseidon) gains Tidal Ring's splash on starting a Dash and again on stopping,
--- knocking foes away and inflicting Froth. It keeps its own name; only what it does is changed.
+-- Breaker Rush (Poseidon) gains Tidal Ring's splash on starting and stopping a Dash, knocking foes away
+-- and inflicting Froth. It keeps its own name; only what it does is changed.
+
 once('BreakerRushWaves', function()
 	if not config.BoonChanges.BreakerRushWaves.Enabled then return end
 
@@ -54,7 +55,6 @@ once('BreakerRushWaves', function()
 		},
 	}
 
-	-- Froth by Tidal Ring's own means: the splash applies ImpactSlow and this converts it
 	breaker.OnEffectApplyFunction = {
 		FunctionName = 'CheckSlipApply',
 		FunctionArgs = {
@@ -64,7 +64,6 @@ once('BreakerRushWaves', function()
 end)
 
 
--- Guards and latch mirror Smithy Rush's, but the two boons keep separate latches.
 function fire_breaker_rush_wave(args, triggerArgs)
 	if args and args.CheckSprint and game.ConfigOptionCache.SprintAutoHold and game.SessionMapState.SprintActive then
 		return
@@ -78,7 +77,6 @@ function fire_breaker_rush_wave(args, triggerArgs)
 	local traitArgs = trait and trait.OnWeaponFiredFunctions and trait.OnWeaponFiredFunctions.FunctionArgs
 	if not traitArgs then return end
 
-	-- Set outright: Tidal Ring overrides the radius anyway, and the splash has no knockback.
 	local dataProperties = {
 		DamageRadius = mod.tuning.TidalRush.Radius,
 		ImpactVelocity = mod.tuning.TidalRush.Knockback,

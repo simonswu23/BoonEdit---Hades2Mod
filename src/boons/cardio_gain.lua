@@ -2,6 +2,7 @@
 ---@diagnostic disable: lowercase-global
 
 -- Cardio Gain (Hestia) also restores Magick on Sprint, not just on hit.
+
 once('CardioGainSprintMana', function()
 	if not config.BoonChanges.CardioGainSprintMana.Enabled then return end
 
@@ -25,7 +26,6 @@ once('CardioGainSprintMana', function()
 end)
 
 
--- The per-dash gain is under 1 Magick, so fractions are banked until they cross a whole number.
 local cardio_gain_sprint_carry = 0
 
 ---@diagnostic disable-next-line: unused-local
@@ -39,7 +39,6 @@ function mod.CardioGainSprintMana(args, triggerArgs)
 		game.ManaDelta(whole)
 	end
 
-	-- a louder copy of Melinoe's own ambient ember footsteps, so the gain reads
 	local hero = game.CurrentRun and game.CurrentRun.Hero
 	if hero then
 		game.CreateAnimation({ Name = 'FireFootstepL', DestinationId = hero.ObjectId, OffsetX = -20 })

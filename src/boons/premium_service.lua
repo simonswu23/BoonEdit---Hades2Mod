@@ -1,9 +1,9 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Premium Service (Hephaestus legendary) keeps its Aspect rank bump, raises every hammer upgrade
--- you hold to Legendary, and drops an Anvil of Fates. The Anvil itself is reworked: give up one of
--- 3 of your hammer upgrades, then choose new ones from 3 options, twice.
+-- Premium Service (Hephaestus legendary) keeps its Aspect rank bump, raises every hammer upgrade you
+-- hold to Legendary, and drops a reworked Anvil of Fates.
+
 once('PremiumServiceHammers', function()
 	if config.BoonChanges.PremiumServiceHammers.Enabled then
 		game.TraitData.WeaponUpgradeBoon.AcquireFunctionName = _PLUGIN.guid .. '.PremiumServiceAcquire'
@@ -17,7 +17,6 @@ once('PremiumServiceHammers', function()
 			ReportValues = { ReportedNumTraits = 'NumTraits' },
 		}
 
-		-- vanilla gates the Anvil on already holding a hammer; ours works from zero
 		anvil.PurchaseRequirements = nil
 	end
 
@@ -27,7 +26,6 @@ once('PremiumServiceHammers', function()
 		return added
 	end)
 
-	-- On the Anvil's sacrifice menu, picking a button means "give this up" rather than "take this".
 	modutil.mod.Path.Wrap("HandleUpgradeChoiceSelection", function(base, screen, button, args)
 		if not (screen and screen.Source and screen.Source.BoonEditAnvilSacrifice) then
 			return base(screen, button, args)
@@ -37,7 +35,6 @@ once('PremiumServiceHammers', function()
 end)
 
 
--- UpgradeHammers stops when its list runs dry, so a big number means "all of them".
 local PREMIUM_SERVICE_HAMMER_COUNT = 99
 
 function mod.PremiumServiceAcquire(args, traitData)
@@ -58,7 +55,6 @@ function mod.PremiumServiceAcquire(args, traitData)
 	})
 end
 
--- Raises one newly acquired hammer, since the Anvil hands you hammers after the acquire has run.
 function premium_service_rank_hammer(trait)
 	if mod.PremiumServiceRanking then return end
 	if not config.BoonChanges.PremiumServiceHammers.Enabled then return end
@@ -73,7 +69,6 @@ function premium_service_rank_hammer(trait)
 	game.thread(premium_service_rank_hammer_deferred, trait.Name)
 end
 
--- Deferred out of the AddTraitToHero wrap: ranking up re-adds the trait mid-call.
 function premium_service_rank_hammer_deferred(traitName)
 	game.waitUnmodified(0.1)
 
@@ -105,7 +100,6 @@ function anvil_hammer_traits()
 	return held
 end
 
--- A stand-in for the loot object these menus normally hang off; without one the menu errors.
 function anvil_menu_source()
 	local source = game.DeepCopyTable(game.LootData.WeaponUpgrade)
 	source.ObjectId = game.SpawnObstacle({
@@ -120,7 +114,6 @@ function anvil_menu_source()
 	return source
 end
 
--- Asks which upgrade to give up. UpgradeOptions is what makes the menu show these traits.
 function anvil_open_sacrifice_menu()
 	local held = anvil_hammer_traits()
 	if game.IsEmpty(held) then return false end
@@ -140,7 +133,6 @@ function anvil_open_sacrifice_menu()
 	return true
 end
 
--- Stands in for HandleUpgradeChoiceSelection: the chosen trait is taken away, not granted.
 function anvil_sacrifice_selected(screen, button)
 	local chosen = button and button.Data and button.Data.Name
 	if chosen then
@@ -162,7 +154,6 @@ function anvil_open_discover_menu()
 	game.OpenUpgradeChoiceMenu(source)
 end
 
--- Give one up, then choose replacements twice; with nothing to give up that menu is skipped.
 function mod.AnvilOfFates(args)
 	if not config.BoonChanges.PremiumServiceHammers.Enabled then
 		return game.ChaosHammerUpgrade(args)

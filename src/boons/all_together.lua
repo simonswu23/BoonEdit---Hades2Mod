@@ -1,6 +1,7 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
+
 -- All Together (Hera legendary) grants 2 of each element on pickup instead of 1.
 
 once('AllTogetherDoubleElements', function()

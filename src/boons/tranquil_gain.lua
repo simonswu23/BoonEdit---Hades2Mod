@@ -1,8 +1,8 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Tranquil Gain (Demeter) pays out for holding an Omega Move; MovePenaltyDuration is reused as the
--- hold.
+-- Tranquil Gain (Demeter) pays out for holding an Omega Move; `MovePenaltyDuration` is reused as the hold.
+
 once('TranquilGainChannel', function()
 	if not config.BoonChanges.TranquilGainChannel.Enabled then return end
 
@@ -23,20 +23,6 @@ function tranquil_gain_channelling()
 end
 
 
--- The hold scales with how fast you actually channel: a flat half-second was worth less the more
--- channel speed you bought.
---
--- Channel speed comes from three places, none aware of the others, so all three are read here --
--- catching only the first misses Racing Thoughts' larger half.
---
--- 1. The weapon's `ChargeTime` -- the Arcana, the hammers, Winner's Circle, and Racing Thoughts via
---    `SpeedPropertyChanges`, whose default expands to exactly that property.
--- 2. `WeaponSpeedMultiplier`, summed by `GetLuaWeaponSpeedMultiplier` and never written into
---    ChargeTime. A duration multiplier, so it multiplies in.
--- 3. The engine's `WeaponChargeMultiplier`, where Plasma speed and time slow go instead. A rate, so
---    it divides out.
---
--- The fastest weapon held wins, since holding two is holding the shorter of the two.
 local function tranquil_gain_hold(base)
 	local hero = game.CurrentRun and game.CurrentRun.Hero
 	if not hero or base <= 0 then return base end
@@ -52,7 +38,6 @@ local function tranquil_gain_hold(base)
 		end
 	end
 
-	-- nothing measurable being held, so the threshold stands as written
 	if not fastest then return base end
 
 	local global = 1
@@ -74,7 +59,6 @@ function tranquil_gain_stop(args)
 	end
 end
 
--- Paid out directly, since the game zeroes the regen rate while anything is channelling.
 function mod.TranquilGainChannel(hero, args)
 	local hold = (args and args.MovePenaltyDuration) or 0
 	local channelled = 0
@@ -87,8 +71,6 @@ function mod.TranquilGainChannel(hero, args)
 		if tranquil_gain_channelling() then
 			channelled = channelled + TRANQUIL_POLL_INTERVAL
 
-			-- read each tick rather than once: which weapon is being held can change mid-hold, and
-			-- so can the speed on it
 			if channelled >= tranquil_gain_hold(hold) then
 				if not flowing then
 					flowing = true
@@ -100,14 +82,10 @@ function mod.TranquilGainChannel(hero, args)
 					end
 				end
 
-				-- Magick is whole numbers, so each tick's share is banked until it reaches one
 				carried = carried + game.CurrentRun.Hero.MaxMana * args.PercentManaRegenPerSecond * TRANQUIL_POLL_INTERVAL
 				local whole = math.floor(carried)
 				if whole > 0 then
 					carried = carried - whole
-					-- `Silent = false` marks this as a drip, the way vanilla's regen loops do -- which is
-					-- what stops MoreDuos' Energy Overflow turning it into max Magick. False rather than
-					-- true so the gain flourish still plays; ManaDelta only reads `not args.Silent`.
 					game.ManaDelta(whole, { Silent = false })
 				end
 			end

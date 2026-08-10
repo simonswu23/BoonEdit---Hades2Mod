@@ -2,6 +2,7 @@
 ---@diagnostic disable: lowercase-global
 
 -- Arterial Spray (Poseidon x Ares): the second splash wave always lands, at reduced power.
+
 once('ArterialSprayAlwaysDouble', function()
 	if config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then
 		local arterial = game.TraitData.DoubleSplashBoon
@@ -38,7 +39,6 @@ once('ArterialSprayAlwaysDouble', function()
 end)
 
 
--- The game fires the second wave itself, so it keeps the red River Styx graphic.
 arterial_spray_projectile = nil
 
 function arterial_spray_begin(functionArgs)
@@ -52,7 +52,6 @@ function arterial_spray_end()
 	arterial_spray_projectile = nil
 end
 
--- Runs for every projectile, so it bails unless a splash is in flight.
 function arterial_spray_weaken(args)
 	if not arterial_spray_projectile then return args end
 	if not args or args.Name ~= arterial_spray_projectile then return args end

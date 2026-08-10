@@ -2,8 +2,8 @@
 ---@diagnostic disable: lowercase-global
 
 -- Fire Away (Hestia legendary) becomes "Burning Meteor": Hestia's fireballs are half again as large
--- and as strong, and inflict Scorch equal to the damage they deal. Its old effect is parked on
--- mod.FireAwayEffect, with no boon left to sit on.
+-- and as strong, and inflict Scorch equal to the damage they deal.
+
 once('BurningMeteor', function()
 	local combustion = game.TraitData.BurnSprintBoon
 
@@ -15,7 +15,6 @@ once('BurningMeteor', function()
 		ExtractValues             = combustion.ExtractValues,
 	}
 
-	-- its Scorch lands for 999 rather than 400
 	if config.BoonChanges.FireAwayScorch.Enabled then
 		mod.FireAwayEffect.OnBlockDamageFunction.Args.EffectArgs.NumStacks = 999
 	end
@@ -66,16 +65,13 @@ function burning_meteor_active()
 	return config.BoonChanges.BurningMeteor.Enabled and game.HeroHasTrait('BurnSprintBoon')
 end
 
--- Scorch is pending damage one for one, so a fireball deals its damage twice over.
 function mod.BurningMeteor(args, attacker, victim, triggerArgs)
 	if not burning_meteor_active() then return end
-	-- ApplyBurn reads ActiveEffects unguarded, and a fireball can hit something with none
 	if not victim or not victim.ObjectId or victim.IsDead or not victim.ActiveEffects then return end
 
 	local hero = game.CurrentRun and game.CurrentRun.Hero
 	if not hero or attacker ~= hero then return end
 
-	-- Burn damage arrives here too, and would otherwise keep topping itself back up
 	if not triggerArgs or triggerArgs.EffectName then return end
 
 	local fireballs = args and args.ValidProjectilesLookup
@@ -90,7 +86,6 @@ function mod.BurningMeteor(args, attacker, victim, triggerArgs)
 	}, triggerArgs)
 end
 
--- Size is engine-side, so the projectile is widened once it exists. Fraction multiplies.
 function mod.BurningMeteorSize(triggerArgs, args)
 	if not burning_meteor_active() then return end
 	if not triggerArgs or not triggerArgs.ProjectileId then return end

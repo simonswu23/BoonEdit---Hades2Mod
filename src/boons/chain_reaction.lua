@@ -2,7 +2,8 @@
 ---@diagnostic disable: lowercase-global
 
 -- Chain Reaction (Hestia x Hephaestus) no longer makes blasts strike twice; instead anything that
--- recharges over time -- the same effects Post Haste speeds up -- may skip its recharge outright.
+-- recharges over time may skip its recharge outright.
+
 once('ChainReactionCooldownSkip', function()
 	if config.BoonChanges.ChainReactionCooldownSkip.Enabled then
 		local chain = game.TraitData.DoubleMassiveAttackBoon
@@ -22,7 +23,6 @@ once('ChainReactionCooldownSkip', function()
 		}
 	end
 
-	-- A multiplier of zero is the skip: the game reads a non-positive time as ready.
 	modutil.mod.Path.Wrap("GetTotalHeroTraitValue", function(base, propertyName, args)
 		if propertyName == 'OlympianRechargeMultiplier' and chain_reaction_skips() then
 			return 0
@@ -32,7 +32,6 @@ once('ChainReactionCooldownSkip', function()
 end)
 
 
--- Rolled per recharge rather than per boon, so a run of them can chain.
 function chain_reaction_skips()
 	if not config.BoonChanges.ChainReactionCooldownSkip.Enabled then return false end
 	if not game.CurrentRun or not game.CurrentRun.Hero then return false end

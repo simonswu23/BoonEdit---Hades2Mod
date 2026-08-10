@@ -1,6 +1,7 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
+
 -- Hostile Environment (Ares x Demeter): the plain Cast follows Melinoe instead of dropping.
 
 once('HostileEnvironmentCastFollows', function()
@@ -26,7 +27,6 @@ function hostile_environment_keeps_cast()
 	return settings.Enabled and game.HeroHasTrait('SelfCastBoon')
 end
 
--- Fire Away's Cast defence ring follows Melinoe. Vanilla only attaches it while Attack1 is held.
 function cast_defense_follows_caster()
 	if not hostile_environment_keeps_cast() then return end
 
@@ -37,7 +37,6 @@ function cast_defense_follows_caster()
 	game.AttachProjectiles({ Ids = { projectileId }, DestinationId = game.CurrentRun.Hero.ObjectId })
 end
 
--- With Aspect of Circe, the familiar's Cast follows the familiar.
 function familiar_cast_follows_familiar()
 	if not hostile_environment_keeps_cast() then return end
 

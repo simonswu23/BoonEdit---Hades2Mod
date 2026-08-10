@@ -1,23 +1,20 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Which boons the game will offer you, and what you must already hold to be offered them. Nothing
--- here changes what a boon does -- the numbers are in `tuning.lua`, the wording in `text.lua`, the
--- behaviour in each boon's own file.
---
--- Two shapes turn up: `game.TraitRequirements[trait]`, with `OneOf` or `OneFromEachSet`, and
--- `game.LinkedTraitData`, the named groups those are written against and listed in `TRAIT_NAMES.md`.
--- Editing a group reaches every requirement reading it, which is worth saying out loud.
---
--- Imported from `reload.lua` after the boons, so it has the last word on any requirement they set.
--- Each block carries the config guard of the change it belongs to.
+-- Every requirement edit -- what the game will offer you and what you must hold to be offered it.
+-- There is no second place to look. Editing a `LinkedTraitData` group reaches every requirement
+-- reading it, and Smithy Rush's removals run last so they see what the blocks above rebuilt.
 
 once('BoonRequirements', function()
 
-	-- Aphrodite x Hephaestus -- Smoldering Forge
+	-- Engagement Ring alone, replacing vanilla's "any Cast boon".
+	if config.BoonChanges.RousingReceptionRequirements.Enabled then
+		game.TraitRequirements.SpawnCastDamageBoon = {
+			OneOf = { 'HeraCastBoon' }, -- Engagement Ring
+		}
+	end
+
 	if config.BoonChanges.SmolderingForge.Enabled then
-		-- Rebuilt rather than edited, since HephaestusMassiveTraits is shared. Furnace Blast is the
-		-- vanilla source of Glow; Anvil Ring and Smithy Rush inflict it once AnvilGlowAndDash is on.
 		game.TraitRequirements.SlamManaBurstBoon = {
 			OneFromEachSet = {
 				game.LinkedTraitData.AphroditeCoreTraits,
@@ -26,8 +23,6 @@ once('BoonRequirements', function()
 		}
 	end
 
-	-- Apollo x Zeus -- Glorious Disaster. Vanilla asks for Nova Burst alone on the Apollo side; this
-	-- accepts Lucid Gain or Super Nova too, leaving the Zeus set as written.
 	if config.BoonChanges.GloriousDisasterRequirements.Enabled then
 		game.TraitRequirements.ApolloSecondStageCastBoon = {
 			OneFromEachSet = {
@@ -41,9 +36,6 @@ once('BoonRequirements', function()
 		}
 	end
 
-	-- Aphrodite x Ares -- Carnal Pleasure. Heart Breaker makes Heartthrobs and this boon is about what
-	-- one does, so it is the only Aphrodite route in -- rebuilt rather than edited, since narrowing
-	-- the shared `AphroditeCoreTraits` would narrow every Aphrodite requirement with it.
 	if config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled then
 		game.TraitRequirements.BloodManaBurstBoon = {
 			OneFromEachSet = {
@@ -53,20 +45,14 @@ once('BoonRequirements', function()
 		}
 	end
 
-	-- Ares -- Profuse Bleeding moves in the offer chain: it asks for the attack or special, and in
-	-- exchange counts as a Plasma source. Vanilla offered it alongside the Plasma set; asking for the
-	-- weapon boons instead makes it the way *into* that set rather than a sibling of it.
 	if config.BoonChanges.ProfuseBleedingRequirements.Enabled then
 		game.TraitRequirements.RendBloodDropBoon = { OneOf = game.LinkedTraitData.AresRendTraits }
 
-		-- Only a Plasma source once it spills any. All three of those boons hold the same table, so
-		-- the one insert reaches every one of them.
 		if config.BoonChanges.ProfuseBleedingBloodSpill.Enabled then
 			table.insert(game.LinkedTraitData.AresBloodDropTraits, 'RendBloodDropBoon')
 		end
 	end
 
-	-- Hephaestus x Poseidon -- Seismic Hammer
 	if config.BoonChanges.SeismicHammer.Enabled then
 		game.TraitRequirements.MassiveCastBoon = {
 			OneFromEachSet = {
@@ -76,7 +62,6 @@ once('BoonRequirements', function()
 		}
 	end
 
-	-- Hermes -- Post Haste, offered off any boon it actually speeds up
 	if config.BoonChanges.HardTargetBecomesPostHaste.Enabled then
 		game.TraitRequirements.SlowProjectileBoon = {
 			OneOf = {
@@ -95,7 +80,6 @@ once('BoonRequirements', function()
 		}
 	end
 
-	-- Hestia -- Burning Meteor
 	if config.BoonChanges.BurningMeteor.Enabled then
 		game.TraitRequirements.BurnSprintBoon = {
 			OneFromEachSet = {
@@ -106,23 +90,13 @@ once('BoonRequirements', function()
 		}
 	end
 
-	-- Poseidon -- Beach Ball counts as a Splash boon. Vanilla leaves it out of `PoseidonSplashTraits`
-	-- in a trailing comment, so the Splash-on-dash boon satisfied neither Slippery Slope nor King
-	-- Tide, which both read this group.
-	--
-	-- An offer requirement, not a damage type: nothing marks a projectile as "Splash damage" for a
-	-- multiplier to find, so this is the only sense the game has of the phrase.
 	if config.BoonChanges.BeachBallCountsAsSplash.Enabled then
 		if not game.Contains(game.LinkedTraitData.PoseidonSplashTraits, 'PoseidonSplashSprintBoon') then
 			table.insert(game.LinkedTraitData.PoseidonSplashTraits, 'PoseidonSplashSprintBoon')
 		end
 	end
 
-	-- Poseidon -- Breaker Rush joins Tidal Ring and Slippery Slope as a Froth boon, so it can earn
-	-- Steam and Killer Current. King Tide's second and third sets are regrouped around Geyser Spout
-	-- and Froth, and Hydraulic Might and Flood Gain no longer count towards it.
 	if config.BoonChanges.PoseidonFrothRequirements.Enabled then
-		-- edited in place: Steam and Killer Current read this same list, and both should be offered
 		table.insert(game.LinkedTraitData.PoseidonKnockbackAmplifyTraits, 'PoseidonSprintBoon')
 
 		game.TraitRequirements.AmplifyConeBoon = {
@@ -142,10 +116,7 @@ once('BoonRequirements', function()
 		}
 	end
 
-	-- Hephaestus -- Smithy Rush. Last of all on purpose: this strips a name out of requirements the
-	-- blocks above may have rebuilt, so it has to see their finished versions.
 	if config.BoonChanges.AnvilGlowAndDash.Enabled then
-		-- Smithy Rush is no longer a massive blast, so it stops earning the offers that need one.
 		local function withoutAnvilRush(list)
 			local kept, dropped = {}, false
 			for _, candidate in ipairs(list) do
@@ -158,7 +129,6 @@ once('BoonRequirements', function()
 			return kept, dropped
 		end
 
-		-- Premium Service is left in: it upgrades hammers, not blasts.
 		for _, traitName in ipairs({
 			'MassiveDamageBoon',       -- Grand Caldera
 			'MassiveKnockupBoon',      -- Furnace Blast

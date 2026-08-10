@@ -13,6 +13,7 @@ Every change below can be switched off independently in
 ### Aphrodite
 
 - **Glamour Gain** — New Effect: Every 1 second, you inflict Weak on nearby foes. Gain mana for each one.
+- **Hearty Appetite** — Additionally restores your health to full when on pickup, and increases your healing for the rest of the night by 50%.
 
 ### Ares
 

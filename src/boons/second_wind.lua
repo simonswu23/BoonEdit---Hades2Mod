@@ -1,16 +1,15 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Paid Dues (Hermes legendary) becomes "Second Wind": two Casts down at once, and a second Dash
--- before the recharge.
+-- Paid Dues (Hermes legendary) becomes "Second Wind": two Casts down at once, and a second Dash before
+-- the recharge.
+
 once('SecondWind', function()
 	if config.BoonChanges.SecondWind.Enabled then
 		local secondWind = game.TraitData.TimeStopLastStandBoon
 
 		secondWind.MoneyShieldData = nil
 
-		-- All the Cast variants, since only one is live at a time. WeaponCastArm is left out: it arms
-		-- a Cast already down.
 		secondWind.PropertyChanges = {}
 		for _, weaponName in ipairs({
 			'WeaponCast',                -- the plain Cast
@@ -27,7 +26,6 @@ once('SecondWind', function()
 			})
 		end
 
-		-- ClipSize is the Dash's charge count. ExcludeLinked keeps it off WeaponSprint.
 		table.insert(secondWind.PropertyChanges, {
 			WeaponName = 'WeaponBlink',
 			WeaponProperty = 'ClipSize',
@@ -48,7 +46,6 @@ once('SecondWind', function()
 		secondWind.StatLines = {}
 		secondWind.ExtractValues = {}
 
-		-- Hermes is the only god with a rarity table of his own, and it puts his legendary at 1%
 		game.HeroData.HermesData.RarityChances.Legendary = game.HeroData.BoonData.RarityChances.Legendary
 	end
 
@@ -59,7 +56,6 @@ once('SecondWind', function()
 end)
 
 
--- Arctic Gale caps its Cast on its own MaxProjectiles rather than the weapon property.
 function second_wind_extend_nova(traitArgs)
 	if not config.BoonChanges.SecondWind.Enabled then return end
 	if not traitArgs then return end
@@ -70,23 +66,11 @@ function second_wind_extend_nova(traitArgs)
 end
 
 
--- Hermes' own keepsake opens Second Wind up. `TimedBuffKeepsake` is the trait it grants.
 function second_wind_keepsake()
 	return config.BoonChanges.SecondWind.Enabled and game.HeroHasTrait('TimedBuffKeepsake')
 end
 
 
--- **Two separate gates, so both have to be answered.**
---
--- `HasTraitRequirements` is where `TraitRequirements` is enforced, and Second Wind's is a long
--- `OneOf` of Hermes boons -- answering it met is the whole of waiving them. Cleared this way rather
--- than by deleting the entry, because `GetPriorityDependentTraits` needs the entry to exist before
--- it will read the `PriorityChance` below.
---
--- That chance is vanilla's own lever for "offer this more often" (`UpgradeChoiceLogic.lua:753`): a
--- trait carrying one is rolled for and forced into the options ahead of the ordinary draw. It is
--- written unconditionally and gated at read time, since `TraitRequirements` outlives the run while
--- the keepsake does not.
 once('SecondWindKeepsake', function()
 	if not config.BoonChanges.SecondWind.Enabled then return end
 
@@ -100,7 +84,6 @@ once('SecondWindKeepsake', function()
 		return base(traitName)
 	end)
 
-	-- Without this the PriorityChance would apply whether or not the keepsake is worn.
 	modutil.mod.Path.Wrap("GetPriorityDependentTraits", function(base, lootData)
 		local linked = base(lootData)
 		if second_wind_keepsake() then return linked end

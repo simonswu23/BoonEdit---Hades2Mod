@@ -1,8 +1,9 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Cryo Pounder (Demeter x Hephaestus): the bonus damage it deals to Frozen foes covers your hammer
--- strikes as well, not only volcanic blasts.
+
+-- Cryo Pounder (Demeter x Hephaestus): its bonus damage against Frozen foes covers hammer strikes as
+-- well, not only volcanic blasts.
 
 once('CryoPounderHammers', function()
 	if not config.BoonChanges.CryoPounderHammers.Enabled then return end

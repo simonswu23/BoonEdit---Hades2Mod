@@ -2,15 +2,14 @@
 ---@diagnostic disable: lowercase-global
 
 -- Killer Current (Zeus x Poseidon): instead of amplifying lightning against Froth-afflicted foes,
--- damaging one has a chance to call a bolt down on it.
+-- damaging one may call a bolt down on it.
+
 once('KillerCurrentBolt', function()
 	if not config.BoonChanges.KillerCurrentBolt.Enabled then return end
 
 	local killerCurrent = game.TraitData.LightningVulnerabilityBoon
 	killerCurrent.AddOutgoingDamageModifiers = nil
 	killerCurrent.BoonEditBoltChance = mod.tuning.KillerCurrent.BoltChance
-	-- Its own line rather than Double Bolt's `DoubleBoltChanceStatDisplay1`, which reads "Bonus Bolt
-	-- Chance" -- borrowed wording for a boon that no longer adds bolts to anything, it calls one down.
 	killerCurrent.StatLines = { 'BoonEditKillerCurrentStatDisplay' }
 	killerCurrent.ExtractValues = {
 		{

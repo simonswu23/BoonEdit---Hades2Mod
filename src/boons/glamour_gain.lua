@@ -1,8 +1,9 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
+
 -- Glamour Gain (Aphrodite) becomes a pulse: it inflicts Weak on everything nearby once every Weak
--- duration and restores Magick for each foe caught.
+-- duration and restores Magick per foe caught.
 
 once('GlamourGainPulse', function()
 	if not config.BoonChanges.GlamourGainPulse.Enabled then return end
@@ -24,7 +25,6 @@ local GLAMOUR_PULSE_FX = 'AphroditeDashNova'
 
 local GLAMOUR_UNLIMITED_RANGE = 3000
 
--- the same gate vanilla puts on the aura: nothing pulses outside a fight
 function glamour_pulse_active()
 	local room = game.CurrentRun.CurrentRoom
 	if game.IsCombatEncounterActive(game.CurrentRun) then return true end
@@ -40,7 +40,6 @@ function mod.GlamourGainPulse(hero, args)
 		and not game.CurrentRun.Hero.IsDead and game.HeroHasTrait('AphroditeManaBoon') do
 
 		if glamour_pulse_active() then
-			-- Island Getaway widens who the pulse reaches but not the ring drawn for it
 			local range = args.Range
 			if game.HeroHasTrait(args.ProximityThresholdExclusionBoon) then
 				range = GLAMOUR_UNLIMITED_RANGE

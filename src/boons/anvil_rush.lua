@@ -2,7 +2,8 @@
 ---@diagnostic disable: lowercase-global
 
 -- Anvil Ring (Hephaestus) inflicts Glow, paid for with 10 base damage; Smithy Rush fires the same
--- strike at half damage on starting and stopping a Dash. Glow also stacks here.
+-- strike at half damage on starting and stopping a Dash.
+
 once('AnvilGlowAndDash', function()
 	if not config.BoonChanges.AnvilGlowAndDash.Enabled then return end
 
@@ -78,13 +79,10 @@ once('AnvilGlowAndDash', function()
 end)
 
 
--- size relative to a full Cast, for both the damage radius and the animation
 local ANVIL_RUSH_SCALE = 0.5
 
--- How long the hammer hangs before it drops.
 local ANVIL_RUSH_WINDUP = 0.35
 
--- Anvil Ring's own hammer and impact, played small and sped up.
 function anvil_rush_presentation(locationX, locationY)
 	local centerId = game.SpawnObstacle({ Name = 'BlankObstacle', LocationX = locationX, LocationY = locationY })
 	local playSpeed = 1 / ANVIL_RUSH_WINDUP
@@ -94,7 +92,6 @@ function anvil_rush_presentation(locationX, locationY)
 	game.DestroyOnDelay({ centerId }, 1)
 end
 
--- Args come off the live trait, since the dash-end hooks are not handed any.
 function fire_anvil_rush_strike(args, triggerArgs)
 	if args and args.CheckSprint and game.ConfigOptionCache.SprintAutoHold and game.SessionMapState.SprintActive then
 		return
@@ -108,7 +105,6 @@ function fire_anvil_rush_strike(args, triggerArgs)
 	local traitArgs = trait and trait.OnWeaponFiredFunctions and trait.OnWeaponFiredFunctions.FunctionArgs
 	if not traitArgs then return end
 
-	-- a Dash has no Cast to measure, so halve ProjectileCast's base radius
 	local dataProperties = nil
 	local castRadius = game.GetBaseDataValue({ Type = 'Projectile', Name = 'ProjectileCast', Property = 'DamageRadius' })
 	if type(castRadius) == 'number' and castRadius > 0 then
@@ -129,11 +125,9 @@ function fire_anvil_rush_strike(args, triggerArgs)
 		game.thread(anvil_rush_presentation, location.X, location.Y)
 	end
 
-	-- cleared here, or a blink-end mid-sprint would consume it
 	game.SessionMapState.BoonEditAnvilRushStarted = nil
 end
 
--- The end strike only lands if the start one did, so an interrupted Dash fires nothing.
 function mod.AnvilRushStart(args, triggerArgs)
 	fire_anvil_rush_strike(args, triggerArgs)
 	game.SessionMapState.BoonEditAnvilRushStarted = true
@@ -144,9 +138,6 @@ function mod.AnvilRushEnd(args, triggerArgs)
 	fire_anvil_rush_strike(args, triggerArgs)
 end
 
--- Vanilla Glow only refreshes itself, so the count is kept on the foe. With no hook for a status
--- wearing off, each stack sleeps its own duration on a room-tagged thread and gives that one back --
--- which is why the vulnerability steps down rather than dropping at once.
 local GLOW_EFFECT = 'DelayedKnockbackEffect'
 
 local function glow_data()

@@ -1,8 +1,9 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Hard Target (Hermes) becomes "Post Haste": instead of slowing enemy shots, anything that
--- recharges over time recharges faster.
+
+-- Hard Target (Hermes) becomes "Post Haste": instead of slowing enemy shots, anything that recharges
+-- over time recharges faster.
 
 once('HardTargetBecomesPostHaste', function()
 	if config.BoonChanges.HardTargetBecomesPostHaste.Enabled then
@@ -10,7 +11,6 @@ once('HardTargetBecomesPostHaste', function()
 
 		haste.EnemyProjectileSpeedMultiplier = nil
 
-		-- 20/25/30/35% faster. Lower is faster here, so each rarity is solved back from its speed-up.
 		local function speedup(factor)
 			return (1 - 1 / factor) / (1 - 1 / 1.20)
 		end
@@ -39,7 +39,6 @@ once('HardTargetBecomesPostHaste', function()
 end)
 
 
--- Unseen Ire checks its own cooldown directly, so the recharge multiplier never reached it.
 function post_haste_recharge(args)
 	if not config.BoonChanges.HardTargetBecomesPostHaste.Enabled then return args end
 	if not args or not args.Cooldown then return args end

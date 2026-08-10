@@ -1,15 +1,13 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Ripple Effect (Hera x Poseidon) stops doubling its own two projectiles only, and instead covers
--- every boon that surcharges your Omega Moves in exchange for an extra effect. Each repeat rolls
--- again at half the chance, so a run of them can carry on up to four deep.
+-- Ripple Effect (Hera x Poseidon) covers every boon that surcharges your Omega Moves rather than
+-- doubling its own two projectiles; each repeat rolls again at half the chance, up to four deep.
+
 once('RippleEffectOmegaBoons', function()
 	if config.BoonChanges.RippleEffectOmegaBoons.Enabled then
 		local ripple = game.TraitData.MoneyDamageBoon
 
-		-- Fine Line and Ocean Swell roll this themselves, for one extra only. Silenced so they use
-		-- the same chain as everything else.
 		ripple.DoubleOlympianProjectileChance = 0
 
 		ripple.BoonEditRepeatChance = mod.tuning.RippleEffect.RepeatChance
@@ -34,7 +32,6 @@ once('RippleEffectOmegaBoons', function()
 end)
 
 
--- what each of the five Omega-surcharge boons puts on the field
 local OMEGA_BOON_PROJECTILES = {
 	PoseidonOmegaWave     = true, -- Ocean Swell (Poseidon)
 	ProjectileHeraOmega   = true, -- Fine Line (Hera)
@@ -44,18 +41,14 @@ local OMEGA_BOON_PROJECTILES = {
 }
 
 function ripple_effect_repeat(args)
-	-- the repeats pass back through this wrap; without the guard they would compound
 	if mod.RippleFiring then return end
 	if not config.BoonChanges.RippleEffectOmegaBoons.Enabled then return end
 	if not args or not args.Name or not OMEGA_BOON_PROJECTILES[args.Name] then return end
 	if not game.HeroHasTrait('MoneyDamageBoon') then return end
 
-	-- Icarus fires his own IcarusExplosion, so the shot has to be ours
 	local hero = game.CurrentRun and game.CurrentRun.Hero
 	if not hero or args.Id ~= hero.ObjectId then return end
 
-	-- Counted out before any of it is fired, the way Divine Vengeance counts its bolts, rather than
-	-- rolling again after each shot lands.
 	local tuning = mod.tuning.RippleEffect
 	local chance = game.GetTotalHeroTraitValue('BoonEditRepeatChance')
 	local repeats = 0
@@ -68,8 +61,6 @@ function ripple_effect_repeat(args)
 
 	local repeated = game.ShallowCopyTable(args)
 
-	-- Ocean Swell allows 2 waves, Cut Above 3 swords, so the cap gains room for exactly as many as
-	-- were rolled rather than for the most that could have been.
 	if repeated.ProjectileCap then
 		repeated.ProjectileCap = repeated.ProjectileCap + repeats
 	end

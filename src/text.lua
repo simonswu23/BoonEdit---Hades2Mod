@@ -1,12 +1,8 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Every word the boon changes put on screen: renamed boons, rewritten descriptions, keyword
--- tooltips, stat-line labels and flavour text. Each block keeps the config guard it was written
--- with, so text only lands for a change that is switched on -- and a few build their wording out of
--- `mod.tuning`, which is why these are statements rather than a plain table.
---
--- Imported last from `reload.lua`: `boon_text` has to exist, and the tuning it reads has to be set.
+-- Every `boon_text` block, each keeping its own config guard. Statements rather than a data table
+-- because several build their wording out of `mod.tuning`, which is why this loads after it.
 
 if config.BoonChanges.GlamourGainPulse.Enabled then
 	boon_text({
@@ -17,6 +13,20 @@ if config.BoonChanges.GlamourGainPulse.Enabled then
 		},
 		StatLines = {
 			BoonEditGlamourManaStatDisplay = { Name = 'Magick per Foe:', Index = 1 },
+		},
+	})
+end
+
+if config.BoonChanges.HeartyAppetite.Enabled then
+	boon_text({
+		Traits = {
+			MaxHealthDamageBoon = {
+				Description = 'You deal more damage with your {$Keywords.WeaponSet} the more {!Icons.HealthUpTotal} ' ..
+					'you have. Restore your {!Icons.Health} now, and your healing effects are more powerful for the rest of the night.',
+			},
+		},
+		StatLines = {
+			BoonEditHeartyAppetiteHealingStatDisplay = { Name = 'Healing Bonus:', Index = 2 },
 		},
 	})
 end
@@ -38,16 +48,10 @@ if config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled then
 	boon_text({
 		Traits = {
 			BloodManaBurstBoon = {
-				-- No mention of creating one: the pickup roll is zeroed, so the boon is purely what
-				-- it does to Hearts made by Heart Breaker and Smoldering Forge. "Larger" is the flat
-				-- doubling, which carries no figure of its own on purpose.
 				Description = 'Your {$Keywords.HeartBurst} are larger and deal more damage, plus ' ..
 					'extra for any {!Icons.BloodDropIcon} you hold.',
 			},
 		},
-		-- The trait carries this line either way; without an entry here it printed its own text id.
-		-- Index 2, not 4: vanilla's last two ExtractValues both carry SkipAutoExtract, and
-		-- StatDisplayN counts only the ones actually extracted.
 		StatLines = {
 			BoonEditCarnalPleasurePlasmaStatDisplay = { Name = 'Bonus Damage:', Index = 2 },
 		},
@@ -59,10 +63,6 @@ if config.BoonChanges.SmolderingForge.Enabled then
 		Traits = {
 			SlamManaBurstBoon = {
 				DisplayName = 'Smoldering Forge',
-				-- Was "You deal much more damage to nearby foes with Glow" -- the close-range damage
-				-- bonus an earlier pass gave this boon. The Hearts replaced that bonus and the
-				-- wording never followed; the stat line named damage too, while the value beneath
-				-- it has always been the Heart chance.
 				Description = 'Damaging a foe with {$Keywords.DelayedKnockback} may create ' ..
 					'a {$Keywords.HeartBurst}.',
 			},
@@ -70,7 +70,6 @@ if config.BoonChanges.SmolderingForge.Enabled then
 		StatLines = {
 			BoonEditSmolderingForgeStatDisplay = { Name = '{$Keywords.HeartBurst} Chance:', Index = 1 },
 		},
-		-- Love Handles' flavour was about volcanic blasts; Hearts are what this throws now.
 		Flavor = {
 			BoonEditSmolderingForgeFlavorText = 'Struck while the iron is hot.',
 		},
@@ -80,9 +79,6 @@ end
 if config.BoonChanges.ObsessiveDevotion.Enabled then
 	boon_text({
 		Traits = {
-			-- The Legendary carries Obsessive Devotion now, and the Duo carries Nervous Wreck. The
-			-- traits stay where they are -- only the name, wording and behaviour moved. See
-			-- `obsessive_devotion.lua`.
 			RandomStatusBoon = {
 				DisplayName = 'Obsessive Devotion',
 				Description = 'When you inflict {$Keywords.Weak}, you may inflict {$Keywords.Charm} ' ..
@@ -95,8 +91,6 @@ if config.BoonChanges.ObsessiveDevotion.Enabled then
 			},
 		},
 		StatLines = {
-			-- A keyword expands to its own formatted run, so suffixing it with letters breaks the
-			-- format rather than reading "Charmed". Say "-afflicted".
 			BoonEditDevotionChanceStatDisplay = { Name = '{$Keywords.Charm} Chance:', Index = 1 },
 		},
 	})
@@ -134,8 +128,6 @@ if config.BoonChanges.SunWorshiperRepeat.Enabled or config.BoonChanges.SunWorshi
 		repeated = '; later ones may as well'
 	end
 
-	-- Nothing is said about the summons being strikeable or Hitchable. The toggle that would do it is
-	-- off and unfinished -- the Hitch never lands -- so promising it in the tooltip would be a lie.
 	local hitched = ''
 
 	boon_text({
@@ -186,8 +178,6 @@ if config.BoonChanges.NaturalSelectionPoms.Enabled then
 					.. poms.EncountersPerPom .. ' {#Prev}{$Keywords.EncounterPlural}.',
 			},
 		},
-		-- The interval is the one part of this you wait on, so it gets the line; the Pom counts are
-		-- fixed and already spelled out above.
 		StatLines = {
 			BoonEditNaturalSelectionStatDisplay = { Name = '{$Keywords.EncounterPlural} per {!Icons.Pom}:', Index = 1 },
 		},
@@ -267,8 +257,6 @@ if config.BoonChanges.SeismicHammer.Enabled then
 	})
 end
 
--- Only the flat Hitch version can be written down; the per-Cast one reads differently for every
--- Cast boon, so it is left with vanilla's wording.
 if config.BoonChanges.RousingReceptionCastCurse.Enabled and mod.tuning.RousingReception.HitchOnly then
 	boon_text({
 		Traits = {
@@ -286,7 +274,6 @@ if config.BoonChanges.AllTogetherDoubleElements.Enabled then
 			AllElementalBoon = {
 				Description = 'Gain {#BoldFormatGraft}2 {#Prev}of each {$Keywords.AllElements}, and {#BoldFormatGraft}1 {#Prev}{$Keywords.Synergy} {$Keywords.GodBoonNoTooltip} for each.',
 			},
-			-- this stat line hardcodes "+1"
 			AllElementStatDisplay = {
 				Description = '{#UpgradeFormat}+2',
 			},
@@ -328,7 +315,6 @@ if config.BoonChanges.SecondWind.Enabled then
 				Description = 'Gain an extra {$Keywords.Cast} and {$Keywords.Dash}.',
 			},
 		},
-		-- Paid Dues' flavour was about its money shield, which Second Wind no longer has.
 		Flavor = {
 			BoonEditSecondWindFlavorText = 'Double Time, and enemies Double Pay the price.',
 		},
@@ -365,7 +351,6 @@ end
 if config.BoonChanges.BreakerRushWaves.Enabled then
 	boon_text({
 		Traits = {
-			-- keeps its own name; only what it does is changed
 			PoseidonSprintBoon = {
 				Description = '{$Keywords.DashSet} damages surrounding foes and inflicts {$Keywords.KnockbackAmplify}, and again once you stop.',
 			},
@@ -447,9 +432,6 @@ if config.BoonChanges.ThermalDynamicsAllLightning.Enabled then
 	})
 end
 
--- Vanilla's wording is built around the charge that is gone: "You can Hold +45 Magick into your
--- Omega Cast to...". With no rung left to hold, the Cast simply is the disaster.
--- Nil-safe: this key may not be in the generated .cfg yet.
 local gloriousOn = config.BoonChanges.GloriousDisasterAlwaysSupercharged
 if gloriousOn ~= nil and gloriousOn.Enabled then
 	boon_text({
@@ -461,7 +443,6 @@ if gloriousOn ~= nil and gloriousOn.Enabled then
 	})
 end
 
--- Nil-safe: this key may not be in the generated .cfg yet.
 local ionicGainOn = config.BoonChanges.IonicGainProximity
 if ionicGainOn ~= nil and ionicGainOn.Enabled then
 	boon_text({
@@ -482,7 +463,6 @@ if config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then
 	boon_text({
 		Traits = {
 			NewStatusDamage = {
-				-- No interval in the text: at 0.3 sec. per foe and per curse it almost never bites.
 				Description = 'Inflicting a {$Keywords.Status} deals {#BoldFormat}{$TooltipData.ExtractData.Damage} {#Prev}damage.',
 			},
 		},
@@ -490,9 +470,6 @@ if config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then
 end
 
 
--- Froth's own keyword is left to vanilla: Scalding Vapor supplies FontChance, FontDamage and
--- KnockbackAmplifyDuration itself, so those numbers already follow your luck and your other boons.
--- Only Steam's keyword is wrong once either toggle is on, since vanilla has it removing the Froth.
 local procs_froth = config.BoonChanges.SteamProcsFroth.Enabled
 
 local keeps_froth = config.BoonChanges.ScaldingVaporKeepsFroth.Enabled
@@ -531,8 +508,6 @@ if procs_froth or keeps_froth then
 end
 
 
--- Not a rewrite of vanilla's text like the rest of this file: Pandemonium is a new boon, so without
--- an entry here the game would print the raw text id.
 if config.BoonChanges.Pandemonium.Enabled then
 	boon_text({
 		Traits = {

@@ -1,8 +1,9 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Harm for the Afflicted (Medea) fires for every new curse landing on a foe. Vanilla already checked
--- each curse on its own; what held it to one hit was a room-wide cooldown, now keyed per foe.
+-- Harm for the Afflicted (Medea) fires for every new curse landing on a foe; the room-wide cooldown
+-- that held it to one hit is now keyed per foe.
+
 once('HarmForTheAfflictedEveryStatus', function()
 	if not config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then return end
 
@@ -12,8 +13,6 @@ once('HarmForTheAfflictedEveryStatus', function()
 end)
 
 
--- The name the game groups a curse under, so two effects shown as one status pay out once. No
--- DisplaySuffix means vanilla skipped it, and so do we.
 local function harm_curse_category(effectName)
 	local effect = game.EffectData[effectName]
 	if not effect or not effect.DisplaySuffix then return nil end

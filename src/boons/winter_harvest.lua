@@ -1,19 +1,16 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Winter Harvest (Demeter legendary) executes from higher up, and against a boss measures that
--- against the whole fight rather than the current health bar, so it can end the fight in an
--- earlier phase. Prometheus loses his execute immunity.
+-- Winter Harvest (Demeter legendary) executes from higher up, and against a boss measures that against
+-- the whole fight rather than the current health bar. Prometheus loses his execute immunity.
+
 once('WinterHarvestBosses', function()
-	-- ReportedThreshold carries the number, so the tooltip follows.
 	if config.BoonChanges.WinterHarvestBosses.Enabled then
 		local harvest = game.TraitData.InstantRootKill.OnDamageEnemyFunction.FunctionArgs
 		harvest.ExecuteImmunities = nil
 		harvest.ChillDeathThreshold = mod.tuning.WinterHarvest.ExecuteThreshold
 	end
 
-	-- A multi-phase boss otherwise survives its own execute. Reporting it as already in the last
-	-- phase clears both gates that would transition instead.
 	modutil.mod.Path.Wrap("CheckChillKill", function(base, args, attacker, victim, triggerArgs)
 		args = winter_harvest_pooled_args(args, victim)
 		if winter_harvest_executes(args, attacker, victim, triggerArgs) then
@@ -22,7 +19,6 @@ once('WinterHarvestBosses', function()
 				victim.CurrentPhase = victim.Phases
 			end
 
-			-- unconditional: the stage machine resurrects on health alone, phase declared or not
 			winter_harvest_stop_phases(victim)
 
 			if skipping then
@@ -34,18 +30,13 @@ once('WinterHarvestBosses', function()
 end)
 
 
--- Each phase carries its own health bar. These are the bars in order, only as many as the boss
--- actually reaches.
 local function boss_phase_healths(victim)
 	local template = game.EnemyData[victim.Name]
 	local stages = victim.AIStages or (template and template.AIStages)
 	if not stages then return nil end
 
-	-- Counted off the stages: Typhon only declares Phases under the boss Oath, yet fights two bars
-	-- regardless. Phases just caps it.
 	local phases = victim.Phases or math.huge
 
-	-- MaxHealth is rewritten as each phase begins, so the opening bar is kept while it is up.
 	if (victim.CurrentPhase or 1) == 1 then
 		victim.BoonEditFirstPhaseHealth = victim.MaxHealth
 	end
@@ -56,7 +47,6 @@ local function boss_phase_healths(victim)
 	local extremeMeasures = game.IsBossDifficultyShrineUpgradeActive()
 	for _, stage in ipairs(stages) do
 		if #healths < phases then
-			-- vanilla folds these in only as each stage begins, so a later bar still reads its base
 			local overrides = extremeMeasures and stage.EMStageDataOverrides
 			local health = (overrides and overrides.NewMaxHealth) or stage.NewMaxHealth
 			if health then
@@ -67,7 +57,6 @@ local function boss_phase_healths(victim)
 	return healths
 end
 
--- The comparison lives in vanilla, so the threshold is restated against this phase instead.
 function winter_harvest_pooled_args(args, victim)
 	if not config.BoonChanges.WinterHarvestBosses.Enabled then return args end
 	if not victim or not victim.MaxHealth or victim.MaxHealth <= 0 then return args end
@@ -86,8 +75,6 @@ function winter_harvest_pooled_args(args, victim)
 	return scaled
 end
 
--- CheckChillKill fires the kill on a thread, so its conditions are repeated here. Its phase test
--- is omitted: Typhon leaves Phases unset.
 function winter_harvest_executes(args, attacker, victim, triggerArgs)
 	if not config.BoonChanges.WinterHarvestBosses.Enabled then return false end
 	if not victim or not victim.ObjectId then return false end
@@ -107,7 +94,6 @@ function winter_harvest_skips_phase(victim)
 	return victim.Phases ~= nil and (victim.CurrentPhase or 1) < victim.Phases
 end
 
--- Killing a boss does not stop its AI, and the next transition would fire -- Typhon's revives him.
 function winter_harvest_stop_phases(victim)
 	victim.AIEndHealthThreshold = nil
 	victim.ReachedAIStageEnd = nil
@@ -117,10 +103,8 @@ function winter_harvest_stop_phases(victim)
 end
 
 
--- Zagreus, taken by his grandmother's work before his second phase.
 local ZAGREUS_HARVEST_LINE = {
 	{
-		-- without this the line is dropped outright while he is mid-quip
 		Queue = 'Interrupt',
 		Source = { LineHistoryName = 'NPC_Zagreus_01', SubtitleColor = game.Color.ZagreusVoice },
 		{ Cue = '/VO/Zagreus_0358', Text = 'Grandmother...?' },

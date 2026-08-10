@@ -1,17 +1,10 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Ionic Gain (Zeus): the Magick drop it spawns each encounter now feeds you while you stand near it,
--- rather than only when you pick it up. Picking it up still restores the lot, as it always did --
--- this is what the drop is worth to you for leaving it where it is.
---
--- Started from the room hook rather than a `SetupFunction`: the boon already has one
--- (`CheckZeusManaSpawn`, the thing that spawns the drop), and a trait carries only one.
 
+-- Ionic Gain (Zeus): its Magick drop feeds you while you stand near it, not only when picked up.
+-- Started from the room hook, since the boon's one `SetupFunction` already spawns the drop.
 
--- Read through a nil-safe helper, not `config.BoonChanges.X.Enabled` directly. Chalk keeps whatever
--- the generated .cfg already holds, so a key added after that file exists is simply absent until it
--- regenerates -- and indexing `.Enabled` off nil there took the whole mod down at load.
 local function ionic_gain_on()
 	local toggle = config.BoonChanges.IonicGainProximity
 	return toggle ~= nil and toggle.Enabled == true
@@ -23,10 +16,6 @@ once('IonicGain', function()
 
 	local zeusMana = game.TraitData.ZeusManaBoon
 
-	-- Its own field rather than the trait's `RarityLevels`: those run *downward* (Heroic is 7/10),
-	-- because what they scale is the respawn interval and a shorter one is better. A regen rate
-	-- wants the opposite, so the ladder is The Unseen's own -- `ManaOverTimeMetaUpgrade`, the arcana
-	-- this is modelled on -- read in `ionic_gain_rate` instead.
 	zeusMana.BoonEditManaPerSecond = mod.tuning.IonicGain.ManaPerSecond
 	table.insert(zeusMana.StatLines, 'BoonEditIonicGainRegenStatDisplay')
 	table.insert(zeusMana.ExtractValues, {
@@ -37,7 +26,6 @@ once('IonicGain', function()
 end)
 
 
--- The Unseen's ladder, applied to whatever rarity the boon came at.
 local function ionic_gain_rate()
 	local trait = game.GetHeroTrait('ZeusManaBoon')
 	if not trait then return 0 end
@@ -48,7 +36,6 @@ local function ionic_gain_rate()
 end
 
 
--- Every drop the boon has put out, since more than one can be standing at a time.
 local function ionic_gain_nearest(heroId)
 	local nearest = nil
 	for _, id in ipairs(game.GetIdsByType({ Name = 'ManaDropZeus' }) or {}) do
@@ -61,9 +48,6 @@ local function ionic_gain_nearest(heroId)
 end
 
 
--- Paid per tick rather than per second, so walking through the edge of the range is still worth
--- something. `ManaDelta` is what every other restore in the game goes through, so the Magick gained
--- is capped and presented the way any other is.
 function ionic_gain_regen()
 	local tuning = mod.tuning.IonicGain
 
@@ -87,7 +71,6 @@ function ionic_gain_regen()
 end
 
 
--- Called from `prefix_SetupMap`, so it starts fresh each room and dies with it.
 function ionic_gain_start()
 	if not ionic_gain_on() then return end
 	if not game.CurrentRun or not game.CurrentRun.Hero then return end
