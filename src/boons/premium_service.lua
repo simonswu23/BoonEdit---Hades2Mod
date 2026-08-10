@@ -154,6 +154,19 @@ function anvil_open_discover_menu()
 	game.OpenUpgradeChoiceMenu(source)
 end
 
+function anvil_unlock_exits()
+	local run = game.CurrentRun
+	local room = run and run.CurrentRoom
+	if not room or room.ExitsUnlocked then return end
+
+	local roomData = game.RoomData[room.Name] or room
+	if game.IsEmpty(game.MapState.OfferedExitDoors or {}) and not roomData.UnlockWithoutDoors then return end
+
+	if game.CheckRoomExitsReady(room) then
+		game.UnlockRoomExits(run, room)
+	end
+end
+
 function mod.AnvilOfFates(args)
 	if not config.BoonChanges.PremiumServiceHammers.Enabled then
 		return game.ChaosHammerUpgrade(args)
@@ -168,5 +181,6 @@ function mod.AnvilOfFates(args)
 		game.waitUnmodified(0.1)
 	end
 
+	anvil_unlock_exits()
 	game.InvalidateCheckpoint()
 end

@@ -2,7 +2,8 @@
 ---@diagnostic disable: lowercase-global
 
 -- Carnal Pleasure (Aphrodite x Ares) no longer throws a Heartthrob on Plasma pickup; instead every
--- Heartthrob from elsewhere is larger and harder hitting, more so for the Plasma you carry.
+-- Heartthrob from elsewhere is stronger and larger, and increases with any Plasma you carry.
+-- Also raises the Heartthrob cap from 6 to 12.
 
 once('CarnalPleasurePlasmaBursts', function()
 	if not config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled then return end
@@ -26,6 +27,15 @@ once('CarnalPleasurePlasmaBursts', function()
 		ExtractAs = 'TooltipPlasmaBonus',
 		Format = 'Percent',
 	})
+
+	if mod.tuning.CarnalPleasure.ShowHeartthrobCapacity then
+		carnal.BoonEditHeartthrobCapacity = mod.tuning.CarnalPleasure.HeartthrobCapacity
+		table.insert(carnal.StatLines, 'BoonEditCarnalPleasureCapacityStatDisplay')
+		table.insert(carnal.ExtractValues, {
+			Key = 'BoonEditHeartthrobCapacity',
+			ExtractAs = 'TooltipHeartthrobCapacity',
+		})
+	end
 end)
 
 
@@ -47,6 +57,14 @@ function carnal_pleasure_plasma_boost()
 	end
 
 	return 1 + tuning.BaseBonus + scaled
+end
+
+
+function carnal_pleasure_heartthrob_cap()
+	if not config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled then return nil end
+	if not game.HeroHasTrait('BloodManaBurstBoon') then return nil end
+
+	return mod.tuning.CarnalPleasure.HeartthrobCapacity
 end
 
 

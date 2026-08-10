@@ -58,6 +58,14 @@ if config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled then
 	})
 end
 
+if config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled and mod.tuning.CarnalPleasure.ShowHeartthrobCapacity then
+	boon_text({
+		StatLines = {
+			BoonEditCarnalPleasureCapacityStatDisplay = { Name = 'Max {$Keywords.HeartBurst} Capacity:', Index = 3 },
+		},
+	})
+end
+
 if config.BoonChanges.SmolderingForge.Enabled then
 	boon_text({
 		Traits = {
@@ -238,6 +246,9 @@ if config.BoonChanges.ChainReactionCooldownSkip.Enabled then
 		},
 		StatLines = {
 			BoonEditCooldownSkipStatDisplay = { Name = 'Recharge Skip Chance:', Index = 1 },
+		},
+		CombatText = {
+			BoonEditChainReactionCombatText = '{#CombatTextHighlightFormat}Chain Reaction',
 		},
 	})
 end

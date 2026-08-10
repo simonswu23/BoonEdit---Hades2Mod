@@ -7,11 +7,6 @@
 
 mod.tuning = {}
 
-mod.tuning.Heartthrob = {
-	-- how many Heartthrobs may be in the air before making one cancels the oldest; vanilla hardcodes 6
-	Capacity = 12,
-}
-
 mod.tuning.CarnalPleasure = {
 	-- the floor, not the ceiling: holding Plasma takes it higher rather than switching it on
 	BaseBonus = 0.50,
@@ -21,6 +16,10 @@ mod.tuning.CarnalPleasure = {
 	-- flat and separate from the damage, so it is not extracted and gets no stat line
 	HeartSizeMultiplier = 2.0,
 	PlasmaManaValue = 10,
+	-- how many Heartthrobs may be in the air before making one cancels the oldest; vanilla hardcodes 6
+	HeartthrobCapacity = 12,
+	-- off to spend the boon's second stat line elsewhere: the tray only ever draws two
+	ShowHeartthrobCapacity = true,
 }
 
 mod.tuning.HeartyAppetite = {
@@ -125,6 +124,9 @@ mod.tuning.AnvilOfFates = {
 
 mod.tuning.ChainReaction = {
 	SkipChance = 0.30,
+	-- floating text on a skip; the cooldown keeps one recharge from printing twice
+	TextDuration = 1.45,
+	TextCooldown = 0.5,
 }
 
 mod.tuning.BraveFace = {

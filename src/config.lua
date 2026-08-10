@@ -132,7 +132,8 @@ local config = {
     };
 
     -- Carnal Pleasure no longer throws a Heartthrob on Plasma pickup. Instead every Heartthrob has
-    -- twice the blast radius and +50% damage, rising to +80% with a full stack of Plasma.
+    -- twice the blast radius and +50% damage, rising to +80% with a full stack of Plasma, and up to
+    -- 12 may follow you at once rather than 6.
     CarnalPleasurePlasmaBursts = {
       Enabled = true;
     };
@@ -180,7 +181,7 @@ local config = {
     };
 
     -- Love Handles (Aphrodite x Hephaestus) becomes "Smoldering Forge": a 20% chance to throw a
-    -- Heartthrob whenever you damage a Glowing foe. Also raises the shared Heartthrob cap from 6 to 12.
+    -- Heartthrob whenever you damage a Glowing foe.
     SmolderingForge = {
       Enabled = true;
     };

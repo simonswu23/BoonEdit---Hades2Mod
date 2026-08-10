@@ -130,7 +130,11 @@ HEARTTHROB_PROJECTILE = 'AphroditeBurst'
 once('Heartthrobs', function()
 	modutil.mod.Path.Wrap("CreateProjectileFromUnit", function(base, args)
 		if args and args.Name == HEARTTHROB_PROJECTILE then
-			args.FizzleOldestProjectileCount = mod.tuning.Heartthrob.Capacity
+			---@diagnostic disable-next-line: undefined-global
+			local capacity = carnal_pleasure_heartthrob_cap()
+			if capacity then
+				args.FizzleOldestProjectileCount = capacity
+			end
 
 			---@diagnostic disable-next-line: undefined-global
 			local damage = carnal_pleasure_plasma_boost()
@@ -159,12 +163,14 @@ trait_text = {}
 help_text = {}
 stat_lines = {}
 flavor_text = {}
+combat_text = {}
 
 function boon_text(spec)
 	for id, entry in pairs(spec.Traits or {}) do trait_text[id] = entry end
 	for id, entry in pairs(spec.Keywords or {}) do help_text[id] = entry end
 	for id, entry in pairs(spec.StatLines or {}) do stat_lines[id] = entry end
 	for id, entry in pairs(spec.Flavor or {}) do flavor_text[id] = entry end
+	for id, entry in pairs(spec.CombatText or {}) do combat_text[id] = entry end
 end
 
 function sjson_PlayerProjectiles(data)
@@ -223,6 +229,10 @@ function sjson_TraitText(data)
 
 	local flavorOrder = { 'Id', 'DisplayName' }
 	for id, text in pairs(flavor_text) do
+		table.insert(data.Texts, sjson.to_object({ Id = id, DisplayName = text }, flavorOrder))
+	end
+
+	for id, text in pairs(combat_text) do
 		table.insert(data.Texts, sjson.to_object({ Id = id, DisplayName = text }, flavorOrder))
 	end
 end
