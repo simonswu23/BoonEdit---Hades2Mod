@@ -5,7 +5,7 @@
 -- doubling its own two projectiles; each repeat rolls again at half the chance, up to four deep.
 
 once('RippleEffectOmegaBoons', function()
-	if config.BoonChanges.RippleEffectOmegaBoons.Enabled then
+	if config.BoonChanges.RippleEffect.Enabled then
 		local ripple = game.TraitData.MoneyDamageBoon
 
 		ripple.DoubleOlympianProjectileChance = 0
@@ -42,7 +42,7 @@ local OMEGA_BOON_PROJECTILES = {
 
 function ripple_effect_repeat(args)
 	if mod.RippleFiring then return end
-	if not config.BoonChanges.RippleEffectOmegaBoons.Enabled then return end
+	if not config.BoonChanges.RippleEffect.Enabled then return end
 	if not args or not args.Name or not OMEGA_BOON_PROJECTILES[args.Name] then return end
 	if not game.HeroHasTrait('MoneyDamageBoon') then return end
 

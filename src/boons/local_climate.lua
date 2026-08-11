@@ -6,7 +6,7 @@
 -- what reaches Hestia's Scorch, which has no projectile of its own.
 
 once('LocalClimateCoversCastBoons', function()
-	if not config.BoonChanges.LocalClimateCoversCastBoons.Enabled then return end
+	if not config.BoonChanges.LocalClimate.Enabled then return end
 
 	local modifiers = game.TraitData.CastAttachBoon.AddOutgoingDamageModifiers
 

@@ -6,7 +6,7 @@
 -- Started from the room hook, since the boon's one `SetupFunction` already spawns the drop.
 
 local function ionic_gain_on()
-	local toggle = config.BoonChanges.IonicGainProximity
+	local toggle = config.BoonChanges.IonicGain
 	return toggle ~= nil and toggle.Enabled == true
 end
 

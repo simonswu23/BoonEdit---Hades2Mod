@@ -4,7 +4,7 @@
 -- Tranquil Gain (Demeter) pays out for holding an Omega Move; `MovePenaltyDuration` is reused as the hold.
 
 once('TranquilGainChannel', function()
-	if not config.BoonChanges.TranquilGainChannel.Enabled then return end
+	if not config.BoonChanges.TranquilGain.Enabled then return end
 
 	local tranquil = game.TraitData.DemeterManaBoon
 

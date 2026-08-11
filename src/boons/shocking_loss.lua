@@ -5,7 +5,7 @@
 -- damage modifiers, instead of being immune outright.
 
 once('ShockingLossGuardians', function()
-	if config.BoonChanges.ShockingLossGuardians.Enabled then
+	if config.BoonChanges.ShockingLoss.Enabled then
 		game.OverwriteTableKeys(game.ProjectileData, {
 			BoonEditZeusGuardianStrike = {
 				InheritFrom = { 'ZeusColorProjectile' },
@@ -28,7 +28,7 @@ end)
 
 
 function shocking_loss_guardian(enemy, traitArgs, triggerArgs)
-	if not config.BoonChanges.ShockingLossGuardians.Enabled then return false end
+	if not config.BoonChanges.ShockingLoss.Enabled then return false end
 	if not enemy or not enemy.ObjectId then return false end
 	if not (enemy.IsBoss or enemy.UseBossHealthBar) then return false end
 

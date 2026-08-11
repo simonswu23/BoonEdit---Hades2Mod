@@ -16,7 +16,7 @@ local LIGHTNING = {
 }
 
 once('ThermalDynamicsAllLightning', function()
-	if not config.BoonChanges.ThermalDynamicsAllLightning.Enabled then return end
+	if not config.BoonChanges.ThermalDynamics.Enabled then return end
 
 	local thermal = game.TraitData.EchoBurnBoon
 
@@ -43,7 +43,7 @@ end)
 
 
 function mod.ThermalDynamics(args, attacker, victim, triggerArgs)
-	if not config.BoonChanges.ThermalDynamicsAllLightning.Enabled then return end
+	if not config.BoonChanges.ThermalDynamics.Enabled then return end
 	if not victim or not victim.ObjectId or victim.IsDead or not victim.ActiveEffects then return end
 
 	local hero = game.CurrentRun and game.CurrentRun.Hero

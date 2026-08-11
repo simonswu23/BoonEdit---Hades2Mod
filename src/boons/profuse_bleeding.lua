@@ -6,7 +6,7 @@
 -- points a trait at it.
 
 once('ProfuseBleedingBloodSpill', function()
-	if not config.BoonChanges.ProfuseBleedingBloodSpill.Enabled then return end
+	if not config.BoonChanges.ProfuseBleeding.Enabled then return end
 
 	local rend = game.TraitData.RendBloodDropBoon
 

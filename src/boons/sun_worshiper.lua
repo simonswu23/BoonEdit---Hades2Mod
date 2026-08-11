@@ -9,7 +9,7 @@
 once('SunWorshiper', function()
 	local raiseDead = game.TraitData.RaiseDeadBoon
 
-	if config.BoonChanges.SunWorshiperRepeat.Enabled then
+	if config.BoonChanges.SunWorshiper.Enabled then
 		raiseDead.BoonEditRepeatChance = mod.tuning.SunWorshiper.RepeatChance
 		table.insert(raiseDead.StatLines, 'BoonEditRepeatRaiseStatDisplay')
 		table.insert(raiseDead.ExtractValues, {
@@ -36,7 +36,7 @@ end)
 
 
 function sun_worshiper_should_repeat()
-	if not config.BoonChanges.SunWorshiperRepeat.Enabled then return false end
+	if not config.BoonChanges.SunWorshiper.Enabled then return false end
 	if not game.MapState.RaiseDeadCount then return false end
 
 	local raised = game.MapState.BoonEditSunWorshiperRepeats or 0

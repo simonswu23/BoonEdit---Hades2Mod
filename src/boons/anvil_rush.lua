@@ -4,15 +4,14 @@
 -- Anvil Ring (Hephaestus) inflicts Glow, paid for with 10 base damage; Smithy Rush fires the same
 -- strike at half damage on starting and stopping a Dash.
 
-once('AnvilGlowAndDash', function()
-	if not config.BoonChanges.AnvilGlowAndDash.Enabled then return end
+once('AnvilRing', function()
+	if not config.BoonChanges.AnvilRing.Enabled then return end
 
 	local blast = game.ProjectileData.HephCastBlast
 	blast.OnHitFunctionNames = blast.OnHitFunctionNames or {}
 	table.insert(blast.OnHitFunctionNames, _PLUGIN.guid .. '.AnvilGlow')
 
 	local cast = game.TraitData.HephaestusCastBoon
-	local dash = game.TraitData.HephaestusSprintBoon
 
 	local baseDamage = game.GetBaseDataValue({ Type = 'Projectile', Name = 'HephCastBlast', Property = 'Damage' })
 	if type(baseDamage) ~= 'number' or baseDamage <= 0 then
@@ -23,6 +22,16 @@ once('AnvilGlowAndDash', function()
 	for _, level in pairs(cast.RarityLevels) do
 		level.Multiplier = level.Multiplier - cut
 	end
+end)
+
+
+-- After Anvil Ring's block, so that with both on the Dash strike inherits the reduced ladder the
+-- Glow is paid for with. With Anvil Ring off it simply mirrors the untouched one.
+once('SmithyRush', function()
+	if not config.BoonChanges.SmithyRush.Enabled then return end
+
+	local cast = game.TraitData.HephaestusCastBoon
+	local dash = game.TraitData.HephaestusSprintBoon
 
 	local castArgs = cast.OnWeaponFiredFunctions.FunctionArgs
 	local halved = {
@@ -177,7 +186,7 @@ end
 
 ---@diagnostic disable-next-line: unused-local
 function mod.AnvilGlow(victim, _victimId, triggerArgs)
-	if not config.BoonChanges.AnvilGlowAndDash.Enabled then return end
+	if not config.BoonChanges.AnvilRing.Enabled then return end
 	if not victim or not victim.ObjectId then return end
 
 	victim.BoonEditGlowStacks = (victim.BoonEditGlowStacks or 0) + 1

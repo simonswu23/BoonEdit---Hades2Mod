@@ -4,7 +4,7 @@
 -- Cardio Gain (Hestia) also restores Magick on Sprint, not just on hit.
 
 once('CardioGainSprintMana', function()
-	if not config.BoonChanges.CardioGainSprintMana.Enabled then return end
+	if not config.BoonChanges.CardioGain.Enabled then return end
 
 	local cardioGain = game.TraitData.HestiaManaBoon
 
@@ -30,7 +30,7 @@ local cardio_gain_sprint_carry = 0
 
 ---@diagnostic disable-next-line: unused-local
 function mod.CardioGainSprintMana(args, triggerArgs)
-	if not config.BoonChanges.CardioGainSprintMana.Enabled then return end
+	if not config.BoonChanges.CardioGain.Enabled then return end
 
 	cardio_gain_sprint_carry = cardio_gain_sprint_carry + args.BoonEditManaGain
 	local whole = math.floor(cardio_gain_sprint_carry)

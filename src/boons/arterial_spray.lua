@@ -4,7 +4,7 @@
 -- Arterial Spray (Poseidon x Ares): the second splash wave always lands, at reduced power.
 
 once('ArterialSprayAlwaysDouble', function()
-	if config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then
+	if config.BoonChanges.ArterialSpray.Enabled then
 		local arterial = game.TraitData.DoubleSplashBoon
 		arterial.ConeModifier.DoubleWaveChance = 1.0
 
@@ -43,7 +43,7 @@ arterial_spray_projectile = nil
 
 function arterial_spray_begin(functionArgs)
 	arterial_spray_projectile = nil
-	if not config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then return end
+	if not config.BoonChanges.ArterialSpray.Enabled then return end
 	if not game.HeroHasTrait('DoubleSplashBoon') then return end
 	arterial_spray_projectile = functionArgs and functionArgs.ProjectileName
 end

@@ -6,7 +6,7 @@
 -- well, not only volcanic blasts.
 
 once('CryoPounderHammers', function()
-	if not config.BoonChanges.CryoPounderHammers.Enabled then return end
+	if not config.BoonChanges.CryoPounder.Enabled then return end
 
 	local modifiers = game.TraitData.ClearRootBoon.AddOutgoingDamageModifiers
 

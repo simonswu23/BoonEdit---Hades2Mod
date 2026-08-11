@@ -8,7 +8,7 @@
 once('BoonRequirements', function()
 
 	-- Engagement Ring alone, replacing vanilla's "any Cast boon".
-	if config.BoonChanges.RousingReceptionRequirements.Enabled then
+	if config.BoonChanges.RousingReception.Enabled then
 		game.TraitRequirements.SpawnCastDamageBoon = {
 			OneOf = { 'HeraCastBoon' }, -- Engagement Ring
 		}
@@ -23,7 +23,7 @@ once('BoonRequirements', function()
 		}
 	end
 
-	if config.BoonChanges.GloriousDisasterRequirements.Enabled then
+	if config.BoonChanges.GloriousDisaster.Enabled then
 		game.TraitRequirements.ApolloSecondStageCastBoon = {
 			OneFromEachSet = {
 				{
@@ -36,7 +36,7 @@ once('BoonRequirements', function()
 		}
 	end
 
-	if config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled then
+	if config.BoonChanges.CarnalPleasure.Enabled then
 		game.TraitRequirements.BloodManaBurstBoon = {
 			OneFromEachSet = {
 				game.LinkedTraitData.AresBloodDropTraits,
@@ -45,12 +45,9 @@ once('BoonRequirements', function()
 		}
 	end
 
-	if config.BoonChanges.ProfuseBleedingRequirements.Enabled then
+	if config.BoonChanges.ProfuseBleeding.Enabled then
 		game.TraitRequirements.RendBloodDropBoon = { OneOf = game.LinkedTraitData.AresRendTraits }
-
-		if config.BoonChanges.ProfuseBleedingBloodSpill.Enabled then
-			table.insert(game.LinkedTraitData.AresBloodDropTraits, 'RendBloodDropBoon')
-		end
+		table.insert(game.LinkedTraitData.AresBloodDropTraits, 'RendBloodDropBoon')
 	end
 
 	if config.BoonChanges.SeismicHammer.Enabled then
@@ -62,7 +59,7 @@ once('BoonRequirements', function()
 		}
 	end
 
-	if config.BoonChanges.HardTargetBecomesPostHaste.Enabled then
+	if config.BoonChanges.PostHaste.Enabled then
 		game.TraitRequirements.SlowProjectileBoon = {
 			OneOf = {
 				'TimedCritVulnerabilityBoon',    -- Death Warrant
@@ -90,13 +87,13 @@ once('BoonRequirements', function()
 		}
 	end
 
-	if config.BoonChanges.BeachBallCountsAsSplash.Enabled then
+	if config.BoonChanges.BeachBall.Enabled then
 		if not game.Contains(game.LinkedTraitData.PoseidonSplashTraits, 'PoseidonSplashSprintBoon') then
 			table.insert(game.LinkedTraitData.PoseidonSplashTraits, 'PoseidonSplashSprintBoon')
 		end
 	end
 
-	if config.BoonChanges.PoseidonFrothRequirements.Enabled then
+	if config.BoonChanges.BreakerRush.Enabled then
 		table.insert(game.LinkedTraitData.PoseidonKnockbackAmplifyTraits, 'PoseidonSprintBoon')
 
 		game.TraitRequirements.AmplifyConeBoon = {
@@ -116,7 +113,7 @@ once('BoonRequirements', function()
 		}
 	end
 
-	if config.BoonChanges.AnvilGlowAndDash.Enabled then
+	if config.BoonChanges.SmithyRush.Enabled then
 		local function withoutAnvilRush(list)
 			local kept, dropped = {}, false
 			for _, candidate in ipairs(list) do

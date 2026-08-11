@@ -5,7 +5,7 @@
 -- that held it to one hit is now keyed per foe.
 
 once('HarmForTheAfflictedEveryStatus', function()
-	if not config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then return end
+	if not config.BoonChanges.HarmForTheAfflicted.Enabled then return end
 
 	local harm = game.TraitData.NewStatusDamage
 	harm.OnEffectApplyFunction.FunctionName = _PLUGIN.guid .. '.HarmForTheAfflicted'
@@ -21,7 +21,7 @@ end
 
 ---@diagnostic disable-next-line: unused-local
 function mod.HarmForTheAfflicted(_, functionArgs, triggerArgs)
-	if not config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then return end
+	if not config.BoonChanges.HarmForTheAfflicted.Enabled then return end
 	if not triggerArgs or not triggerArgs.IsVulnerabilityEffect or triggerArgs.Reapplied then return end
 
 	local victim = triggerArgs.Victim

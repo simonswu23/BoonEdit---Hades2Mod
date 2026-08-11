@@ -15,7 +15,7 @@ once('BurningMeteor', function()
 		ExtractValues             = combustion.ExtractValues,
 	}
 
-	if config.BoonChanges.FireAwayScorch.Enabled then
+	if config.BoonChanges.BurningMeteor.Enabled then
 		mod.FireAwayEffect.OnBlockDamageFunction.Args.EffectArgs.NumStacks = 999
 	end
 

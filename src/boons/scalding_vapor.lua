@@ -5,7 +5,7 @@
 -- Two other changes sit here on their own switches, both off by default, which is vanilla.
 
 once('ScaldingVapor', function()
-	if config.BoonChanges.SteamCountsAsFrothProc.Enabled then
+	if config.BoonChanges.ScaldingVapor.Enabled then
 		local froth = game.EffectData.AmplifyKnockbackEffect
 		local kept = {}
 		for _, name in ipairs(froth.ProjectileNameBlacklist or {}) do
@@ -24,7 +24,7 @@ once('ScaldingVapor', function()
 
 		local froth = game.EffectData.AmplifyKnockbackEffect
 		local cooldown = froth.Cooldown
-		froth.Cooldown = cooldown * mod.tuning.SteamProcsFroth.FontCooldownMultiplier
+		froth.Cooldown = cooldown * mod.tuning.ScaldingVapor.FontCooldownMultiplier
 		local ok, err = pcall(base, victim, triggerArgs)
 		froth.Cooldown = cooldown
 		if not ok then error(err) end
@@ -33,7 +33,7 @@ once('ScaldingVapor', function()
 	local keepingFroth = false
 
 	modutil.mod.Path.Wrap("CheckSteam", function(base, victim, functionArgs, triggerArgs)
-		if not config.BoonChanges.ScaldingVaporKeepsFroth.Enabled then
+		if not config.BoonChanges.ScaldingVapor.Enabled then
 			return base(victim, functionArgs, triggerArgs)
 		end
 
@@ -53,5 +53,5 @@ end)
 
 
 function steam_froth_active()
-	return config.BoonChanges.SteamProcsFroth.Enabled and game.HeroHasTrait('SteamBoon')
+	return config.BoonChanges.ScaldingVapor.Enabled and game.HeroHasTrait('SteamBoon')
 end

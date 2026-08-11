@@ -7,6 +7,6 @@
 -- are data rather than Lua.
 
 function beach_ball_rebalanced()
-	local toggle = config.BoonChanges.BeachBallDamage
+	local toggle = config.BoonChanges.BeachBall
 	return toggle ~= nil and toggle.Enabled == true
 end

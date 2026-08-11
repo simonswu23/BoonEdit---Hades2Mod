@@ -6,7 +6,7 @@
 -- figure, which vanilla clamps after multipliers.
 
 once('AirQualityAdditiveFloor', function()
-	if config.BoonChanges.AirQualityAdditiveFloor.Enabled then
+	if config.BoonChanges.AirQuality.Enabled then
 		local airQuality = game.TraitData.ElementalDamageFloorBoon
 		airQuality.BoonEditBaseDamageFloor = airQuality.ActivatedDamageFloor
 		airQuality.ActivatedDamageFloor = nil
@@ -15,7 +15,7 @@ once('AirQualityAdditiveFloor', function()
 
 	modutil.mod.Path.Wrap("CalculateBaseDamage", function(base, attacker, victim, triggerArgs)
 		local damage = base(attacker, victim, triggerArgs)
-		if not config.BoonChanges.AirQualityAdditiveFloor.Enabled then return damage end
+		if not config.BoonChanges.AirQuality.Enabled then return damage end
 		if attacker == nil or attacker ~= game.CurrentRun.Hero then return damage end
 
 		if type(damage) ~= 'number' or damage <= 0 then return damage end

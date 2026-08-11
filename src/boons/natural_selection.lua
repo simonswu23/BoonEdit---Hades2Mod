@@ -5,7 +5,7 @@
 -- then one more every few encounters.
 
 once('NaturalSelectionPoms', function()
-	if config.BoonChanges.NaturalSelectionPoms.Enabled then
+	if config.BoonChanges.NaturalSelection.Enabled then
 		local selection = game.TraitData.GoodStuffBoon
 
 		selection.AcquireFunctionName = _PLUGIN.guid .. '.NaturalSelectionAcquire'
@@ -98,12 +98,12 @@ end
 
 ---@diagnostic disable-next-line: unused-local
 function mod.NaturalSelectionAcquire(args, traitData)
-	if not config.BoonChanges.NaturalSelectionPoms.Enabled then return end
+	if not config.BoonChanges.NaturalSelection.Enabled then return end
 	game.thread(natural_selection_drop_poms, mod.tuning.NaturalSelection.PomsOnPickup, mod.tuning.NaturalSelection.LevelsPerPom)
 end
 
 function natural_selection_check_pom()
-	if not config.BoonChanges.NaturalSelectionPoms.Enabled then return end
+	if not config.BoonChanges.NaturalSelection.Enabled then return end
 	if not game.CurrentRun or not game.CurrentRun.Hero then return end
 
 	local trait = game.GetHeroTrait('GoodStuffBoon')

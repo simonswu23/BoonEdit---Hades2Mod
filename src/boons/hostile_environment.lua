@@ -23,7 +23,7 @@ end)
 
 
 function hostile_environment_keeps_cast()
-	local settings = config.BoonChanges.HostileEnvironmentCastFollows
+	local settings = config.BoonChanges.HostileEnvironment
 	return settings.Enabled and game.HeroHasTrait('SelfCastBoon')
 end
 

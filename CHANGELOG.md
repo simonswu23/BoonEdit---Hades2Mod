@@ -28,10 +28,12 @@ Every change below can be switched off independently in
 ### Hades
 
 - **Unseen Ire** — Cooldown reduced to 30 seconds.
+- **Old Grudge** — No longer a one-time use internally, allowing it to fire multiple times.
 
 ### Hephaestus
 
 - **Anvil Ring** — Additionally, inflicts Glow in exchange for a slight decrease in power.
+- **Heavy Metal** — Additionally, foes' attacks cannot knock you back while you hold it.
 - **Molten Touch** — Additionally deals bonus damage to foes afflicted with Glow.
 - **Smithy Rush** — New Effect: when you start and stop dashing, a hammer strikes the area, dealing damage and inflicting Glow.
 
@@ -67,7 +69,7 @@ Every change below can be switched off independently in
 - **Beach Ball** (Apollo × Poseidon) — Is now considered a Splash Boon, and max damage increased to 400.
 - **Brave Face** (Hephaestus × Hera) — Resists up to 50% of any damage rather than 30%, and each point resisted costs 5 Magick instead of 10.
 - **Chain Reaction** (Hestia × Hephaestus) — New Effect: Boon effect cooldowns have a 30% chance of being skipped. Announces itself on screen when it fires.
-- **Carnal Pleasure** (Aphrodite × Ares) — New Effect: Your Heartthrobs are larger and deal +50 damage, plus extra for any Plasma you hold. Up to 12 may follow you at once rather than 6. Picking up Plasma counts as 10 magic towards Heartbreaker.
+- **Carnal Pleasure** (Aphrodite × Ares) — New Effect: Your Heartthrobs are larger and deal more damage, plus extra for any Plasma you have. Up to 12 may follow you at once. Picking up Plasma counts as 10 magic towards Heartbreaker.
 - **Cherished Heirloom** (Demeter × Hera) — Additionally, keepsake effects don't expire tonight. Equip an extra one on pickup.
 - **Cryo Pounder** (Demeter × Hephaestus) — Additionally, frozen foes also take more damage from Hephaestus' hammer strikes.
 - **Nervous Wreck** (Aphrodite x Hera) — Swapped: same effect as before (as Aphrodite's legendary), but kept Ecstatic Obession's old requirements.

@@ -5,7 +5,7 @@
 -- and inflicting Froth. It keeps its own name; only what it does is changed.
 
 once('BreakerRushWaves', function()
-	if not config.BoonChanges.BreakerRushWaves.Enabled then return end
+	if not config.BoonChanges.BreakerRush.Enabled then return end
 
 	local breaker = game.TraitData.PoseidonSprintBoon
 

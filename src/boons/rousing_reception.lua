@@ -12,7 +12,7 @@ end)
 
 
 once('RousingReceptionCastDuration', function()
-	if not config.BoonChanges.RousingReceptionCastDuration.Enabled then return end
+	if not config.BoonChanges.RousingReception.Enabled then return end
 
 	local reception = game.TraitData.SpawnCastDamageBoon
 	local multiplier = mod.tuning.RousingReception.CastDurationMultiplier
@@ -154,7 +154,7 @@ end
 
 ---@diagnostic disable-next-line: unused-local
 function mod.RousingReceptionCurse(victim, _victimId, triggerArgs)
-	if not config.BoonChanges.RousingReceptionCastCurse.Enabled then return end
+	if not config.BoonChanges.RousingReception.Enabled then return end
 
 	if mod.tuning.RousingReception.HitchOnly then
 		apply_hitch(victim)

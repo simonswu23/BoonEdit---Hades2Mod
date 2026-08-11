@@ -8,7 +8,7 @@
 local GLOW_EFFECT = 'DelayedKnockbackEffect'
 
 once('MoltenTouchGlow', function()
-	if not config.BoonChanges.MoltenTouchGlow.Enabled then return end
+	if not config.BoonChanges.MoltenTouch.Enabled then return end
 
 	local moltenTouch = game.TraitData.AntiArmorBoon
 	local tuning = mod.tuning.MoltenTouch

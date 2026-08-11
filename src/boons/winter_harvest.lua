@@ -5,7 +5,7 @@
 -- the whole fight rather than the current health bar. Prometheus loses his execute immunity.
 
 once('WinterHarvestBosses', function()
-	if config.BoonChanges.WinterHarvestBosses.Enabled then
+	if config.BoonChanges.WinterHarvest.Enabled then
 		local harvest = game.TraitData.InstantRootKill.OnDamageEnemyFunction.FunctionArgs
 		harvest.ExecuteImmunities = nil
 		harvest.ChillDeathThreshold = mod.tuning.WinterHarvest.ExecuteThreshold
@@ -58,7 +58,7 @@ local function boss_phase_healths(victim)
 end
 
 function winter_harvest_pooled_args(args, victim)
-	if not config.BoonChanges.WinterHarvestBosses.Enabled then return args end
+	if not config.BoonChanges.WinterHarvest.Enabled then return args end
 	if not victim or not victim.MaxHealth or victim.MaxHealth <= 0 then return args end
 
 	local healths = boss_phase_healths(victim)
@@ -76,7 +76,7 @@ function winter_harvest_pooled_args(args, victim)
 end
 
 function winter_harvest_executes(args, attacker, victim, triggerArgs)
-	if not config.BoonChanges.WinterHarvestBosses.Enabled then return false end
+	if not config.BoonChanges.WinterHarvest.Enabled then return false end
 	if not victim or not victim.ObjectId then return false end
 	if not victim.MaxHealth or victim.MaxHealth <= 0 then return false end
 

@@ -4,7 +4,7 @@
 -- Every `boon_text` block, each keeping its own config guard. Statements rather than a data table
 -- because several build their wording out of `mod.tuning`, which is why this loads after it.
 
-if config.BoonChanges.GlamourGainPulse.Enabled then
+if config.BoonChanges.GlamourGain.Enabled then
 	boon_text({
 		Traits = {
 			AphroditeManaBoon = {
@@ -31,20 +31,7 @@ if config.BoonChanges.HeartyAppetite.Enabled then
 	})
 end
 
-if config.BoonChanges.CarnalPleasureHealing.Enabled then
-	boon_text({
-		Traits = {
-			BloodManaBurstBoon = {
-				Description = 'Whenever you collect {!Icons.BloodDropIcon}, you restore {!Icons.Health} and may create a {$Keywords.HeartBurst}.',
-			},
-		},
-		StatLines = {
-			BoonEditCarnalPleasureHealStatDisplay = { Name = 'Health per Plasma:', Index = 2 },
-		},
-	})
-end
-
-if config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled then
+if config.BoonChanges.CarnalPleasure.Enabled then
 	boon_text({
 		Traits = {
 			BloodManaBurstBoon = {
@@ -53,15 +40,15 @@ if config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled then
 			},
 		},
 		StatLines = {
-			BoonEditCarnalPleasurePlasmaStatDisplay = { Name = 'Bonus Damage:', Index = 2 },
+			BoonEditCarnalPleasurePlasmaStatDisplay = { Name = 'Bonus Damage:', Index = 1 },
 		},
 	})
 end
 
-if config.BoonChanges.CarnalPleasurePlasmaBursts.Enabled and mod.tuning.CarnalPleasure.ShowHeartthrobCapacity then
+if config.BoonChanges.CarnalPleasure.Enabled and mod.tuning.CarnalPleasure.ShowHeartthrobCapacity then
 	boon_text({
 		StatLines = {
-			BoonEditCarnalPleasureCapacityStatDisplay = { Name = 'Max {$Keywords.HeartBurst} Capacity:', Index = 3 },
+			BoonEditCarnalPleasureCapacityStatDisplay = { Name = 'Max Heartthrobs:', Index = 2 },
 		},
 	})
 end
@@ -104,7 +91,7 @@ if config.BoonChanges.ObsessiveDevotion.Enabled then
 	})
 end
 
-if config.BoonChanges.ProfuseBleedingBloodSpill.Enabled then
+if config.BoonChanges.ProfuseBleeding.Enabled then
 	boon_text({
 		Traits = {
 			RendBloodDropBoon = {
@@ -120,7 +107,7 @@ if config.BoonChanges.ProfuseBleedingBloodSpill.Enabled then
 	})
 end
 
-if config.BoonChanges.HostileEnvironmentCastFollows.Enabled then
+if config.BoonChanges.HostileEnvironment.Enabled then
 	boon_text({
 		Traits = {
 			SelfCastBoon = {
@@ -130,33 +117,21 @@ if config.BoonChanges.HostileEnvironmentCastFollows.Enabled then
 	})
 end
 
-if config.BoonChanges.SunWorshiperRepeat.Enabled or config.BoonChanges.SunWorshiperHitch.Enabled then
-	local repeated = ''
-	if config.BoonChanges.SunWorshiperRepeat.Enabled then
-		repeated = '; later ones may as well'
-	end
-
-	local hitched = ''
-
+if config.BoonChanges.SunWorshiper.Enabled then
 	boon_text({
 		Traits = {
 			RaiseDeadBoon = {
 				Description = 'In each {$Keywords.EncounterAlt}, the first foe you slay returns to fight for you'
-					.. repeated .. '.' .. hitched,
+					.. '; later ones may as well.',
 			},
 		},
-	})
-end
-
-if config.BoonChanges.SunWorshiperRepeat.Enabled then
-	boon_text({
 		StatLines = {
 			BoonEditRepeatRaiseStatDisplay = { Name = 'Repeat Revival Chance:', Index = 2 },
 		},
 	})
 end
 
-if config.BoonChanges.LocalClimateCoversCastBoons.Enabled then
+if config.BoonChanges.LocalClimate.Enabled then
 	boon_text({
 		Traits = {
 			CastAttachBoon = {
@@ -166,7 +141,7 @@ if config.BoonChanges.LocalClimateCoversCastBoons.Enabled then
 	})
 end
 
-if config.BoonChanges.TranquilGainChannel.Enabled then
+if config.BoonChanges.TranquilGain.Enabled then
 	boon_text({
 		Traits = {
 			DemeterManaBoon = {
@@ -176,7 +151,7 @@ if config.BoonChanges.TranquilGainChannel.Enabled then
 	})
 end
 
-if config.BoonChanges.NaturalSelectionPoms.Enabled then
+if config.BoonChanges.NaturalSelection.Enabled then
 	local poms = mod.tuning.NaturalSelection
 	boon_text({
 		Traits = {
@@ -192,7 +167,7 @@ if config.BoonChanges.NaturalSelectionPoms.Enabled then
 	})
 end
 
-if config.BoonChanges.CryoPounderHammers.Enabled then
+if config.BoonChanges.CryoPounder.Enabled then
 	boon_text({
 		Traits = {
 			ClearRootBoon = {
@@ -202,12 +177,19 @@ if config.BoonChanges.CryoPounderHammers.Enabled then
 	})
 end
 
-if config.BoonChanges.AnvilGlowAndDash.Enabled then
+if config.BoonChanges.AnvilRing.Enabled then
 	boon_text({
 		Traits = {
 			HephaestusCastBoon = {
 				Description = 'Your {$Keywords.CastSet} deal damage {$TooltipData.ExtractData.Detonations} times in succession to foes in the binding circle, inflicting {$Keywords.DelayedKnockback}.',
 			},
+		},
+	})
+end
+
+if config.BoonChanges.SmithyRush.Enabled then
+	boon_text({
+		Traits = {
 			HephaestusSprintBoon = {
 				Description = '{$Keywords.DashSet} damages surrounding foes and inflicts {$Keywords.DelayedKnockback}, and again once you stop.',
 			},
@@ -215,7 +197,19 @@ if config.BoonChanges.AnvilGlowAndDash.Enabled then
 	})
 end
 
-if config.BoonChanges.MoltenTouchGlow.Enabled then
+if config.BoonChanges.HeavyMetal.Enabled then
+	boon_text({
+		Traits = {
+			HeavyArmorBoon = {
+				Description = 'Your {$Keywords.WeaponSet} deals more damage based on ' ..
+					'{$TooltipData.ExtractData.TooltipBonus:F} of your {!Icons.ArmorTotal}, and you gain ' ..
+					'some now. Foes\' blows cannot knock you back.',
+			},
+		},
+	})
+end
+
+if config.BoonChanges.MoltenTouch.Enabled then
 	boon_text({
 		Traits = {
 			AntiArmorBoon = {
@@ -226,7 +220,7 @@ if config.BoonChanges.MoltenTouchGlow.Enabled then
 	})
 end
 
-if config.BoonChanges.PremiumServiceHammers.Enabled then
+if config.BoonChanges.PremiumService.Enabled then
 	boon_text({
 		Traits = {
 			WeaponUpgradeBoon = {
@@ -237,7 +231,7 @@ if config.BoonChanges.PremiumServiceHammers.Enabled then
 	})
 end
 
-if config.BoonChanges.ChainReactionCooldownSkip.Enabled then
+if config.BoonChanges.ChainReaction.Enabled then
 	boon_text({
 		Traits = {
 			DoubleMassiveAttackBoon = {
@@ -268,7 +262,7 @@ if config.BoonChanges.SeismicHammer.Enabled then
 	})
 end
 
-if config.BoonChanges.RousingReceptionCastCurse.Enabled and mod.tuning.RousingReception.HitchOnly then
+if config.BoonChanges.RousingReception.Enabled and mod.tuning.RousingReception.HitchOnly then
 	boon_text({
 		Traits = {
 			SpawnCastDamageBoon = {
@@ -279,7 +273,7 @@ if config.BoonChanges.RousingReceptionCastCurse.Enabled and mod.tuning.RousingRe
 	})
 end
 
-if config.BoonChanges.AllTogetherDoubleElements.Enabled then
+if config.BoonChanges.AllTogether.Enabled then
 	boon_text({
 		Traits = {
 			AllElementalBoon = {
@@ -307,7 +301,7 @@ if config.BoonChanges.CherishedHeirloom.Enabled then
 	})
 end
 
-if config.BoonChanges.HardTargetBecomesPostHaste.Enabled then
+if config.BoonChanges.PostHaste.Enabled then
 	boon_text({
 		Traits = {
 			SlowProjectileBoon = {
@@ -346,7 +340,7 @@ if config.BoonChanges.BurningMeteor.Enabled then
 	})
 end
 
-if config.BoonChanges.CardioGainSprintMana.Enabled then
+if config.BoonChanges.CardioGain.Enabled then
 	boon_text({
 		Traits = {
 			HestiaManaBoon = {
@@ -359,7 +353,7 @@ if config.BoonChanges.CardioGainSprintMana.Enabled then
 	})
 end
 
-if config.BoonChanges.BreakerRushWaves.Enabled then
+if config.BoonChanges.BreakerRush.Enabled then
 	boon_text({
 		Traits = {
 			PoseidonSprintBoon = {
@@ -369,7 +363,7 @@ if config.BoonChanges.BreakerRushWaves.Enabled then
 	})
 end
 
-if config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then
+if config.BoonChanges.ArterialSpray.Enabled then
 	boon_text({
 		Traits = {
 			DoubleSplashBoon = {
@@ -382,7 +376,7 @@ if config.BoonChanges.ArterialSprayAlwaysDouble.Enabled then
 	})
 end
 
-if config.BoonChanges.RippleEffectOmegaBoons.Enabled then
+if config.BoonChanges.RippleEffect.Enabled then
 	boon_text({
 		Traits = {
 			MoneyDamageBoon = {
@@ -396,7 +390,7 @@ if config.BoonChanges.RippleEffectOmegaBoons.Enabled then
 	})
 end
 
-if config.BoonChanges.ShockingLossGuardians.Enabled then
+if config.BoonChanges.ShockingLoss.Enabled then
 	boon_text({
 		Traits = {
 			SpawnKillBoon = {
@@ -406,7 +400,7 @@ if config.BoonChanges.ShockingLossGuardians.Enabled then
 	})
 end
 
-if config.BoonChanges.KillerCurrentBolt.Enabled then
+if config.BoonChanges.KillerCurrent.Enabled then
 	boon_text({
 		Traits = {
 			LightningVulnerabilityBoon = {
@@ -419,7 +413,7 @@ if config.BoonChanges.KillerCurrentBolt.Enabled then
 	})
 end
 
-if config.BoonChanges.AirQualityAdditiveFloor.Enabled then
+if config.BoonChanges.AirQuality.Enabled then
 	boon_text({
 		Traits = {
 			ElementalDamageFloorBoon = {
@@ -429,7 +423,7 @@ if config.BoonChanges.AirQualityAdditiveFloor.Enabled then
 	})
 end
 
-if config.BoonChanges.ThermalDynamicsAllLightning.Enabled then
+if config.BoonChanges.ThermalDynamics.Enabled then
 	boon_text({
 		Traits = {
 			EchoBurnBoon = {
@@ -443,7 +437,7 @@ if config.BoonChanges.ThermalDynamicsAllLightning.Enabled then
 	})
 end
 
-local gloriousOn = config.BoonChanges.GloriousDisasterAlwaysSupercharged
+local gloriousOn = config.BoonChanges.GloriousDisaster
 if gloriousOn ~= nil and gloriousOn.Enabled then
 	boon_text({
 		Traits = {
@@ -454,7 +448,7 @@ if gloriousOn ~= nil and gloriousOn.Enabled then
 	})
 end
 
-local ionicGainOn = config.BoonChanges.IonicGainProximity
+local ionicGainOn = config.BoonChanges.IonicGain
 if ionicGainOn ~= nil and ionicGainOn.Enabled then
 	boon_text({
 		Traits = {
@@ -470,7 +464,7 @@ if ionicGainOn ~= nil and ionicGainOn.Enabled then
 	})
 end
 
-if config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then
+if config.BoonChanges.HarmForTheAfflicted.Enabled then
 	boon_text({
 		Traits = {
 			NewStatusDamage = {
@@ -481,9 +475,9 @@ if config.BoonChanges.HarmForTheAfflictedEveryStatus.Enabled then
 end
 
 
-local procs_froth = config.BoonChanges.SteamProcsFroth.Enabled
+local procs_froth = config.BoonChanges.ScaldingVapor.Enabled
 
-local keeps_froth = config.BoonChanges.ScaldingVaporKeepsFroth.Enabled
+local keeps_froth = config.BoonChanges.ScaldingVapor.Enabled
 
 if procs_froth or keeps_froth then
 	local held = ''

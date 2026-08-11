@@ -26,7 +26,7 @@ end)
 
 
 function stabbing_rush_active()
-	return config.BoonChanges.StabbingRushDuration.Enabled and game.HeroHasTrait('AresSprintBoon')
+	return config.BoonChanges.StabbingRush.Enabled and game.HeroHasTrait('AresSprintBoon')
 end
 
 function stabbing_rush_sprinting()

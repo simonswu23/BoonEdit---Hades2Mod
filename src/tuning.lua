@@ -8,17 +8,13 @@
 mod.tuning = {}
 
 mod.tuning.CarnalPleasure = {
-	-- the floor, not the ceiling: holding Plasma takes it higher rather than switching it on
-	BaseBonus = 0.50,
-	PlasmaBonus = 0.30,
-	-- where the game itself stops counting Plasma, so the bonus stops climbing there too
-	PlasmaCeiling = 50,
-	-- flat and separate from the damage, so it is not extracted and gets no stat line
-	HeartSizeMultiplier = 2.0,
+	BaseDamage = 50,
+	DamagePerPlasma = 1,
+	BaseRadius = 1.20,
+	RadiusPerPlasma = 0.01,
+	PlasmaCeiling = 999,
 	PlasmaManaValue = 10,
-	-- how many Heartthrobs may be in the air before making one cancels the oldest; vanilla hardcodes 6
 	HeartthrobCapacity = 12,
-	-- off to spend the boon's second stat line elsewhere: the tray only ever draws two
 	ShowHeartthrobCapacity = true,
 }
 
@@ -50,8 +46,7 @@ mod.tuning.IonicGain = {
 	-- the drop's own spawn keeps it 450 or further out, so this is that distance read back
 	Range = 450,
 	Interval = 0.25,
-	-- The Unseen's ladder, not Ionic Gain's own: the trait's `RarityLevels` scale a respawn interval
-	-- and so run downward, which on a regen rate would mean a rarer boon restoring less.
+	-- nearby-mana-regen ladder
 	RarityScale = {
 		Common = 1.00,
 		Rare = 1.34,
@@ -61,13 +56,11 @@ mod.tuning.IonicGain = {
 }
 
 mod.tuning.BeachBall = {
-	-- written to the projectile rather than the boon, so the tooltip follows without a text change
 	BlastDamage = 400,
 }
 
 mod.tuning.GloriousDisaster = {
 	SkipSuperchargeCondition = true,
-	-- lives in `PlayerProjectiles.sjson`, not Lua, so it is written through an sjson hook
 	BoltDamage = 50,
 }
 
@@ -157,7 +150,7 @@ mod.tuning.SecondWind = {
 
 mod.tuning.BurningMeteor = {
 	FireballMultiplier = 1.5,
-	SizeMultiplier = 1.5,
+	SizeMultiplier = 2.0,
 }
 
 mod.tuning.CardioGain = {
@@ -165,7 +158,7 @@ mod.tuning.CardioGain = {
 	SprintManaGain = 0.75,
 }
 
-mod.tuning.SteamProcsFroth = {
+mod.tuning.ScaldingVapor = {
 	-- fraction of the Font's own cooldown kept; vanilla's is 0.6s, so a half is 0.3s
 	FontCooldownMultiplier = 0.5,
 }

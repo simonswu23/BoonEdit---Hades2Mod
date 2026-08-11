@@ -136,10 +136,20 @@ once('Heartthrobs', function()
 				args.FizzleOldestProjectileCount = capacity
 			end
 
+			-- written onto the projectile's own damage, so anything that multiplies a Heartthrob
+			-- later multiplies the raised figure rather than stacking against it
 			---@diagnostic disable-next-line: undefined-global
-			local damage = carnal_pleasure_plasma_boost()
-			if damage > 1 then
-				args.DamageMultiplier = (args.DamageMultiplier or 1) * damage
+			local bonus = carnal_pleasure_bonus_damage()
+			if bonus > 0 then
+				local baseDamage = game.GetBaseDataValue({
+					Type = 'Projectile',
+					Name = HEARTTHROB_PROJECTILE,
+					Property = 'Damage',
+				})
+				if type(baseDamage) == 'number' then
+					args.DataProperties = args.DataProperties or {}
+					args.DataProperties.Damage = baseDamage + bonus
+				end
 			end
 
 			---@diagnostic disable-next-line: undefined-global
@@ -259,8 +269,10 @@ import 'boons/natural_selection.lua'
 import 'boons/cryo_pounder.lua'
 
 import 'boons/unseen_ire.lua'
+import 'boons/old_grudge.lua'
 
 import 'boons/anvil_rush.lua'
+import 'boons/heavy_armor.lua'
 import 'boons/molten_touch.lua'
 import 'boons/premium_service.lua'
 import 'boons/chain_reaction.lua'

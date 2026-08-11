@@ -5,7 +5,7 @@
 -- All Together (Hera legendary) grants 2 of each element on pickup instead of 1.
 
 once('AllTogetherDoubleElements', function()
-	if not config.BoonChanges.AllTogetherDoubleElements.Enabled then return end
+	if not config.BoonChanges.AllTogether.Enabled then return end
 
 	local allTogether = game.TraitData.AllElementalBoon
 	local doubled = {}

@@ -7,7 +7,7 @@
 mod.ChainReactionDisplaying = mod.ChainReactionDisplaying or 0
 
 once('ChainReactionCooldownSkip', function()
-	if config.BoonChanges.ChainReactionCooldownSkip.Enabled then
+	if config.BoonChanges.ChainReaction.Enabled then
 		local chain = game.TraitData.DoubleMassiveAttackBoon
 
 		chain.DoubleAttackInterval = nil
@@ -45,7 +45,7 @@ end)
 
 
 function chain_reaction_skips()
-	if not config.BoonChanges.ChainReactionCooldownSkip.Enabled then return false end
+	if not config.BoonChanges.ChainReaction.Enabled then return false end
 	if not game.CurrentRun or not game.CurrentRun.Hero then return false end
 	if mod.ChainReactionDisplaying > 0 then return false end
 	if not game.HeroHasTrait('DoubleMassiveAttackBoon') then return false end

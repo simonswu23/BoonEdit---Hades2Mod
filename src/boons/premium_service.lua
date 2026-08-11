@@ -5,7 +5,7 @@
 -- hold to Legendary, and drops a reworked Anvil of Fates.
 
 once('PremiumServiceHammers', function()
-	if config.BoonChanges.PremiumServiceHammers.Enabled then
+	if config.BoonChanges.PremiumService.Enabled then
 		game.TraitData.WeaponUpgradeBoon.AcquireFunctionName = _PLUGIN.guid .. '.PremiumServiceAcquire'
 
 		local anvil = game.ConsumableData.ChaosWeaponUpgrade
@@ -40,7 +40,7 @@ local PREMIUM_SERVICE_HAMMER_COUNT = 99
 function mod.PremiumServiceAcquire(args, traitData)
 	game.UpgradeAspect(args, traitData)
 
-	if not config.BoonChanges.PremiumServiceHammers.Enabled then return end
+	if not config.BoonChanges.PremiumService.Enabled then return end
 
 	game.UpgradeHammers({ Count = PREMIUM_SERVICE_HAMMER_COUNT })
 
@@ -57,7 +57,7 @@ end
 
 function premium_service_rank_hammer(trait)
 	if mod.PremiumServiceRanking then return end
-	if not config.BoonChanges.PremiumServiceHammers.Enabled then return end
+	if not config.BoonChanges.PremiumService.Enabled then return end
 	if not game.CurrentRun or not game.CurrentRun.Hero then return end
 
 	if not trait or not trait.Name or not trait.IsHammerTrait then return end
@@ -168,7 +168,7 @@ function anvil_unlock_exits()
 end
 
 function mod.AnvilOfFates(args)
-	if not config.BoonChanges.PremiumServiceHammers.Enabled then
+	if not config.BoonChanges.PremiumService.Enabled then
 		return game.ChaosHammerUpgrade(args)
 	end
 

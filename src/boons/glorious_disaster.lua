@@ -6,7 +6,7 @@
 -- at detonation instead, through vanilla's own `OnEarlyCastDetonation`.
 
 once('GloriousDisasterAxe', function()
-	if not config.BoonChanges.GloriousDisasterAxe.Enabled then return end
+	if not config.BoonChanges.GloriousDisaster.Enabled then return end
 
 	game.TraitData.ApolloSecondStageCastBoon.OnEarlyCastDetonation = {
 		FunctionName = _PLUGIN.guid .. '.GloriousDisasterEarlyDetonation',
@@ -15,7 +15,7 @@ end)
 
 
 function glorious_disaster_supercharged()
-	local toggle = config.BoonChanges.GloriousDisasterAlwaysSupercharged
+	local toggle = config.BoonChanges.GloriousDisaster
 	return toggle ~= nil and toggle.Enabled == true
 end
 
@@ -45,7 +45,7 @@ end)
 
 ---@diagnostic disable-next-line: unused-local
 function mod.GloriousDisasterEarlyDetonation(projectileId, _args)
-	if not config.BoonChanges.GloriousDisasterAxe.Enabled then return end
+	if not config.BoonChanges.GloriousDisaster.Enabled then return end
 
 	if not game.HeroHasTrait('ApolloExCastBoon') then return end
 

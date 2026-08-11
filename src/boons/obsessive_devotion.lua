@@ -71,6 +71,7 @@ end
 
 local function devotion_charmable(unit)
 	return not unit.IsBoss and not unit.UseBossHealthBar and not unit.BlockCharm
+		and not unit.SkipModifiers
 end
 
 

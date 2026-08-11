@@ -6,7 +6,7 @@
 -- duration and restores Magick per foe caught.
 
 once('GlamourGainPulse', function()
-	if not config.BoonChanges.GlamourGainPulse.Enabled then return end
+	if not config.BoonChanges.GlamourGain.Enabled then return end
 
 	local glamour = game.TraitData.AphroditeManaBoon
 

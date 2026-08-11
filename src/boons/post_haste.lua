@@ -6,7 +6,7 @@
 -- over time recharges faster.
 
 once('HardTargetBecomesPostHaste', function()
-	if config.BoonChanges.HardTargetBecomesPostHaste.Enabled then
+	if config.BoonChanges.PostHaste.Enabled then
 		local haste = game.TraitData.SlowProjectileBoon
 
 		haste.EnemyProjectileSpeedMultiplier = nil
@@ -40,7 +40,7 @@ end)
 
 
 function post_haste_recharge(args)
-	if not config.BoonChanges.HardTargetBecomesPostHaste.Enabled then return args end
+	if not config.BoonChanges.PostHaste.Enabled then return args end
 	if not args or not args.Cooldown then return args end
 
 	local multiplier = game.GetTotalHeroTraitValue('OlympianRechargeMultiplier', { IsMultiplier = true })

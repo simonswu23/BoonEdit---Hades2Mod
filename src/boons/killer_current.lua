@@ -5,7 +5,7 @@
 -- damaging one may call a bolt down on it.
 
 once('KillerCurrentBolt', function()
-	if not config.BoonChanges.KillerCurrentBolt.Enabled then return end
+	if not config.BoonChanges.KillerCurrent.Enabled then return end
 
 	local killerCurrent = game.TraitData.LightningVulnerabilityBoon
 	killerCurrent.AddOutgoingDamageModifiers = nil
@@ -27,7 +27,7 @@ end)
 
 ---@diagnostic disable-next-line: unused-local
 function mod.KillerCurrentBolt(victim, functionArgs, triggerArgs)
-	if not config.BoonChanges.KillerCurrentBolt.Enabled then return end
+	if not config.BoonChanges.KillerCurrent.Enabled then return end
 	if not victim or not victim.ActiveEffects or not victim.ActiveEffects.AmplifyKnockbackEffect then return end
 	if not rolls(mod.tuning.KillerCurrent.BoltChance) then return end
 
