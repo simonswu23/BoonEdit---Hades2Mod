@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Premium Service (Hephaestus legendary) keeps its Aspect rank bump, raises every hammer upgrade you
--- hold to Legendary, and drops a reworked Anvil of Fates.
 
 once('PremiumServiceHammers', function()
 	if config.BoonChanges.PremiumService.Enabled then

@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Ionic Gain (Zeus): its Magick drop feeds you while you stand near it, not only when picked up.
--- Started from the room hook, since the boon's one `SetupFunction` already spawns the drop.
-
 local function ionic_gain_on()
 	local toggle = config.BoonChanges.IonicGain
 	return toggle ~= nil and toggle.Enabled == true
@@ -50,6 +47,7 @@ end
 
 function ionic_gain_regen()
 	local tuning = mod.tuning.IonicGain
+	local carried = 0
 
 	while game.CurrentRun and game.CurrentRun.CurrentRoom and game.CurrentRun.Hero
 		and not game.CurrentRun.Hero.IsDead and game.HeroHasTrait('ZeusManaBoon') do
@@ -61,9 +59,17 @@ function ionic_gain_regen()
 			if nearest and nearest <= tuning.Range then
 				local rate = ionic_gain_rate()
 				if rate > 0 then
-					game.ManaDelta(rate * tuning.Interval)
+
+					carried = carried + rate * tuning.Interval
+					local whole = math.floor(carried)
+					if whole > 0 then
+						carried = carried - whole
+						game.ManaDelta(whole, { Silent = false, SWuManaDrip = true })
+					end
 				end
 			end
+		else
+			carried = 0
 		end
 
 		game.wait(tuning.Interval, game.RoomThreadName)

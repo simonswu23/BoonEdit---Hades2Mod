@@ -30,7 +30,7 @@ reload = mods['SGG_Modding-ReLoad']
 
 ---@module 'config'
 config = chalk.auto 'config.lua'
-public.config = config -- so other mods can access our config
+public.config = config
 
 local function on_ready()
 	if config.enabled == false then return end

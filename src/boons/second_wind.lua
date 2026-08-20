@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Paid Dues (Hermes legendary) becomes "Second Wind": two Casts down at once, and a second Dash before
--- the recharge.
 
 once('SecondWind', function()
 	if config.BoonChanges.SecondWind.Enabled then
@@ -12,11 +10,11 @@ once('SecondWind', function()
 
 		secondWind.PropertyChanges = {}
 		for _, weaponName in ipairs({
-			'WeaponCast',                -- the plain Cast
-			'WeaponAnywhereCast',        -- Lightning Lance
-			'WeaponCastLob',             -- Tipsy Shot
-			'WeaponCastProjectile',      -- Glowing Coal
-			'WeaponCastProjectileHades', -- Howling Soul
+			'WeaponCast',
+			'WeaponAnywhereCast',
+			'WeaponCastLob',
+			'WeaponCastProjectile',
+			'WeaponCastProjectileHades',
 		}) do
 			table.insert(secondWind.PropertyChanges, {
 				WeaponName = weaponName,

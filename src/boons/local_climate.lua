@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Local Climate (Demeter) covers Cast-boon damage, not just the Omega detonation; the weapon side is
--- what reaches Hestia's Scorch, which has no projectile of its own.
-
 once('LocalClimateCoversCastBoons', function()
 	if not config.BoonChanges.LocalClimate.Enabled then return end
 

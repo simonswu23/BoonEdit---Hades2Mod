@@ -1,9 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Heavy Metal (Hephaestus) plants you where you stand again: while you hold it, foes' blows no
--- longer shove you around. The game keeps its own switch for this, named by flag so that several
--- holders may ask for it at once -- nothing else asks for it on a boon's behalf.
 
 local HEAVY_ARMOR_TRAIT = 'HeavyArmorBoon'
 

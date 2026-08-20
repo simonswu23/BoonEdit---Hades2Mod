@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Thermal Dynamics (Hestia x Zeus) reaches past Blitz to all of Zeus' lightning, and measures the Scorch
--- it lands against the damage rather than a flat count.
-
 local LIGHTNING = {
 	'ZeusEchoStrike',
 	'ZeusCastStrike',

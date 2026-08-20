@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Glamour Gain (Aphrodite) becomes a pulse: it inflicts Weak on everything nearby once every Weak
--- duration and restores Magick per foe caught.
-
 once('GlamourGainPulse', function()
 	if not config.BoonChanges.GlamourGain.Enabled then return end
 
@@ -35,6 +32,7 @@ end
 
 function mod.GlamourGainPulse(hero, args)
 	local interval = (args and args.Interval) or 1
+	local carried = 0
 
 	while game.CurrentRun and game.CurrentRun.CurrentRoom and game.CurrentRun.Hero
 		and not game.CurrentRun.Hero.IsDead and game.HeroHasTrait('AphroditeManaBoon') do
@@ -77,7 +75,12 @@ function mod.GlamourGainPulse(hero, args)
 					ScaleRadius = args.Range,
 				})
 
-				game.ManaDelta(args.ManaRegen * struck)
+				carried = carried + args.ManaRegen * struck
+				local whole = math.floor(carried)
+				if whole > 0 then
+					carried = carried - whole
+					game.ManaDelta(whole, { Silent = false, SWuManaDrip = true })
+				end
 			end
 		end
 

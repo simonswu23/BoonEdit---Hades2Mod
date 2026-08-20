@@ -1,9 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Old Grudge (Hades) stops being a one-time use internally. It still lands once a night, on the
--- confrontation it names, but the boon is never marked spent -- so anything that wants to set the
--- burst off again has a live trait to read it from.
 
 local OLD_GRUDGE = 'HadesPreDamageBoon'
 

@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Every `boon_text` block, each keeping its own config guard. Statements rather than a data table
--- because several build their wording out of `mod.tuning`, which is why this loads after it.
 
 if config.BoonChanges.GlamourGain.Enabled then
 	boon_text({
@@ -22,7 +20,9 @@ if config.BoonChanges.HeartyAppetite.Enabled then
 		Traits = {
 			MaxHealthDamageBoon = {
 				Description = 'You deal more damage with your {$Keywords.WeaponSet} the more {!Icons.HealthUpTotal} ' ..
-					'you have. Restore your {!Icons.Health} now, and your healing effects are more powerful for the rest of the night.',
+					'you have. A hearty meal appears now and every ' ..
+					'{$TooltipData.ExtractData.TooltipEncountersPerFood} {$Keywords.EncounterPluralAlt}, ' ..
+					'and your healing effects are more powerful for the rest of the night.',
 			},
 		},
 		StatLines = {
@@ -71,11 +71,11 @@ if config.BoonChanges.SmolderingForge.Enabled then
 	})
 end
 
-if config.BoonChanges.ObsessiveDevotion.Enabled then
+if config.BoonChanges.EcstaticObsession.Enabled then
 	boon_text({
 		Traits = {
 			RandomStatusBoon = {
-				DisplayName = 'Obsessive Devotion',
+				DisplayName = 'Ecstatic Obsession',
 				Description = 'When you inflict {$Keywords.Weak}, you may inflict {$Keywords.Charm} ' ..
 					'instead. You deal more damage for each nearby character fighting for you.',
 			},
@@ -86,7 +86,7 @@ if config.BoonChanges.ObsessiveDevotion.Enabled then
 			},
 		},
 		StatLines = {
-			BoonEditDevotionChanceStatDisplay = { Name = '{$Keywords.Charm} Chance:', Index = 1 },
+			BoonEditObsessionChanceStatDisplay = { Name = '{$Keywords.Charm} Chance:', Index = 1 },
 		},
 	})
 end
@@ -103,6 +103,24 @@ if config.BoonChanges.ProfuseBleeding.Enabled then
 		},
 		StatLines = {
 			BoonEditBloodSpillChanceStatDisplay = { Name = 'Spill Chance:', Index = 1 },
+		},
+	})
+end
+
+if config.BoonChanges.BloodSpree.Enabled then
+	boon_text({
+		Traits = {
+			LowHealthLifestealBoon = {
+				Description = 'While you have less than ' ..
+					'{$TooltipData.ExtractData.ReportedRequirement}{!Icons.Health}, your ' ..
+					'{$Keywords.AttackSet} and {$Keywords.SpecialSet} restore {!Icons.Health}. ' ..
+					'Whenever you slay a foe, gain a chance to deal ' ..
+					'{$TraitData.AresStatusDoubleDamageBoon.DamagePercent:F} damage for the rest of ' ..
+					'the {$Keywords.EncounterAlt}.',
+			},
+		},
+		StatLines = {
+			BoonEditBloodSpreeCritStatDisplay = { Name = 'Damage Chance per Kill:', Index = 2 },
 		},
 	})
 end
@@ -475,38 +493,17 @@ if config.BoonChanges.HarmForTheAfflicted.Enabled then
 end
 
 
-local procs_froth = config.BoonChanges.ScaldingVapor.Enabled
-
-local keeps_froth = config.BoonChanges.ScaldingVapor.Enabled
-
-if procs_froth or keeps_froth then
-	local held = ''
-	if procs_froth and keeps_froth then
-		held = ', which keeps the {$Keywords.KnockbackAmplify} and sets it off more often'
-	elseif keeps_froth then
-		held = ', which keeps the {$Keywords.KnockbackAmplify}'
-	else
-		held = ', which sets off the {$Keywords.KnockbackAmplify} more often'
-	end
-
-	local steam = 'A burning cloud that rapidly deals damage'
-	if not keeps_froth then
-		steam = 'A burning cloud that removes {$Keywords.KnockbackAmplify} from foes and rapidly deals damage'
-	end
-	if procs_froth then
-		steam = steam .. ', and counts as a hit for {$Keywords.KnockbackAmplify}'
-	end
-
+if config.BoonChanges.ScaldingVapor.Enabled then
 	boon_text({
 		Traits = {
 			SteamBoon = {
-				Description = 'If foes with {$Keywords.KnockbackAmplify} are struck by your fire effects from ' ..
-					'{#BoldFormatGraft}Hestia{#Prev}, they are engulfed in {$Keywords.Steam}' .. held .. '.',
+				Description = 'If foes with {$Keywords.KnockbackAmplify} are struck by your fireball effects ' ..
+					'from {#BoldFormatGraft}Hestia{#Prev}, they are engulfed in {$Keywords.Steam}.',
 			},
 		},
 		Keywords = {
 			Steam = {
-				Description = steam .. '. Lasts {#BoldFormatGraft}{$TooltipData.ExtractData.Duration} Sec.',
+				Description = 'A burning cloud that rapidly deals damage. Lasts {#BoldFormatGraft}{$TooltipData.ExtractData.Duration} Sec.',
 			},
 		},
 	})

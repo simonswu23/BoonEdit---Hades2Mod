@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Cherished Heirloom (Demeter x Hera) keeps its rank bonus, stops Keepsakes running out for the night,
--- and lets you wear a second one.
 
 once('CherishedHeirloom', function()
 	if config.BoonChanges.CherishedHeirloom.Enabled then

@@ -1,10 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Sun Worshiper (Apollo x Hera): after the first foe is raised in an encounter, later slain foes may
--- rise too. The `SunWorshiperHitch` half is deleted rather than switched off -- making a summon
--- strikeable put it in `EnemyTeam`, and anything aimed at that group then found your own side. Its
--- config key stays, and stays off.
 
 once('SunWorshiper', function()
 	local raiseDead = game.TraitData.RaiseDeadBoon
@@ -19,6 +15,23 @@ once('SunWorshiper', function()
 			HideSigns = true,
 		})
 	end
+
+	modutil.mod.Path.Wrap("ApplyEffect", function(base, args)
+		local id = args and args.DestinationId
+		local unit = id and game.ActiveEnemies and game.ActiveEnemies[id]
+		if sun_worshiper_warded(unit, args and args.EffectName) then return end
+		return base(args)
+	end)
+
+	modutil.mod.Path.Wrap("ApplyBurn", function(base, victim, functionArgs, triggerArgs)
+		if sun_worshiper_warded(victim, functionArgs and functionArgs.EffectName) then return end
+		return base(victim, functionArgs, triggerArgs)
+	end)
+
+	modutil.mod.Path.Wrap("ApplyRoot", function(base, victim, functionArgs, triggerArgs)
+		if sun_worshiper_warded(victim, functionArgs and functionArgs.EffectName) then return end
+		return base(victim, functionArgs, triggerArgs)
+	end)
 
 	modutil.mod.Path.Wrap("RaiseKilledEnemy", function(base, enemy, args)
 		if sun_worshiper_should_repeat() then
@@ -46,4 +59,20 @@ function sun_worshiper_should_repeat()
 
 	game.MapState.BoonEditSunWorshiperRepeats = raised + 1
 	return true
+end
+
+
+function sun_worshiper_curse(effectName)
+	local effect = effectName and game.EffectData[effectName]
+	local properties = effect and (effect.EffectData or effect.DataProperties)
+	return properties ~= nil and properties.IsVulnerabilityEffect == true
+end
+
+
+function sun_worshiper_warded(unit, effectName)
+	if not mod.tuning.SunWorshiper.WardSummons then return false end
+	if not unit or not unit.ObjectId then return false end
+	if not is_allied_summon(unit) then return false end
+
+	return sun_worshiper_curse(effectName)
 end

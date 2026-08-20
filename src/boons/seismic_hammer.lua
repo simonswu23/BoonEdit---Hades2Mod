@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Seismic Servo (Hephaestus x Poseidon) becomes "Seismic Hammer": Volcanic Strike and Volcanic Flourish
--- blasts erupt your Cast into an Omega Cast.
-
 once('SeismicHammer', function()
 	if not config.BoonChanges.SeismicHammer.Enabled then return end
 

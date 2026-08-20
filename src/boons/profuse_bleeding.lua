@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Profuse Bleeding (Ares): `CheckAresBloodDrop` already rolls to spill a Blood Drop; vanilla just never
--- points a trait at it.
-
 once('ProfuseBleedingBloodSpill', function()
 	if not config.BoonChanges.ProfuseBleeding.Enabled then return end
 

@@ -1,7 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Tranquil Gain (Demeter) pays out for holding an Omega Move; `MovePenaltyDuration` is reused as the hold.
 
 once('TranquilGainChannel', function()
 	if not config.BoonChanges.TranquilGain.Enabled then return end
@@ -86,7 +85,7 @@ function mod.TranquilGainChannel(hero, args)
 				local whole = math.floor(carried)
 				if whole > 0 then
 					carried = carried - whole
-					game.ManaDelta(whole, { Silent = false })
+					game.ManaDelta(whole, { Silent = false, SWuManaDrip = true })
 				end
 			end
 		else

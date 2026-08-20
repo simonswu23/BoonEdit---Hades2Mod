@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Natural Selection (Demeter x Poseidon) hands out Poms instead of spreading levels: a batch on pickup,
--- then one more every few encounters.
 
 once('NaturalSelectionPoms', function()
 	if config.BoonChanges.NaturalSelection.Enabled then

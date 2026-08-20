@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Killer Current (Zeus x Poseidon): instead of amplifying lightning against Froth-afflicted foes,
--- damaging one may call a bolt down on it.
 
 once('KillerCurrentBolt', function()
 	if not config.BoonChanges.KillerCurrent.Enabled then return end

@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Shocking Loss (Zeus legendary) no longer passes over Guardians: they take a large hit, scaled by your
--- damage modifiers, instead of being immune outright.
 
 once('ShockingLossGuardians', function()
 	if config.BoonChanges.ShockingLoss.Enabled then

@@ -1,7 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Cardio Gain (Hestia) also restores Magick on Sprint, not just on hit.
 
 once('CardioGainSprintMana', function()
 	if not config.BoonChanges.CardioGain.Enabled then return end

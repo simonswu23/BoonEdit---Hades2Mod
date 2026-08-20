@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Anvil Ring (Hephaestus) inflicts Glow, paid for with 10 base damage; Smithy Rush fires the same
--- strike at half damage on starting and stopping a Dash.
 
 once('AnvilRing', function()
 	if not config.BoonChanges.AnvilRing.Enabled then return end
@@ -25,8 +23,6 @@ once('AnvilRing', function()
 end)
 
 
--- After Anvil Ring's block, so that with both on the Dash strike inherits the reduced ladder the
--- Glow is paid for with. With Anvil Ring off it simply mirrors the untouched one.
 once('SmithyRush', function()
 	if not config.BoonChanges.SmithyRush.Enabled then return end
 

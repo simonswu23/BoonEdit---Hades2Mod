@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Hard Target (Hermes) becomes "Post Haste": instead of slowing enemy shots, anything that recharges
--- over time recharges faster.
-
 once('HardTargetBecomesPostHaste', function()
 	if config.BoonChanges.PostHaste.Enabled then
 		local haste = game.TraitData.SlowProjectileBoon

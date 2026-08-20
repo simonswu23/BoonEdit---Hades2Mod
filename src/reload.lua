@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Re-run on every reload: shared helpers, the per-room hooks, and the import of every boon file.
--- Anything that must not run twice goes inside `once`.
 
 mod.SetupDone = mod.SetupDone or {}
 
@@ -28,8 +26,7 @@ function prefix_SetupMap()
 end
 
 function reload_config()
-	-- Do not collapse to `return chalk.auto(...)`: that is a tail call, so Lua drops this frame and
-	-- ENVY's `getfenv` lands on `pcall`, a C function with no `_ENV`, and the load fails.
+
 	local ok, reloaded = pcall(function()
 		local loaded = chalk.auto('config.lua')
 		return loaded
@@ -136,8 +133,6 @@ once('Heartthrobs', function()
 				args.FizzleOldestProjectileCount = capacity
 			end
 
-			-- written onto the projectile's own damage, so anything that multiplies a Heartthrob
-			-- later multiplies the raised figure rather than stacking against it
 			---@diagnostic disable-next-line: undefined-global
 			local bonus = carnal_pleasure_bonus_damage()
 			if bonus > 0 then
@@ -250,15 +245,17 @@ end
 
 ---@diagnostic disable: undefined-global
 
+import 'boons/fireballs.lua'
 import 'boons/glamour_gain.lua'
 import 'boons/carnal_pleasure.lua'
 import 'boons/smoldering_forge.lua'
-import 'boons/obsessive_devotion.lua'
+import 'boons/ecstatic_obsession.lua'
 import 'boons/hearty_appetite.lua'
 
 import 'boons/stabbing_rush.lua'
 import 'boons/profuse_bleeding.lua'
 import 'boons/hostile_environment.lua'
+import 'boons/blood_spree.lua'
 
 import 'boons/sun_worshiper.lua'
 

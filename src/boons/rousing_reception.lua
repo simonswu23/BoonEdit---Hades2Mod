@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Rousing Reception (Hera) additionally curses the foes it damages -- Hitch under `HitchOnly`, otherwise
--- the status belonging to whichever Cast you are running.
 
 once('RousingReceptionCastCurse', function()
 	local summonProjectile = game.ProjectileData.HeraCastSummonProjectile

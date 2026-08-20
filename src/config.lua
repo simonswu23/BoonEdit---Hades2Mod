@@ -2,10 +2,7 @@ local config = {
   version = 1;
   enabled = true;
 
-  -- Every boon change toggles independently here; the numbers behind each live in `mod.tuning`.
-  -- Chalk turns this into an editable .cfg in ReturnOfModding/config/.
   BoonChanges = {
-
     AirQuality = {
       Enabled = true;
     };
@@ -23,6 +20,10 @@ local config = {
     };
 
     BeachBall = {
+      Enabled = true;
+    };
+
+    BloodSpree = {
       Enabled = true;
     };
 
@@ -55,6 +56,10 @@ local config = {
     };
 
     CryoPounder = {
+      Enabled = true;
+    };
+
+    EcstaticObsession = {
       Enabled = true;
     };
 
@@ -102,10 +107,6 @@ local config = {
       Enabled = true;
     };
 
-    ObsessiveDevotion = {
-      Enabled = true;
-    };
-
     OldGrudge = {
       Enabled = true;
     };
@@ -135,7 +136,7 @@ local config = {
     };
 
     ScaldingVapor = {
-      Enabled = false;
+      Enabled = true;
     };
 
     SecondWind = {
@@ -181,12 +182,11 @@ local config = {
     WinterHarvest = {
       Enabled = true;
     };
-
   };
 
   Debug = {
+    LogScaldingVapor = false;
 
-    -- Trait names, separated by commas, semicolons or spaces.
     GrantTraits = '';
 
     GrantRarity = 'Common';

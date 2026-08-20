@@ -1,16 +1,12 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Every requirement edit -- what the game will offer you and what you must hold to be offered it.
--- There is no second place to look. Editing a `LinkedTraitData` group reaches every requirement
--- reading it, and Smithy Rush's removals run last so they see what the blocks above rebuilt.
 
 once('BoonRequirements', function()
 
-	-- Engagement Ring alone, replacing vanilla's "any Cast boon".
 	if config.BoonChanges.RousingReception.Enabled then
 		game.TraitRequirements.SpawnCastDamageBoon = {
-			OneOf = { 'HeraCastBoon' }, -- Engagement Ring
+			OneOf = { 'HeraCastBoon' },
 		}
 	end
 
@@ -26,11 +22,7 @@ once('BoonRequirements', function()
 	if config.BoonChanges.GloriousDisaster.Enabled then
 		game.TraitRequirements.ApolloSecondStageCastBoon = {
 			OneFromEachSet = {
-				{
-					'ApolloExCastBoon',   -- Nova Burst
-					'ApolloManaBoon',     -- Lucid Gain
-					'ApolloCastAreaBoon', -- Super Nova
-				},
+				{ 'ApolloExCastBoon' },
 				{ 'ZeusWeaponBoon', 'ZeusSpecialBoon', 'ZeusCastBoon', 'ZeusSprintBoon' },
 			},
 		}
@@ -40,7 +32,7 @@ once('BoonRequirements', function()
 		game.TraitRequirements.BloodManaBurstBoon = {
 			OneFromEachSet = {
 				game.LinkedTraitData.AresBloodDropTraits,
-				{ 'ManaBurstBoon' }, -- Heart Breaker
+				{ 'ManaBurstBoon' },
 			},
 		}
 	end
@@ -48,6 +40,15 @@ once('BoonRequirements', function()
 	if config.BoonChanges.ProfuseBleeding.Enabled then
 		game.TraitRequirements.RendBloodDropBoon = { OneOf = game.LinkedTraitData.AresRendTraits }
 		table.insert(game.LinkedTraitData.AresBloodDropTraits, 'RendBloodDropBoon')
+	end
+
+	if config.BoonChanges.ScaldingVapor.Enabled then
+		game.TraitRequirements.SteamBoon = {
+			OneFromEachSet = {
+				game.LinkedTraitData.PoseidonKnockbackAmplifyTraits,
+				{ 'CastProjectileBoon', 'FireballManaSpecialBoon' },
+			},
+		}
 	end
 
 	if config.BoonChanges.SeismicHammer.Enabled then
@@ -62,17 +63,17 @@ once('BoonRequirements', function()
 	if config.BoonChanges.PostHaste.Enabled then
 		game.TraitRequirements.SlowProjectileBoon = {
 			OneOf = {
-				'TimedCritVulnerabilityBoon',    -- Death Warrant
-				'RetaliateInvulnerabilityBoon',  -- Defensive Posture
-				'AthenaProjectileBoon',          -- Phalanx Shot
-				'PowerDrinkBoon',                -- Bottomless Drink
-				'FogDamageBonusBoon',            -- Happy Haze
-				'HephaestusWeaponBoon',          -- Volcanic Strike
-				'HephaestusSpecialBoon',         -- Volcanic Flourish
-				'PoseidonManaBoon',              -- Flood Gain
-				'ZeusManaBoon',                  -- Ionic Gain
-				'AutoRevengeBoon',               -- Heinous Affront
-				'HadesInvisibilityRetaliateBoon',-- Unseen Ire
+				'TimedCritVulnerabilityBoon',
+				'RetaliateInvulnerabilityBoon',
+				'AthenaProjectileBoon',
+				'PowerDrinkBoon',
+				'FogDamageBonusBoon',
+				'HephaestusWeaponBoon',
+				'HephaestusSpecialBoon',
+				'PoseidonManaBoon',
+				'ZeusManaBoon',
+				'AutoRevengeBoon',
+				'HadesInvisibilityRetaliateBoon',
 			},
 		}
 	end
@@ -80,9 +81,9 @@ once('BoonRequirements', function()
 	if config.BoonChanges.BurningMeteor.Enabled then
 		game.TraitRequirements.BurnSprintBoon = {
 			OneFromEachSet = {
-				{ 'HestiaWeaponBoon', 'HestiaSpecialBoon', 'HestiaCastBoon' },   -- Flame Strike / Flourish / Smolder Ring
-				{ 'CastProjectileBoon', 'FireballManaSpecialBoon' },             -- Glowing Coal / Controlled Burn
-				{ 'BurnExplodeBoon', 'BurnArmorBoon', 'AloneDamageBoon' },       -- Flash Fry / Hot Pot / Snuffed Candle
+				{ 'HestiaWeaponBoon', 'HestiaSpecialBoon', 'HestiaCastBoon' },
+				{ 'CastProjectileBoon', 'FireballManaSpecialBoon' },
+				{ 'BurnExplodeBoon', 'BurnArmorBoon', 'AloneDamageBoon' },
 			},
 		}
 	end
@@ -100,14 +101,14 @@ once('BoonRequirements', function()
 			OneFromEachSet = {
 				game.LinkedTraitData.PoseidonSplashTraits,
 				{
-					'PoseidonExCastBoon',          -- Geyser Spout
-					'FocusDamageShaveBoon',        -- High Surf
-					'OmegaPoseidonProjectileBoon', -- Ocean Swell
+					'PoseidonExCastBoon',
+					'FocusDamageShaveBoon',
+					'OmegaPoseidonProjectileBoon',
 				},
 				{
-					'PoseidonCastBoon',   -- Tidal Ring
-					'PoseidonStatusBoon', -- Slippery Slope
-					'PoseidonSprintBoon', -- Breaker Rush
+					'PoseidonCastBoon',
+					'PoseidonStatusBoon',
+					'PoseidonSprintBoon',
 				},
 			},
 		}
@@ -127,11 +128,11 @@ once('BoonRequirements', function()
 		end
 
 		for _, traitName in ipairs({
-			'MassiveDamageBoon',       -- Grand Caldera
-			'MassiveKnockupBoon',      -- Furnace Blast
-			'BlindClearBoon',          -- Rude Awakening
-			'ClearRootBoon',           -- Cryo Pounder
-			'DoubleMassiveAttackBoon', -- Chain Reaction
+			'MassiveDamageBoon',
+			'MassiveKnockupBoon',
+			'BlindClearBoon',
+			'ClearRootBoon',
+			'DoubleMassiveAttackBoon',
 		}) do
 			local requirements = game.TraitRequirements[traitName]
 			if requirements then

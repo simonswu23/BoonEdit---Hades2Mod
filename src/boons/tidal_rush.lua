@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Breaker Rush (Poseidon) gains Tidal Ring's splash on starting and stopping a Dash, knocking foes away
--- and inflicting Froth. It keeps its own name; only what it does is changed.
 
 once('BreakerRushWaves', function()
 	if not config.BoonChanges.BreakerRush.Enabled then return end

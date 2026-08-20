@@ -1,9 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Glorious Disaster (Apollo x Zeus) also fires from the Aspect of Charon's axe. The second stage is
--- normally decided when the Cast is created, so one the axe detonates was laid unmarked -- it is marked
--- at detonation instead, through vanilla's own `OnEarlyCastDetonation`.
 
 once('GloriousDisasterAxe', function()
 	if not config.BoonChanges.GloriousDisaster.Enabled then return end

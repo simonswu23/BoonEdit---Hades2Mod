@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Winter Harvest (Demeter legendary) executes from higher up, and against a boss measures that against
--- the whole fight rather than the current health bar. Prometheus loses his execute immunity.
 
 once('WinterHarvestBosses', function()
 	if config.BoonChanges.WinterHarvest.Enabled then

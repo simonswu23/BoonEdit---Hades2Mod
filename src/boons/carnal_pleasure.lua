@@ -1,10 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Carnal Pleasure (Aphrodite x Ares) no longer throws a Heartthrob on Plasma pickup; instead every
--- Heartthrob from elsewhere hits harder and reaches further, both climbing with the Plasma you
--- carry. The damage is added to the blast rather than multiplying it. Also raises the Heartthrob
--- cap from 6 to 12, and Plasma you collect counts towards Heartbreaker's own next Heartthrob.
 
 once('CarnalPleasurePlasmaBursts', function()
 	if not config.BoonChanges.CarnalPleasure.Enabled then return end
@@ -45,7 +41,6 @@ once('CarnalPleasurePlasmaBursts', function()
 end)
 
 
--- How much Plasma the bonuses are allowed to read, which is all of it up to the ceiling.
 local function carnal_pleasure_plasma()
 	local tuning = mod.tuning.CarnalPleasure
 	local room = game.CurrentRun and game.CurrentRun.CurrentRoom
@@ -59,7 +54,6 @@ local function carnal_pleasure_plasma()
 end
 
 
--- Flat damage the Heartthrob is worth on top of its own, not a multiplier.
 function carnal_pleasure_bonus_damage()
 	if not config.BoonChanges.CarnalPleasure.Enabled then return 0 end
 	if not game.HeroHasTrait('BloodManaBurstBoon') then return 0 end

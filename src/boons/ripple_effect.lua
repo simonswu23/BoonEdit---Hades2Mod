@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Ripple Effect (Hera x Poseidon) covers every boon that surcharges your Omega Moves rather than
--- doubling its own two projectiles; each repeat rolls again at half the chance, up to four deep.
 
 once('RippleEffectOmegaBoons', function()
 	if config.BoonChanges.RippleEffect.Enabled then
@@ -33,11 +31,11 @@ end)
 
 
 local OMEGA_BOON_PROJECTILES = {
-	PoseidonOmegaWave     = true, -- Ocean Swell (Poseidon)
-	ProjectileHeraOmega   = true, -- Fine Line (Hera)
-	ProjectileFireball    = true, -- Controlled Burn (Hestia)
-	ProjectileAresSwordEx = true, -- Cut Above (Ares)
-	IcarusExplosion       = true, -- Explosive Intent (Icarus)
+	PoseidonOmegaWave     = true,
+	ProjectileHeraOmega   = true,
+	ProjectileFireball    = true,
+	ProjectileAresSwordEx = true,
+	IcarusExplosion       = true,
 }
 
 function ripple_effect_repeat(args)

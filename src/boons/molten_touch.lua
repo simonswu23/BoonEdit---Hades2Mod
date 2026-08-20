@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Molten Touch (Hephaestus) also bites into Glow, for half of what it gets out of Armor -- a second
--- modifier entry, since vanilla's rides `HealthBufferDamageMultiplier` and is gated on the buffer alone.
-
 local GLOW_EFFECT = 'DelayedKnockbackEffect'
 
 once('MoltenTouchGlow', function()

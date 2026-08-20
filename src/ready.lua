@@ -1,7 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Runs once per launch: the sjson text hooks and the `SetupMap` wrap. Plumbing only.
 
 local traitText = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
 sjson.hook(traitText, function(data)

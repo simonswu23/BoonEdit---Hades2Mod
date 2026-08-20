@@ -17,6 +17,8 @@ Every change below can be switched off independently in
 
 ### Ares
 
+- **Blood Spree** — Additionally, every foe you kill gives you a 1% / 1.5% / 2% / 2.5% chance to deal 200% damage, for the rest of the encounter. 
+
 - **Profuse Bleeding** — New(?) Effect: foes with wounds have a small chance to drop plasma after taking damage.
 - **Stabbing Rush** — Falling blades keep dropping for the entire duration of your sprint.
 
@@ -73,16 +75,16 @@ Every change below can be switched off independently in
 - **Cherished Heirloom** (Demeter × Hera) — Additionally, keepsake effects don't expire tonight. Equip an extra one on pickup.
 - **Cryo Pounder** (Demeter × Hephaestus) — Additionally, frozen foes also take more damage from Hephaestus' hammer strikes.
 - **Nervous Wreck** (Aphrodite x Hera) — Swapped: same effect as before (as Aphrodite's legendary), but kept Ecstatic Obession's old requirements.
-- **Glorious Disaster** (Apollo × Zeus) — No longer needs the extra channeled Magick, and bolts hit for 50 rather than 20 damage. Loosened offering requirements.
-- **Hostile Environment** (Demeter × Ares) — Additionally, your regular cast also follows you around.
+- **Glorious Disaster** (Apollo × Zeus) — No longer needs the extra channeled Magick, and bolts hit for 50 rather than 20 damage.
+- **Hostile Environment** (Demeter × Ares) — Additionally, your regular cast also follows you around. Arctic Gale's gust rides along with it, on your cast and on your familiar's under Aspect of Circe, rather than only on a cast fired with Attack held.
 - **Killer Current** (Zeus × Poseidon) — New Effect: Froth-afflicted foes have a 30% chance of being struck by lightning after taking damage.
 - **Love Handles → Smoldering Forge** (Aphrodite × Hephaestus) — Replaced: damaging a foe with Glow has a 20% chance to create a Heartthrob.
 - **Natural Selection** (Demeter × Poseidon) — New Effect: on pickup, gain 3 triple-poms. Every 8 encounters, gain another one.
 - **Ripple Effect** (Hera × Poseidon) — New Effect: the bonus effects your Omega Moves trigger have a 50% chance to occur again, up to 4 times, each with diminishing chances (50% / 25% / 12.5% / 6.25%). Includes Ocean Swell, Fine Line, Controlled Burn, Cut Above, and Explosive Intent.
 - **Seismic Servo → Seismic Hammer** (Hephaestus × Poseidon) — Replaced: your Cast erupts into your Omega Cast after being struck by a Hephaestus explosion. Also reduces the cooldowns of Volcanic Strike, Volcanic Flourish, and Land Mine flatly by 1 second.
 - **Sun Worshiper** (Apollo × Hera) — Additional foes have a 30% chance to also be summoned in combat after being slain, up to 10 extra per encounter.
-- **Scalding Vapor** (Hestia × Poseidon) — Additionally, halves the cooldown for Froth Activation.
-- **Thermal Dynamics** (Hestia × Zeus) — Additionally triggers on every lightning effect from Zeus rather than only Blitz.
+- **Scalding Vapor** (Hestia × Poseidon) — Creating Steam no longer consumes Froth and Steam can trigger Froth. Adjusted requirements.
+- **Thermal Dynamics** (Hestia × Zeus) — Additionally triggers on every lightning effect from Zeus rather than only Blitz, but 30%.
 
 ### Legendary Boons
 
@@ -93,7 +95,7 @@ Every change below can be switched off independently in
 - **Premium Service** (Hephaestus) — Additionally, all weapon upgrades increase in rank tonight, and gain an Anvil of Fates on pickup.
 - **Shocking Loss** (Zeus) — If this activates against a guardian, they take 9999 damage instead.
 - **Winter Harvest** (Demeter) — Executes from 15% rather than 10%, and sums boss HP across all phases for calculation. Can now skip more boss phases (Prometheus, Zagreus, Typhon).
-- **Nervous Wreck → Obsessive Devotion** (Aphrodite × Hera) — Replaced: when you inflict Weak, you have a 30% chance to inflict Charm for 5 seconds instead. Charming Guardians interrupts their attack pattern (can only be applied every 5 seconds). Additionally, deal 10% more damage for each nearby character fighting for you, up to 50%.
+- **Nervous Wreck → Ecstatic Obsession** (Aphrodite × Hera) — Replaced: when you inflict Weak, you have a 30% chance to inflict Charm for 5 seconds instead. Deal 10% more damage for each nearby character fighting for you, up to 50%.
 
 ### Other
 

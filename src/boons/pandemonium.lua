@@ -2,10 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Pandemonium (Chaos, Legendary) -- a new boon rather than an edit of one. Every god is in the pool for
--- the night, no boon asks you to hold anything first, core boons stop taking each other's slots, and
--- doors offer blessings more often. Built on vanilla's `ChaosLastStandBlessing`.
-
 PANDEMONIUM = 'BoonEditPandemoniumBlessing'
 
 local function pandemonium_blessings()

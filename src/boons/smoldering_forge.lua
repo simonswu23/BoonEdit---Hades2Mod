@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Love Handles (Aphrodite x Hephaestus) becomes "Smoldering Forge": damaging a Glowing foe can throw a
--- Heartthrob, whatever put the damage on it.
-
 local GLOW_EFFECT = 'DelayedKnockbackEffect'
 
 once('SmolderingForge', function()

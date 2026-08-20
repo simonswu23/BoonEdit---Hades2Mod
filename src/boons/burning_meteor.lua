@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Fire Away (Hestia legendary) becomes "Burning Meteor": Hestia's fireballs are half again as large
--- and as strong, and inflict Scorch equal to the damage they deal.
 
 once('BurningMeteor', function()
 	local combustion = game.TraitData.BurnSprintBoon
@@ -21,7 +19,7 @@ once('BurningMeteor', function()
 
 	if not config.BoonChanges.BurningMeteor.Enabled then return end
 
-	local fireballs = { 'ProjectileCastFireball', 'ProjectileFireball' }
+	local fireballs = fireball_projectiles()
 
 	combustion.OnBlockDamageFunction = nil
 	combustion.OnWeaponFiredFunctions = nil

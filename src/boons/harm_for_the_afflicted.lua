@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Harm for the Afflicted (Medea) fires for every new curse landing on a foe; the room-wide cooldown
--- that held it to one hit is now keyed per foe.
 
 once('HarmForTheAfflictedEveryStatus', function()
 	if not config.BoonChanges.HarmForTheAfflicted.Enabled then return end

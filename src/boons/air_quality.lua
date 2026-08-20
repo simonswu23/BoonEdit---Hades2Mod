@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Air Quality (Elemental legendary): the floor goes under the *base* damage, not the finished
--- figure, which vanilla clamps after multipliers.
-
 once('AirQualityAdditiveFloor', function()
 	if config.BoonChanges.AirQuality.Enabled then
 		local airQuality = game.TraitData.ElementalDamageFloorBoon

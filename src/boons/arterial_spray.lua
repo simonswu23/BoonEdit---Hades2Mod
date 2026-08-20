@@ -1,7 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Arterial Spray (Poseidon x Ares): the second splash wave always lands, at reduced power.
 
 once('ArterialSprayAlwaysDouble', function()
 	if config.BoonChanges.ArterialSpray.Enabled then

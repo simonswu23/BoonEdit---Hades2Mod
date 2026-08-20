@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Stabbing Rush (Ares) drops a fixed three blades, repeating for as long as the sprint lasts and
--- reusing vanilla's own modifier, sound and cap handling.
-
 once('StabbingRushDuration', function()
 	modutil.mod.Path.Wrap("StartAresSprintProjectile", function(base, weaponData, args, triggerArgs)
 		if not stabbing_rush_active() then

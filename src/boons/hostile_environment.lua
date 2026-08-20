@@ -2,8 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Hostile Environment (Ares x Demeter): the plain Cast follows Melinoe instead of dropping.
-
 once('HostileEnvironmentCastFollows', function()
 	modutil.mod.Path.Wrap("CheckCastDetach", function(base, weaponData, args, triggerArgs)
 		if hostile_environment_keeps_cast() then return end
@@ -18,6 +16,11 @@ once('HostileEnvironmentCastFollows', function()
 	modutil.mod.Path.Wrap("CheckFamiliarLink", function(base, weaponData, functionArgs, triggerArgs)
 		base(weaponData, functionArgs, triggerArgs)
 		familiar_cast_follows_familiar()
+	end)
+
+	modutil.mod.Path.Wrap("DemeterCastBlast", function(base, weaponData, traitArgs, triggerArgs)
+		base(weaponData, traitArgs, triggerArgs)
+		cast_storm_follows_caster(triggerArgs)
 	end)
 end)
 
@@ -45,4 +48,21 @@ function familiar_cast_follows_familiar()
 	if not projectileId or not anchorId then return end
 
 	game.AttachProjectiles({ Ids = { projectileId }, DestinationId = anchorId })
+end
+
+
+function cast_storm_follows_caster(triggerArgs)
+	if not hostile_environment_keeps_cast() then return end
+
+	local storms = game.MapState.CastStorms
+	local ids = storms and storms[#storms]
+	if not ids or game.IsEmpty(ids) then return end
+
+	local anchorId = game.CurrentRun.Hero.ObjectId
+	if triggerArgs and triggerArgs.UnitIdOverride then
+		anchorId = game.MapState.FamiliarLocationId
+	end
+	if not anchorId then return end
+
+	game.AttachProjectiles({ Ids = ids, DestinationId = anchorId })
 end

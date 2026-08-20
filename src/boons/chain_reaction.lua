@@ -1,8 +1,6 @@
 ---@meta _
 ---@diagnostic disable: lowercase-global
 
--- Chain Reaction (Hestia x Hephaestus) no longer makes blasts strike twice; instead anything that
--- recharges over time may skip its recharge outright, announcing itself when it does.
 
 mod.ChainReactionDisplaying = mod.ChainReactionDisplaying or 0
 
