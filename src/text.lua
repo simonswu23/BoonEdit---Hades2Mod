@@ -91,6 +91,20 @@ if config.BoonChanges.EcstaticObsession.Enabled then
 	})
 end
 
+if config.BoonChanges.MeatGrinder.Enabled then
+	boon_text({
+		Traits = {
+			AresExCastBoon = {
+				Description = 'Your {$Keywords.CastEX} also creates a {$Keywords.BladeRift} in the ' ..
+					'binding circle, and your {$Keywords.BladeRift} may spill {!Icons.BloodDropIcon}.',
+			},
+		},
+		StatLines = {
+			BoonEditMeatGrinderPlasmaStatDisplay = { Name = 'Spill Chance:', Index = 2 },
+		},
+	})
+end
+
 if config.BoonChanges.ProfuseBleeding.Enabled then
 	boon_text({
 		Traits = {
@@ -427,6 +441,16 @@ if config.BoonChanges.KillerCurrent.Enabled then
 		},
 		StatLines = {
 			BoonEditKillerCurrentStatDisplay = { Name = 'Strike Chance:', Index = 1 },
+		},
+	})
+end
+
+if config.BoonChanges.PowerSurge.Enabled then
+	boon_text({
+		Traits = {
+			ZeusManaBoltBoon = {
+				Description = 'Whenever you use or restore {!Icons.Mana}, a random surrounding foe is struck by lightning.',
+			},
 		},
 	})
 end

@@ -15,6 +15,15 @@ mod.tuning.CarnalPleasure = {
 	ShowHeartthrobCapacity = true,
 }
 
+mod.tuning.StormImmunity = {
+	Duration = 0.01,
+	Projectiles = { 'DemeterSprintStorm', 'DemeterCastStorm', 'DemeterMiniStorm' },
+}
+
+mod.tuning.PowerSurge = {
+	RestoreCooldown = 0.35,
+}
+
 mod.tuning.HeartyAppetite = {
 	HealingBonus = 1.5,
 
@@ -40,6 +49,11 @@ mod.tuning.EcstaticObsession = {
 	AllyRange = 430,
 
 	SpareBosses = false,
+}
+
+mod.tuning.MeatGrinder = {
+	PlasmaChance = 0.10,
+	PlasmaCooldown = 0.5,
 }
 
 mod.tuning.ProfuseBleeding = {

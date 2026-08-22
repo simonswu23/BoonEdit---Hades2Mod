@@ -99,6 +99,11 @@ local config = {
       Enabled = true;
     };
 
+    MeatGrinder = {
+      -- Blade Rifts may spill Plasma when they hit a foe.
+      Enabled = true;
+    };
+
     MoltenTouch = {
       Enabled = true;
     };
@@ -112,6 +117,14 @@ local config = {
     };
 
     Pandemonium = {
+      Enabled = true;
+    };
+
+    StormImmunity = {
+      Enabled = true;
+    };
+
+    PowerSurge = {
       Enabled = true;
     };
 

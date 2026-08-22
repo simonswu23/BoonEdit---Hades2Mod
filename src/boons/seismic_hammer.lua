@@ -38,7 +38,35 @@ once('SeismicHammer', function()
 	}
 	hammer.OnProjectileCreationFunction.ValidProjectilesLookup =
 		game.ToLookup(hammer.OnProjectileCreationFunction.ValidProjectiles)
+
+	-- The blasts' own tooltips read ReportedCooldown, which is copied off their action args and
+	-- so never sees the reduction applied at the CheckMassiveAttack call site.
+	modutil.mod.Path.Wrap("SetTraitTextData", function(base, traitData, args)
+		seismic_hammer_report(traitData)
+		return base(traitData, args)
+	end)
 end)
+
+
+SEISMIC_BLAST_BOONS = {
+	HephaestusWeaponBoon = true,
+	HephaestusSpecialBoon = true,
+}
+
+
+function seismic_hammer_report(traitData)
+	if not config.BoonChanges.SeismicHammer.Enabled then return end
+	if not traitData or not SEISMIC_BLAST_BOONS[traitData.Name] then return end
+	if not game.HeroHasTrait('MassiveCastBoon') then return end
+
+	local action = traitData.OnEnemyDamagedAction
+	local full = action and action.Args and action.Args.Cooldown
+	if type(full) ~= 'number' then return end
+
+	local tuning = mod.tuning.SeismicHammer
+	traitData.ReportedCooldown =
+		math.max(tuning.MinimumBlastCooldown, full - tuning.BlastCooldownReduction)
+end
 
 
 function seismic_hammer_shortens(functionArgs)

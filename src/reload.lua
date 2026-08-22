@@ -191,9 +191,16 @@ function sjson_PlayerProjectiles(data)
 		damages.ProjectileSprintBall = mod.tuning.BeachBall.BlastDamage
 	end
 
+	---@diagnostic disable-next-line: undefined-global
+	local immunity = storm_immunity_suspended() and game.ToLookup(storm_immunity_projectiles()) or {}
+
 	for _, projectile in ipairs(data.Projectiles) do
 		local damage = damages[projectile.Name]
 		if damage then projectile.Damage = damage end
+
+		if immunity[projectile.Name] then
+			projectile.ImmunityDuration = mod.tuning.StormImmunity.Duration
+		end
 	end
 end
 
@@ -254,6 +261,7 @@ import 'boons/hearty_appetite.lua'
 
 import 'boons/stabbing_rush.lua'
 import 'boons/profuse_bleeding.lua'
+import 'boons/meat_grinder.lua'
 import 'boons/hostile_environment.lua'
 import 'boons/blood_spree.lua'
 
@@ -295,6 +303,8 @@ import 'boons/ripple_effect.lua'
 import 'boons/shocking_loss.lua'
 import 'boons/killer_current.lua'
 import 'boons/air_quality.lua'
+import 'boons/power_surge.lua'
+import 'boons/storm_immunity.lua'
 
 import 'boons/thermal_dynamics.lua'
 
