@@ -15,11 +15,6 @@ mod.tuning.CarnalPleasure = {
 	ShowHeartthrobCapacity = true,
 }
 
-mod.tuning.StormImmunity = {
-	Duration = 0.01,
-	Projectiles = { 'DemeterSprintStorm', 'DemeterCastStorm', 'DemeterMiniStorm' },
-}
-
 mod.tuning.PowerSurge = {
 	RestoreCooldown = 0.35,
 }

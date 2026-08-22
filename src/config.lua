@@ -120,10 +120,6 @@ local config = {
       Enabled = true;
     };
 
-    StormImmunity = {
-      Enabled = true;
-    };
-
     PowerSurge = {
       Enabled = true;
     };
