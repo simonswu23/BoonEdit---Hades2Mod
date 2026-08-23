@@ -20,9 +20,8 @@ if config.BoonChanges.HeartyAppetite.Enabled then
 		Traits = {
 			MaxHealthDamageBoon = {
 				Description = 'You deal more damage with your {$Keywords.WeaponSet} the more {!Icons.HealthUpTotal} ' ..
-					'you have. A hearty meal appears now and every ' ..
-					'{$TooltipData.ExtractData.TooltipEncountersPerFood} {$Keywords.EncounterPluralAlt}, ' ..
-					'and your healing effects are more powerful for the rest of the night.',
+					'you have. Gain a healing reward now and every ' ..
+					'{$TooltipData.ExtractData.TooltipEncountersPerFood} {$Keywords.EncounterPlural}..',
 			},
 		},
 		StatLines = {

@@ -169,6 +169,7 @@ mod.tuning.SecondWind = {
 	ExtraCasts = 1,
 	ExtraDashes = 1,
 	DashRechargeMultiplier = 0.90,
+	DashCooldownMultiplier = 0.40,
 }
 
 mod.tuning.BurningMeteor = {

@@ -91,7 +91,7 @@ Every change below can be switched off independently in
 - **Pandemonium** (Chaos) — New Legendary: puts all gods in your pool tonight, removes all boon requirements, increases boon offering chances, and allows core boons to be stacked.
 - **All Together** (Hera) — Gain an additional essence of each type upon pickup.
 - **Fire Away → Burning Meteor** (Hestia) — Replaced: Fireball effects from Hestia are 50% larger and stronger, and inflict Scorch equal to the damage they deal.
-- **Paid Dues → Second Wind** (Hermes) — Replaced: You can cast and dash an additional time.
+- **Paid Dues → Second Wind** (Hermes) — Replaced: You can cast and dash an additional time, and dashes chain more quickly.
 - **Premium Service** (Hephaestus) — Additionally, all weapon upgrades increase in rank tonight, and gain an Anvil of Fates on pickup.
 - **Shocking Loss** (Zeus) — If this activates against a guardian, they take 9999 damage instead.
 - **Winter Harvest** (Demeter) — Executes from 15% rather than 10%, and sums boss HP across all phases for calculation. Can now skip more boss phases (Prometheus, Zagreus, Typhon).

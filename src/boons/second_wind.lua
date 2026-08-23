@@ -40,6 +40,14 @@ once('SecondWind', function()
 			ExcludeLinked = true,
 		})
 
+		table.insert(secondWind.PropertyChanges, {
+			WeaponName = 'WeaponBlink',
+			WeaponProperty = 'Cooldown',
+			ChangeValue = mod.tuning.SecondWind.DashCooldownMultiplier,
+			ChangeType = 'Multiply',
+			ExcludeLinked = true,
+		})
+
 		secondWind.FlavorText = 'BoonEditSecondWindFlavorText'
 		secondWind.StatLines = {}
 		secondWind.ExtractValues = {}
