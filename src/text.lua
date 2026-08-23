@@ -97,10 +97,7 @@ if config.BoonChanges.MeatGrinder.Enabled then
 				Description = 'Your {$Keywords.CastEX} also creates a {$Keywords.BladeRift} in the ' ..
 					'binding circle, and your {$Keywords.BladeRift} may spill {!Icons.BloodDropIcon}.',
 			},
-		},
-		StatLines = {
-			BoonEditMeatGrinderPlasmaStatDisplay = { Name = 'Spill Chance:', Index = 2 },
-		},
+		}
 	})
 end
 
