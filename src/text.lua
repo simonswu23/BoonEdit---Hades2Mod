@@ -30,6 +30,28 @@ if config.BoonChanges.HeartyAppetite.Enabled then
 	})
 end
 
+if config.BoonChanges.DazzlingDisplay.Enabled then
+	boon_text({
+		Traits = {
+			BlindChanceBoon = {
+				Description = 'Your {$Keywords.AttackSet} may inflict {$Keywords.Blind}, ' ..
+					'and your {$Keywords.SpecialSet} as well while you hold {#BoldFormatGraft}Nova Flourish{#Prev}.',
+			},
+		},
+	})
+end
+
+if config.BoonChanges.ExtraDose.Enabled then
+	boon_text({
+		Traits = {
+			DoubleStrikeChanceBoon = {
+				Description = 'Your {$Keywords.Attack} and {$Keywords.Special} have a chance to hit ' ..
+					'{$TraitData.DoubleStrikeChanceBoon.StringTextNumeral} times.',
+			},
+		},
+	})
+end
+
 if config.BoonChanges.CarnalPleasure.Enabled then
 	boon_text({
 		Traits = {

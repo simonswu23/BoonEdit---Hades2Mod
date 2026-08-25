@@ -139,8 +139,20 @@ mod.tuning.AnvilOfFates = {
 	Discoveries = 2,
 }
 
+-- 15 / 20 / 25 / 30% across the rarities, off a Common of 0.15
+mod.tuning.DazzlingDisplay = {
+	Chance = 0.15,
+
+	RarityMultipliers = {
+		Common = 1.0,
+		Rare = 20 / 15,
+		Epic = 25 / 15,
+		Heroic = 30 / 15,
+	},
+}
+
 mod.tuning.ChainReaction = {
-	SkipChance = 0.30,
+	SkipChance = 0.50,
 
 	TextDuration = 1.45,
 	TextCooldown = 0.5,

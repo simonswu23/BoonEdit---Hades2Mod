@@ -259,6 +259,8 @@ import 'boons/hostile_environment.lua'
 import 'boons/blood_spree.lua'
 
 import 'boons/sun_worshiper.lua'
+import 'boons/dazzling_display.lua'
+import 'boons/extra_dose.lua'
 
 import 'boons/local_climate.lua'
 import 'boons/tranquil_gain.lua'

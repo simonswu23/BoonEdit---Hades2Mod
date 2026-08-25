@@ -59,7 +59,15 @@ local config = {
       Enabled = true;
     };
 
+    DazzlingDisplay = {
+      Enabled = true;
+    };
+
     EcstaticObsession = {
+      Enabled = true;
+    };
+
+    ExtraDose = {
       Enabled = true;
     };
 
@@ -194,6 +202,8 @@ local config = {
   };
 
   Debug = {
+    LogChainReaction = false;
+
     LogScaldingVapor = false;
 
     GrantTraits = '';

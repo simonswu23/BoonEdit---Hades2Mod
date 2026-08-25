@@ -19,6 +19,24 @@ once('BoonRequirements', function()
 		}
 	end
 
+	-- Chain Reaction is a chance-based effect once BoonEdits has reworked it, so it belongs on the
+	-- list of boons that make Success Rate worth offering. Luck already reaches the roll itself --
+	-- rolls() scales every chance in this mod by LuckMultiplier -- it was only the offer that
+	-- did not know about it.
+	if config.BoonChanges.ChainReaction.Enabled then
+		local lucky = game.TraitRequirements.LuckyBoon
+		if lucky and lucky.OneOf and not game.Contains(lucky.OneOf, 'DoubleMassiveAttackBoon') then
+			table.insert(lucky.OneOf, 'DoubleMassiveAttackBoon')
+		end
+	end
+
+	if config.BoonChanges.DazzlingDisplay.Enabled then
+		game.TraitRequirements.BlindChanceBoon = {
+			PriorityChance = 0.25,
+			OneOf = { 'ApolloWeaponBoon', 'ApolloSpecialBoon' },
+		}
+	end
+
 	if config.BoonChanges.GloriousDisaster.Enabled then
 		game.TraitRequirements.ApolloSecondStageCastBoon = {
 			OneFromEachSet = {

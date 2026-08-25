@@ -4,12 +4,9 @@
 
 once('ShockingLossGuardians', function()
 	if config.BoonChanges.ShockingLoss.Enabled then
-		game.OverwriteTableKeys(game.ProjectileData, {
-			BoonEditZeusGuardianStrike = {
-				InheritFrom = { 'ZeusColorProjectile' },
-			},
-		})
-		game.ProcessDataStore(game.ProjectileData)
+		-- The damage screen keys on the projectile and has no mapping for this one, so it reads as
+		-- a raw id without one.
+		game.ScreenData.RunClear.DamageSourceMap.ZeusOnSpawn = 'SpawnKillBoon'
 
 		local shockingLoss = game.TraitData.SpawnKillBoon
 		shockingLoss.OnEnemyDamagedAction.Args.BoonEditGuardianDamage = mod.tuning.ShockingLoss.GuardianDamage
@@ -57,10 +54,11 @@ function mod.ShockingLossGuardianStrike(enemy, traitArgs)
 	game.wait(0.1, game.RoomThreadName)
 	game.CreateAnimation({ Name = traitArgs.Vfx, DestinationId = enemy.ObjectId, Group = 'FX_Standing_Top' })
 
+	-- Vanilla's own spawn-kill projectile carries IgnoreAllModifiers, so the damage is set.
 	game.thread(game.Damage, enemy, {
 		AttackerId = hero.ObjectId,
 		AttackerTable = hero,
-		SourceProjectile = 'BoonEditZeusGuardianStrike',
+		SourceProjectile = 'ZeusOnSpawn',
 		DamageAmount = traitArgs.BoonEditGuardianDamage or mod.tuning.ShockingLoss.GuardianDamage,
 		Silent = false,
 	})

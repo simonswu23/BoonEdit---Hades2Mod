@@ -22,6 +22,11 @@ Every change below can be switched off independently in
 - **Profuse Bleeding** — New(?) Effect: foes with wounds have a small chance to drop plasma after taking damage.
 - **Stabbing Rush** — Falling blades keep dropping for the entire duration of your sprint.
 
+### Apollo
+
+- **Dazzling Display** — Additionally inflicts Blind with your Special while you hold Nova Flourish, and Nova Flourish now makes it eligible to be offered in the first place. Blind chance raised to 15% / 20% / 25% / 30% across the rarities.
+- **Extra Dose** — Additionally, your Special has the same chance to strike twice.
+
 ### Demeter
 
 - **Local Climate** — Additionally, buff your regular cast damage as well.
@@ -70,7 +75,7 @@ Every change below can be switched off independently in
 - **Arterial Spray** (Poseidon × Ares) — The second wave's strike chance is improved to 100%, in exchange for its power reduced to 30%.
 - **Beach Ball** (Apollo × Poseidon) — Is now considered a Splash Boon, and max damage increased to 400.
 - **Brave Face** (Hephaestus × Hera) — Resists up to 50% of any damage rather than 30%, and each point resisted costs 5 Magick instead of 10.
-- **Chain Reaction** (Hestia × Hephaestus) — New Effect: Boon effect cooldowns have a 30% chance of being skipped. Announces itself on screen when it fires.
+- **Chain Reaction** (Hestia × Hephaestus) — New Effect: Boon effect cooldowns have a 50% chance of being skipped. Announces itself on screen when it fires. A Blast rolls on the Blast that lands rather than on every hit, so a fast weapon no longer rolls its way past the cooldown many times a second; when the roll comes up, the Blast is ready again at once. Now counts as a chance-based effect for Success Rate, which can be offered off it.
 - **Carnal Pleasure** (Aphrodite × Ares) — New Effect: Your Heartthrobs are larger and deal more damage, plus extra for any Plasma you have. Up to 12 may follow you at once. Picking up Plasma counts as 10 magic towards Heartbreaker.
 - **Cherished Heirloom** (Demeter × Hera) — Additionally, keepsake effects don't expire tonight. Equip an extra one on pickup.
 - **Cryo Pounder** (Demeter × Hephaestus) — Additionally, frozen foes also take more damage from Hephaestus' hammer strikes.
@@ -93,7 +98,7 @@ Every change below can be switched off independently in
 - **Fire Away → Burning Meteor** (Hestia) — Replaced: Fireball effects from Hestia are 50% larger and stronger, and inflict Scorch equal to the damage they deal.
 - **Paid Dues → Second Wind** (Hermes) — Replaced: You can cast and dash an additional time, and dashes chain more quickly.
 - **Premium Service** (Hephaestus) — Additionally, all weapon upgrades increase in rank tonight, and gain an Anvil of Fates on pickup.
-- **Shocking Loss** (Zeus) — If this activates against a guardian, they take 9999 damage instead.
+- **Shocking Loss** (Zeus) — If this activates against a guardian, they take 9999 damage instead. That is set damage, dealt through vanilla's own spawn-kill projectile so nothing multiplies it, and counted as Shocking Loss on the end-of-run damage screen rather than by the projectile's name.
 - **Winter Harvest** (Demeter) — Executes from 15% rather than 10%, and sums boss HP across all phases for calculation. Can now skip more boss phases (Prometheus, Zagreus, Typhon).
 - **Nervous Wreck → Ecstatic Obsession** (Aphrodite × Hera) — Replaced: when you inflict Weak, you have a 30% chance to inflict Charm for 5 seconds instead. Deal 10% more damage for each nearby character fighting for you, up to 50%.
 
