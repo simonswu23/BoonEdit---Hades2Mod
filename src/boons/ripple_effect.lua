@@ -30,22 +30,41 @@ once('RippleEffectOmegaBoons', function()
 end)
 
 
-local OMEGA_BOON_PROJECTILES = {
-	PoseidonOmegaWave     = true,
-	ProjectileHeraOmega   = true,
-	ProjectileFireball    = true,
-	ProjectileAresSwordEx = true,
-	IcarusExplosion       = true,
+-- Four families and no more. Ares' swords and Icarus' explosion used to be here and are not the
+-- kind of thing this is for -- one is a falling blade with its own count, the other a one-off blast.
+--
+-- Hestia's is the whole fireball list rather than the one name, because this mod widens what counts
+-- as a fireball elsewhere (`fireball_projectiles`) and a boon that repeats "your fireballs" should
+-- mean the same set everywhere.
+local RIPPLE_PROJECTILES = {
+	-- Ocean Swells
+	PoseidonOmegaWave = true,
+
+	-- Hera Rifts
+	ProjectileHeraOmega = true,
+
+	-- Artemis' piercing arrows, off Easy Shot
+	ArtemisCastVolley = true,
 }
+
+
+function ripple_effect_covers(name)
+	if RIPPLE_PROJECTILES[name] then return true end
+
+	---@diagnostic disable-next-line: undefined-global
+	return game.Contains(fireball_projectiles(), name)
+end
 
 function ripple_effect_repeat(args)
 	if mod.RippleFiring then return end
 	if not config.BoonChanges.RippleEffect.Enabled then return end
-	if not args or not args.Name or not OMEGA_BOON_PROJECTILES[args.Name] then return end
+	if not args or not args.Name or not ripple_effect_covers(args.Name) then return end
 	if not game.HeroHasTrait('MoneyDamageBoon') then return end
 
-	local hero = game.CurrentRun and game.CurrentRun.Hero
-	if not hero or args.Id ~= hero.ObjectId then return end
+	-- No check on who fired it. These four are yours by definition -- nothing else in the game makes
+	-- an Ocean Swell or a Hera Rift -- and tying it to Melinoe's own ObjectId quietly dropped every
+	-- one of them that something else spawned on your behalf: a familiar's cast, a Hex-Call's swells,
+	-- anything re-fired through a wrap. However and whenever one is created, it repeats.
 
 	local tuning = mod.tuning.RippleEffect
 	local chance = game.GetTotalHeroTraitValue('BoonEditRepeatChance')

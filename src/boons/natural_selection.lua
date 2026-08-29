@@ -25,6 +25,11 @@ once('NaturalSelectionPoms', function()
 		base(...)
 		natural_selection_check_pom()
 	end)
+
+	modutil.mod.Path.Wrap("OpenUpgradeChoiceMenu", function(base, source, args)
+		natural_selection_reroll(source)
+		return base(source, args)
+	end)
 end)
 
 
@@ -82,6 +87,8 @@ function natural_selection_drop_poms(count, levels)
 
 		natural_selection_spread_choices(pom, index)
 
+		if pom then pom.BoonEditNaturalSelection = true end
+
 		if pom and pom.ObjectId then
 			game.ApplyUpwardForce({ Id = pom.ObjectId, Speed = game.RandomFloat(500, 700) })
 			game.ApplyForce({
@@ -109,4 +116,29 @@ function natural_selection_check_pom()
 	if trait.CurrentRoom ~= 0 then return end
 
 	game.thread(natural_selection_drop_poms, 1, mod.tuning.NaturalSelection.LevelsPerPom)
+end
+
+
+-- Vanilla settles a pom's options once and keeps them. `CreateBoonLootButtons` regenerates only when
+-- `UpgradeOptions` is nil, or when a StackOnly loot is still holding a boon you no longer own
+-- (`UpgradeChoiceLogic.lua:117`) -- so these were filled at the moment they were dropped, and what a
+-- pom offered had been decided before you walked over to it. Looking at the same pom twice showed
+-- the same answer, and so did a second pom out of the same handful.
+--
+-- Clearing the options is the whole of the reroll: vanilla fills them back in on its own path, with
+-- the rarity and priority rules intact, rather than us second-guessing what belongs in the list. The
+-- seed is walked on each time so two poms, or two looks at one, do not land on the same three.
+--
+-- Kept on `CurrentRun` rather than a local, so the walk survives a save.
+function natural_selection_reroll(source)
+	if not config.BoonChanges.NaturalSelection.Enabled then return end
+	if not source or not source.BoonEditNaturalSelection then return end
+
+	local run = game.CurrentRun
+	if run then
+		run.BoonEditNaturalSelectionRoll = (run.BoonEditNaturalSelectionRoll or 0) + 1
+		game.RandomSynchronize(run.BoonEditNaturalSelectionRoll * NATURAL_SELECTION_ROLL_STRIDE)
+	end
+
+	source.UpgradeOptions = nil
 end

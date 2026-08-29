@@ -146,13 +146,10 @@ if config.BoonChanges.BloodSpree.Enabled then
 				Description = 'While you have less than ' ..
 					'{$TooltipData.ExtractData.ReportedRequirement}{!Icons.Health}, your ' ..
 					'{$Keywords.AttackSet} and {$Keywords.SpecialSet} restore {!Icons.Health}. ' ..
-					'Whenever you slay a foe, gain a chance to deal ' ..
-					'{$TraitData.AresStatusDoubleDamageBoon.DamagePercent:F} damage for the rest of ' ..
-					'the {$Keywords.EncounterAlt}.',
+					'Whenever you slay a foe, you have a {#AltUpgradeFormat}' ..
+					math.floor(mod.tuning.BloodSpree.KillHealChance * 100) ..
+					'% {#Prev}chance to restore that much {!Icons.Health}.',
 			},
-		},
-		StatLines = {
-			BoonEditBloodSpreeCritStatDisplay = { Name = 'Damage Chance per Kill:', Index = 2 },
 		},
 	})
 end

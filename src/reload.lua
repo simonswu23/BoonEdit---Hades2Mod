@@ -15,6 +15,9 @@ end
 import 'tuning.lua'
 
 
+SCREEN_WAIT_TRIES = 40
+SCREEN_WAIT_STEP = 0.1
+
 function prefix_SetupMap()
 	reload_config()
 	debug_grant_test_boons()
@@ -23,6 +26,8 @@ function prefix_SetupMap()
 	pandemonium_sync_slots()
 	---@diagnostic disable-next-line: undefined-global
 	ionic_gain_start()
+	---@diagnostic disable-next-line: undefined-global
+	breaker_rush_sync()
 end
 
 function reload_config()
@@ -197,6 +202,39 @@ function sjson_PlayerProjectiles(data)
 	end
 end
 
+-- Arterial Spray marks its second wave with `PoseidonRedConeFxEmitterLarge`, which is a cone --
+-- vanilla's splash is a cone, so that matches. Breaker Rush's is not: `PoseidonCastSplashSplinter`
+-- is `Type = INSTANT` with `UseRadialImpact` and a 290 damage radius, so it already hits all round
+-- and the red cone pointed one way across a circle that did not.
+--
+-- This is the same trick vanilla used to make the red cone in the first place: inherit the shape and
+-- recolour it, with the red taken verbatim off `PoseidonRedConeFxLarge`. `ClearCreateAnimations`
+-- drops the parent's child animations, which are all tinted Poseidon blue and would otherwise show
+-- through the red.
+function sjson_PoseidonVfx(data)
+	if not data or not data.Animations then return end
+
+	for _, animation in ipairs(data.Animations) do
+		if animation.Name == mod.tuning.PoseidonSplash.RedNova then return end
+	end
+
+	table.insert(data.Animations, sjson.to_object({
+		Name = mod.tuning.PoseidonSplash.RedNova,
+		InheritFrom = 'RadialNovaPentagram_Poseidon',
+		ClearCreateAnimations = true,
+		StartRed = 1,
+		StartGreen = 0.01,
+		StartBlue = 0.01,
+		EndRed = 0.7,
+		EndGreen = 0,
+		EndBlue = 0,
+	}, {
+		'Name', 'InheritFrom', 'ClearCreateAnimations',
+		'StartRed', 'StartGreen', 'StartBlue', 'EndRed', 'EndGreen', 'EndBlue',
+	}))
+end
+
+
 function sjson_HelpText(data)
 	for _, entry in ipairs(data.Texts) do
 		local rewrite = help_text[entry.Id]
@@ -291,6 +329,8 @@ import 'boons/cardio_gain.lua'
 import 'boons/scalding_vapor.lua'
 
 import 'boons/tidal_rush.lua'
+import 'boons/tidal_ring.lua'
+import 'boons/easy_shot.lua'
 import 'boons/beach_ball.lua'
 import 'boons/arterial_spray.lua'
 import 'boons/ripple_effect.lua'
@@ -311,3 +351,84 @@ import 'boons/pandemonium.lua'
 
 import 'requirements.lua'
 import 'text.lua'
+
+-- Wait for whatever is already on screen to close before opening one of our own.
+--
+-- Both of the prompts that use this used to be a fixed pause, which raced anything else that opens a
+-- window on a delay of its own -- Concave Stone's random boon is the one that showed it: whichever
+-- screen opened second landed on top of the first. Time is frozen while a screen is up, so the pause
+-- also has to be unmodified or it does not run down at all.
+--
+-- Bounded, so a screen that never closes cannot strand the prompt for good. `settle` is the old
+-- fixed pause, kept as the beat after the field is clear.
+--
+-- The field is re-checked on the far side of that pause, not only before it. The window this exists
+-- to avoid is a *delayed* one, so it can open during the settle just as easily as before it, and
+-- leaving on the first clear reading would walk straight back into the collision.
+-- `ConeModifier` is what Arterial Spray, King Tide and Backwash all work through, and the only
+-- things that ever read it are vanilla's own splash functions -- `CheckPoseidonSplash`
+-- (`PowersLogic.lua:3799`) and High Surf's `PoseidonAttackPunish` (`:6123`). Notably *not*
+-- `CheckPoseidonCastSplash` (`:1857`), which fires Tidal Ring's and consults nothing at all.
+--
+-- So any splash this mod fires itself goes past all of them unless it does the reading, and three
+-- now do. The loop is vanilla's, in vanilla's order; each trait carrying the field rolls separately
+-- and each success is another wave, so the boons stack here exactly as they do elsewhere.
+--
+-- The graphic is deliberately not `data.DoubleWaveGraphic`. Every caller of this fires a radial
+-- splash, and Arterial Spray's own marker is a cone.
+function poseidon_splash_cone()
+	local scale = 1
+	local count = 1
+	local graphic = nil
+
+	for _, data in pairs(game.GetHeroTraitValues('ConeModifier')) do
+		if data.ScaleIncrease then
+			scale = scale * data.ScaleIncrease
+		end
+		if data.MaxScale and scale > data.MaxScale then
+			scale = data.MaxScale
+		end
+		if data.DoubleWaveChance and game.RandomChance(data.DoubleWaveChance
+			* game.GetTotalHeroTraitValue('LuckMultiplier', { IsMultiplier = true })) then
+			count = count + 1
+			graphic = mod.tuning.PoseidonSplash.RedNova
+		end
+	end
+
+	return scale, count, graphic
+end
+
+
+function wait_for_screens(settle)
+	settle = settle or 0
+
+	for _ = 1, SCREEN_WAIT_TRIES do
+		if not game.IsEmpty(game.ActiveScreenOrder or {}) then
+			game.waitUnmodified(SCREEN_WAIT_STEP)
+		else
+			if settle > 0 then game.waitUnmodified(settle) end
+			if game.IsEmpty(game.ActiveScreenOrder or {}) then return end
+		end
+	end
+end
+
+-- Nothing opens on top of an open screen. A choice that arrives on a delay -- Concave Stone's random
+-- boon is the one that showed this -- used to land over whatever was already up, so a page you were
+-- reading became a page you could no longer see. Deferred rather than refused: the offer is still
+-- owed, it just waits its turn.
+--
+-- `OpenUpgradeChoiceMenu`'s return value is read by nothing, in vanilla or here, so handing the
+-- caller back nothing while the real open happens on a thread costs nothing. `OpenKeepsakeRackScreen`
+-- already refuses outright when its own screen is up (`KeepsakeLogic.lua:605`), which is the same
+-- instinct with a shorter reach.
+function defer_screen_open(open, ...)
+	if game.IsEmpty(game.ActiveScreenOrder or {}) then
+		return open(...)
+	end
+
+	local args = table.pack(...)
+	game.thread(function()
+		wait_for_screens(0)
+		open(table.unpack(args, 1, args.n))
+	end)
+end

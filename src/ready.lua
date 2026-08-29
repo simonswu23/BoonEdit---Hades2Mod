@@ -20,6 +20,23 @@ sjson.hook(playerProjectiles, function(data)
 	return sjson_PlayerProjectiles(data)
 end)
 
+local poseidonVfx = rom.path.combine(rom.paths.Content, 'Game/Animations/Melinoe_Poseidon_VFX.sjson')
+sjson.hook(poseidonVfx, function(data)
+	---@diagnostic disable-next-line: undefined-global
+	return sjson_PoseidonVfx(data)
+end)
+
+
+modutil.mod.Path.Wrap("OpenUpgradeChoiceMenu", function(base, source, args)
+	---@diagnostic disable-next-line: undefined-global
+	return defer_screen_open(base, source, args)
+end)
+
+modutil.mod.Path.Wrap("OpenKeepsakeRackScreen", function(base, source)
+	---@diagnostic disable-next-line: undefined-global
+	return defer_screen_open(base, source)
+end)
+
 
 modutil.mod.Path.Wrap("SetupMap", function(base, ...)
 	---@diagnostic disable-next-line: undefined-global

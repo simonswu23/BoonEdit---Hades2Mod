@@ -76,6 +76,21 @@ local function obsession_charmable(unit)
 end
 
 
+local function obsession_guardian(unit)
+	return unit.IsBoss or unit.UseBossHealthBar
+end
+
+
+-- A Guardian breaks Charm several times faster than a lesser foe does, so nothing stops the next
+-- Weak that lands from putting it straight back under. Lesser foes are left uncapped.
+local function obsession_charm_ready(unit)
+	if not obsession_guardian(unit) then return true end
+
+	return game.CheckCooldown('BoonEditObsessionCharm' .. tostring(unit.ObjectId),
+		mod.tuning.EcstaticObsession.GuardianCharmCooldown)
+end
+
+
 local function obsession_charm(unit)
 	game.ApplyEffect({
 		Id = game.CurrentRun.Hero.ObjectId,
@@ -193,6 +208,7 @@ function obsession_take(victim, effectName)
 	if not (game.ActiveEnemies or {})[victim.ObjectId] then return end
 
 	if obsession_charmable(victim) then
+		if not obsession_charm_ready(victim) then return end
 		obsession_charm(victim)
 	elseif not obsession_interrupt(victim) then
 		return

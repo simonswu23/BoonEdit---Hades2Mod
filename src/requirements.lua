@@ -58,6 +58,18 @@ once('BoonRequirements', function()
 	if config.BoonChanges.ProfuseBleeding.Enabled then
 		game.TraitRequirements.RendBloodDropBoon = { OneOf = game.LinkedTraitData.AresRendTraits }
 		table.insert(game.LinkedTraitData.AresBloodDropTraits, 'RendBloodDropBoon')
+
+		-- It is not a sword boon any more. Rewritten it drops plasma off wounded foes and never
+		-- makes a falling blade, so it has no business unlocking the two duos that improve them:
+		-- Coffin Nail (`RapidSwordBoon`) and Cutting Edge (`DoubleSwordBoon`) both ask
+		-- `AresSwordTraits` (`TraitData.lua:615`, `:624`), and both hold that set by reference, so
+		-- striking the name out of the set reaches both without touching either requirement.
+		for i, name in ipairs(game.LinkedTraitData.AresSwordTraits) do
+			if name == 'RendBloodDropBoon' then
+				table.remove(game.LinkedTraitData.AresSwordTraits, i)
+				break
+			end
+		end
 	end
 
 	if config.BoonChanges.ScaldingVapor.Enabled then
@@ -106,31 +118,73 @@ once('BoonRequirements', function()
 		}
 	end
 
-	if config.BoonChanges.BeachBall.Enabled then
-		if not game.Contains(game.LinkedTraitData.PoseidonSplashTraits, 'PoseidonSplashSprintBoon') then
-			table.insert(game.LinkedTraitData.PoseidonSplashTraits, 'PoseidonSplashSprintBoon')
+	-- `PoseidonSplashTraits` is the group the game means by "a splash boon" when it decides what may
+	-- be offered off one -- Slippery Slope reads it as its `OneOf`, King Tide and the Ares duo as one
+	-- of their sets. Vanilla lists only Attack and Special, though several other boons plainly make a
+	-- splash: they fire the same `PoseidonSplashSplinter` / `PoseidonCastSplashSplinter` the two core
+	-- ones do, which is what King Tide's damage bonus and Slippery Slope's Froth key on. So the
+	-- mechanics already treated them as splashes; only the offer requirements did not.
+	local function counts_as_splash(traitName)
+		if not game.Contains(game.LinkedTraitData.PoseidonSplashTraits, traitName) then
+			table.insert(game.LinkedTraitData.PoseidonSplashTraits, traitName)
 		end
+	end
+
+	if config.BoonChanges.BeachBall.Enabled then
+		counts_as_splash('PoseidonSplashSprintBoon')
+	end
+
+	-- Tidal Ring, through `CheckPoseidonCastSplash`
+	if config.BoonChanges.TidalRing.Enabled then
+		counts_as_splash('PoseidonCastBoon')
+	end
+
+	-- High Surf, through `PoseidonAttackPunish` -- which already reads `ConeModifier`, so King Tide
+	-- and Arterial Spray were shaping its splash before it counted as one
+	if config.BoonChanges.HighSurf.Enabled then
+		counts_as_splash('FocusDamageShaveBoon')
 	end
 
 	if config.BoonChanges.BreakerRush.Enabled then
 		table.insert(game.LinkedTraitData.PoseidonKnockbackAmplifyTraits, 'PoseidonSprintBoon')
 
+		-- reworked to fire `PoseidonCastSplashSplinter` on every dash, so it is a splash boon in
+		-- everything but the group it was listed in
+		counts_as_splash('PoseidonSprintBoon')
+
+		-- Pinned to the two core splash boons by name rather than to `PoseidonSplashTraits`, which
+		-- now holds Tidal Ring, Breaker Rush, High Surf and Beach Ball as well. `HasTraitRequirements`
+		-- (`RunLogic.lua:80`) tests each set on its own with no deduplication, so one boon appearing in
+		-- two sets satisfies both -- read off the widened group, High Surf and Tidal Ring between them
+		-- covered all three sets and King Tide no longer needed an Attack or Special at all.
 		game.TraitRequirements.AmplifyConeBoon = {
 			OneFromEachSet = {
-				game.LinkedTraitData.PoseidonSplashTraits,
+				{
+					'PoseidonWeaponBoon',
+					'PoseidonSpecialBoon',
+				},
+				{
+					'PoseidonStatusBoon',
+					'PoseidonCastBoon',
+					'PoseidonSprintBoon',
+				},
 				{
 					'PoseidonExCastBoon',
 					'FocusDamageShaveBoon',
 					'OmegaPoseidonProjectileBoon',
 				},
-				{
-					'PoseidonCastBoon',
-					'PoseidonStatusBoon',
-					'PoseidonSprintBoon',
-				},
 			},
 		}
 	end
+
+	-- Slippery Slope is pinned for the same reason King Tide is, and more sharply: its requirement is
+	-- a bare `OneOf = PoseidonSplashTraits`, so every name added to that group above became a fresh
+	-- way to unlock it -- Beach Ball, a duo, among them. It is the Froth that Wave Strike and Trident
+	-- Flourish put on the water, so those two are what it asks for.
+	game.TraitRequirements.PoseidonStatusBoon = {
+		PriorityChance = 0.25,
+		OneOf = { 'PoseidonWeaponBoon', 'PoseidonSpecialBoon' },
+	}
 
 	if config.BoonChanges.SmithyRush.Enabled then
 		local function withoutAnvilRush(list)

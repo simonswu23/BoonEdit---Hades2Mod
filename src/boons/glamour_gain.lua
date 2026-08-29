@@ -23,7 +23,8 @@ local GLAMOUR_PULSE_FX = 'AphroditeDashNova'
 local GLAMOUR_UNLIMITED_RANGE = 3000
 
 function glamour_pulse_active()
-	local room = game.CurrentRun.CurrentRoom
+	local room = game.CurrentRun and game.CurrentRun.CurrentRoom
+	if not room then return false end
 	if game.IsCombatEncounterActive(game.CurrentRun) then return true end
 	if not room.Encounter then return true end
 	if room.Encounter.DelayedStart and room.Encounter.StartTime then return true end

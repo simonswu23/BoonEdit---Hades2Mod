@@ -63,6 +63,10 @@ local config = {
       Enabled = true;
     };
 
+    EasyShot = {
+      Enabled = true;
+    };
+
     EcstaticObsession = {
       Enabled = true;
     };
@@ -88,6 +92,10 @@ local config = {
     };
 
     HeavyMetal = {
+      Enabled = true;
+    };
+
+    HighSurf = {
       Enabled = true;
     };
 
@@ -185,6 +193,10 @@ local config = {
     };
 
     ThermalDynamics = {
+      Enabled = true;
+    };
+
+    TidalRing = {
       Enabled = true;
     };
 

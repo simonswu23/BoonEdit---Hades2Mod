@@ -29,6 +29,13 @@ function mod.KillerCurrentBolt(victim, functionArgs, triggerArgs)
 	if not victim or not victim.ActiveEffects or not victim.ActiveEffects.AmplifyKnockbackEffect then return end
 	if not rolls(mod.tuning.KillerCurrent.BoltChance) then return end
 
+	-- After the roll, not before: `CheckCooldown` starts the timer when it passes, so testing it
+	-- first would spend the cooldown on hits that were never going to bolt anyway. Meat Grinder's
+	-- plasma drop is ordered the same way for the same reason.
+	if not game.CheckCooldown('BoonEditKillerCurrentBolt', mod.tuning.KillerCurrent.BoltCooldown) then
+		return
+	end
+
 	local baseDamage = game.GetBaseDataValue({ Type = 'Projectile', Name = 'ZeusEchoStrike', Property = 'Damage' })
 	if type(baseDamage) ~= 'number' or baseDamage <= 0 then
 		baseDamage = 100

@@ -2,12 +2,16 @@
 ---@diagnostic disable: lowercase-global
 
 
+-- Blood Spree's lifesteal only pays out while you are already nearly dead. This adds a second way to
+-- get it: slaying a foe restores the same amount the boon's Attack and Special do, one kill in five.
+-- The amount is read off the boon's own lifesteal figure, so it grows with rarity exactly as the
+-- lifesteal does and there is no second number to keep in step.
+
 local BLOOD_SPREE = 'LowHealthLifestealBoon'
 
-local KILLS = 'BoonEditBloodSpreeKills'
-local CHANCE = 'BoonEditBloodSpreeChance'
 
-
+-- The key is a guard, not a name: `once` remembers the string, so changing it would let a hot reload
+-- in a live session apply a second `KillEnemy` wrap and roll the chance twice per orphaned kill.
 once('BloodSpreeKillCrit', function()
 
 	modutil.mod.Path.Wrap("KillEnemy", function(base, victim, triggerArgs)
@@ -21,40 +25,12 @@ once('BloodSpreeKillCrit', function()
 	local trait = game.TraitData[BLOOD_SPREE]
 	if not trait then return end
 
-	local scale = mod.tuning.BloodSpree.RarityScale
-
-	trait.BoonEditKillCritChance = {
-		BaseValue = mod.tuning.BloodSpree.CritChancePerKill,
-		CustomRarityMultiplier = {
-			Common = { Multiplier = scale.Common },
-			Rare = { Multiplier = scale.Rare },
-			Epic = { Multiplier = scale.Epic },
-			Heroic = { Multiplier = scale.Heroic },
-		},
-	}
-
-	trait.AddOutgoingDoubleDamageModifiers = { Chance = { BaseValue = 0 } }
 	trait.OnEnemyDeathFunction = { Name = _PLUGIN.guid .. '.BloodSpreeKill' }
-	trait.SetupFunction = { Name = _PLUGIN.guid .. '.BloodSpreeSetup' }
-
-	trait.ShowInHUD = true
-	trait.CustomLabel = {
-		DisplayType = 'RoomValue',
-		Key = CHANCE,
-		Text = 'UI_TimedKillBuff',
-	}
-
-	table.insert(trait.StatLines, 'BoonEditBloodSpreeCritStatDisplay')
-	table.insert(trait.CustomStatLinesWithShrineUpgrade.StatLines, 'BoonEditBloodSpreeCritStatDisplay')
-	table.insert(trait.ExtractValues, {
-		Key = 'BoonEditKillCritChance',
-		ExtractAs = 'BoonEditKillCritChance',
-		Format = 'LuckModifiedPercent',
-		DecimalPlaces = 1,
-	})
 end)
 
 
+-- A foe killed by a lingering effect rather than by a hit has no attacker, so `OnEnemyDeathFunction`
+-- never runs for it. These are the ones worth catching anyway.
 local ORPHANED_KILL_EFFECTS = {
 	DamageShareDeath = true,
 }
@@ -77,41 +53,32 @@ function mod.BloodSpreeKill(victim, _args, _triggerArgs)
 	---@diagnostic disable-next-line: undefined-global
 	if is_allied_summon(victim) then return end
 
-	local room = game.CurrentRun and game.CurrentRun.CurrentRoom
-	if not room then return end
-
-	room[KILLS] = (room[KILLS] or 0) + 1
-	blood_spree_apply()
-end
-
-
----@diagnostic disable-next-line: unused-local
-function mod.BloodSpreeSetup(_hero, _args, _setupArgs, _trait)
-	if not config.BoonChanges.BloodSpree.Enabled then return end
-
-	blood_spree_apply()
-end
-
-
-function blood_spree_apply()
 	local hero = game.CurrentRun and game.CurrentRun.Hero
-	local room = game.CurrentRun and game.CurrentRun.CurrentRoom
-	if not hero or not room then return end
+	if not hero then return end
 
+	---@diagnostic disable-next-line: undefined-global
+	if not rolls(mod.tuning.BloodSpree.KillHealChance) then return end
+
+	local amount = blood_spree_heal_amount()
+	if amount <= 0 then return end
+
+	-- vanilla puts every point of lifesteal through the healing multiplier before it lands
+	-- (`CombatLogic.lua:1107`), and this boon carries the shrine-upgrade stat line that says so
+	game.Heal(hero, {
+		HealAmount = game.round(amount * game.CalculateHealingMultiplier()),
+		SourceName = BLOOD_SPREE,
+	})
+end
+
+
+-- `MaxLifesteal` is nested inside `AddOutgoingLifestealModifiers`, and `GetProcessedValue` recurses
+-- (`TraitLogic.lua:337`), so the hero's copy of the trait already carries it as a plain number with
+-- the rarity multiplier applied. Read off the trait rather than off tuning for that reason.
+function blood_spree_heal_amount()
 	local trait = game.GetHeroTrait(BLOOD_SPREE)
-	if not trait then return end
+	local modifiers = trait and trait.AddOutgoingLifestealModifiers
+	local amount = modifiers and modifiers.MaxLifesteal
 
-	local perKill = trait.BoonEditKillCritChance
-	if type(perKill) ~= 'number' then return end
-
-	local chance = math.min(perKill * (room[KILLS] or 0), mod.tuning.BloodSpree.MaxCritChance)
-
-	for _, data in ipairs(hero.OutgoingDoubleDamageModifiers or {}) do
-		if data.Name == BLOOD_SPREE then
-			data.Chance = chance
-		end
-	end
-
-	room[CHANCE] = game.round(chance * 1000) / 10
-	game.UpdateTraitNumber(trait)
+	if type(amount) ~= 'number' then return 0 end
+	return amount
 end

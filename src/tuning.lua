@@ -38,6 +38,12 @@ mod.tuning.EcstaticObsession = {
 	CharmChance = 0.30,
 	CharmDuration = 5,
 	InterruptCooldown = 5,
+
+	-- How long a Guardian is left alone after being Charmed. Lesser foes have none: they shake it
+	-- off on their own and there is nothing to protect. A Guardian shakes it off several times
+	-- faster (`CharmBreakModifier`, `Enemies.sjson`), so without this the next Weak to land could
+	-- put it straight back under and hold a boss out of the fight indefinitely.
+	GuardianCharmCooldown = 5,
 	DamagePerFriendly = 0.10,
 	MaxDamageBonus = 0.50,
 
@@ -56,16 +62,7 @@ mod.tuning.ProfuseBleeding = {
 }
 
 mod.tuning.BloodSpree = {
-	CritChancePerKill = 0.01,
-
-	RarityScale = {
-		Common = 1,
-		Rare = 1.5,
-		Epic = 2,
-		Heroic = 2.5,
-	},
-
-	MaxCritChance = 1.0,
+	KillHealChance = 0.20,
 }
 
 mod.tuning.IonicGain = {
@@ -84,6 +81,15 @@ mod.tuning.IonicGain = {
 
 mod.tuning.BeachBall = {
 	BlastDamage = 400,
+
+	-- `ProjectileSprintBall`'s own `DamageRadius`, fallen back on when the ball is already gone by
+	-- the time its death is reported.
+	BlastRadius = 250,
+
+	-- What the splash boons' extra wave is fired as. The ball itself is a steered, growing orb and
+	-- cannot simply be made twice; the radial splinter is the same shape its blast leaves and the
+	-- same one Tidal Ring's waves are.
+	WaveProjectile = 'PoseidonCastSplashSplinter',
 }
 
 mod.tuning.GloriousDisaster = {
@@ -199,8 +205,41 @@ mod.tuning.Fireballs = {
 	Traits = { 'FireballRendBoon', 'SteamBoon' },
 }
 
+-- Shared by every splash this mod fires itself. `ConeModifier` is only ever read inside vanilla's own
+-- splash functions, so a boon that fires straight has to do the reading -- and three of ours now do.
+-- Easy Shot's piercing arrow. The boon reports its damage as a multiple of `ArtemisCastVolley`'s own
+-- 50, so doubling the multiplier doubles the printed figure at every rarity: 50/60/70/80 becomes
+-- 100/120/140/160. Poms cannot be spent on this boon at all -- see `easy_shot.lua`.
+mod.tuning.EasyShot = {
+	DamageMultiplier = 2.0,
+}
+
+mod.tuning.PoseidonSplash = {
+	-- Our own radial red nova, registered in `sjson_PoseidonVfx`. Arterial Spray's own marker is a
+	-- cone, which is the right shape for the Attack and Special splash and the wrong one for these:
+	-- they go off all round, and the cone pointed one way across a circle that did not.
+	RedNova = 'SWuPoseidonRedNova',
+
+	-- The gap between one wave and the next. Vanilla's own spacing (`PowersLogic.lua:3826`).
+	WaveDelay = 0.1,
+}
+
+mod.tuning.TidalRing = {
+	-- What `CheckPoseidonCastSplash` falls back to when the Cast is gone (`PowersLogic.lua:1859`)
+	Radius = 430,
+}
+
 mod.tuning.TidalRush = {
-	WaveDamage = { Common = 20, Rare = 25, Epic = 30, Heroic = 35 },
+	WaveDamage = { Common = 50, Rare = 55, Epic = 60, Heroic = 65 },
+
+	-- What a Pom of Power adds, in damage: the first one, then every one after it. Vanilla's own
+	-- figures for this boon (20 then 10 against an 80-damage blast); they are written here in damage
+	-- and divided by the splash's base below, because `AbsoluteStackValues` are multipliers.
+	PomDamage = { First = 20, Rest = 10 },
+
+	-- How often the sprint lays a splash behind it, on top of the two at either end.
+	TrailInterval = 0.5,
+
 	Radius = 400,
 	Knockback = 2000,
 }
@@ -226,7 +265,11 @@ mod.tuning.ShockingLoss = {
 
 mod.tuning.KillerCurrent = {
 	BoltChance = 0.30,
-	BoltPower = 50,
+	BoltPower = 30,
+
+	-- The shortest gap between two bolts. Froth sits on a foe for a while and every hit that lands
+	-- on it rolls again, so a fast weapon into a Frothed crowd rolled many times a second.
+	BoltCooldown = 0.5,
 }
 
 mod.tuning.ThermalDynamics = {
