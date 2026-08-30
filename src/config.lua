@@ -140,6 +140,10 @@ local config = {
       Enabled = true;
     };
 
+    PassionRush = {
+      Enabled = true;
+    };
+
     PowerSurge = {
       Enabled = true;
     };

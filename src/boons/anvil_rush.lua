@@ -23,6 +23,9 @@ once('AnvilRing', function()
 end)
 
 
+local ANVIL_RUSH_WEAPONS = { 'WeaponBlink', 'WeaponSprint' }
+
+
 once('SmithyRush', function()
 	if not config.BoonChanges.SmithyRush.Enabled then return end
 
@@ -49,8 +52,8 @@ once('SmithyRush', function()
 	dash.BlastReadyDarkVfx = nil
 
 	dash.OnWeaponFiredFunctions = {
-		ValidWeapons = { 'WeaponBlink' },
-		ValidWeaponsLookup = game.ToLookup({ 'WeaponBlink' }),
+		ValidWeapons = game.DeepCopyTable(ANVIL_RUSH_WEAPONS),
+		ValidWeaponsLookup = game.ToLookup(ANVIL_RUSH_WEAPONS),
 		ExcludeLinked = true,
 		FunctionName = _PLUGIN.guid .. '.AnvilRushStart',
 		FunctionArgs = {
@@ -97,15 +100,7 @@ function anvil_rush_presentation(locationX, locationY)
 	game.DestroyOnDelay({ centerId }, 1)
 end
 
-function fire_anvil_rush_strike(args, triggerArgs)
-	if args and args.CheckSprint and game.ConfigOptionCache.SprintAutoHold and game.SessionMapState.SprintActive then
-		return
-	end
-	if not game.ConfigOptionCache.SprintAutoHold
-		and ((triggerArgs and triggerArgs.Canceled) or (args and args.CheckSprint and game.SessionMapState.SprintActive)) then
-		return
-	end
-
+function anvil_rush_strike()
 	local trait = game.GetHeroTrait('HephaestusSprintBoon')
 	local traitArgs = trait and trait.OnWeaponFiredFunctions and trait.OnWeaponFiredFunctions.FunctionArgs
 	if not traitArgs then return end
@@ -129,12 +124,31 @@ function fire_anvil_rush_strike(args, triggerArgs)
 	if location then
 		game.thread(anvil_rush_presentation, location.X, location.Y)
 	end
+end
 
+function fire_anvil_rush_strike(args, triggerArgs)
+	if args and args.CheckSprint and game.ConfigOptionCache.SprintAutoHold and game.SessionMapState.SprintActive then
+		return
+	end
+	if not game.ConfigOptionCache.SprintAutoHold
+		and ((triggerArgs and triggerArgs.Canceled) or (args and args.CheckSprint and game.SessionMapState.SprintActive)) then
+		return
+	end
+
+	anvil_rush_strike()
 	game.SessionMapState.BoonEditAnvilRushStarted = nil
 end
 
-function mod.AnvilRushStart(args, triggerArgs)
-	fire_anvil_rush_strike(args, triggerArgs)
+---@diagnostic disable-next-line: unused-local
+function mod.AnvilRushStart(weaponData, _args, _triggerArgs)
+	if weaponData and weaponData.Name == 'WeaponSprint' then
+		if game.CheckCooldown('BoonEditAnvilRushTrail', mod.tuning.AnvilRush.TrailInterval) then
+			anvil_rush_strike()
+		end
+		return
+	end
+
+	anvil_rush_strike()
 	game.SessionMapState.BoonEditAnvilRushStarted = true
 end
 

@@ -133,6 +133,7 @@ mod.tuning.UnseenIre = {
 mod.tuning.AnvilRush = {
 	GlowPerStack = 0.05,
 	GlowMax = 1.35,
+	TrailInterval = 0.5,
 }
 
 mod.tuning.MoltenTouch = {
@@ -243,6 +244,10 @@ mod.tuning.TidalRush = {
 
 	Radius = 400,
 	Knockback = 2000,
+}
+
+mod.tuning.PassionRush = {
+	TrailInterval = 0.5,
 }
 
 mod.tuning.ArterialSpray = {

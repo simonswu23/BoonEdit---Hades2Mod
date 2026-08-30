@@ -285,6 +285,7 @@ end
 
 import 'boons/fireballs.lua'
 import 'boons/glamour_gain.lua'
+import 'boons/passion_rush.lua'
 import 'boons/carnal_pleasure.lua'
 import 'boons/smoldering_forge.lua'
 import 'boons/ecstatic_obsession.lua'
