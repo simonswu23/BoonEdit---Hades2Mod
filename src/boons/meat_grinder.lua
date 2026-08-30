@@ -5,6 +5,34 @@
 local RIFT = 'AresProjectile'
 
 
+once('MeatGrinderArea', function()
+	if not config.BoonChanges.MeatGrinder.Enabled then return end
+
+	local grinder = game.TraitData.AresExCastBoon
+	grinder.OnProjectileArmFunction.FunctionName = _PLUGIN.guid .. '.MeatGrinderCastArmed'
+end)
+
+
+---@diagnostic disable-next-line: unused-local
+function mod.MeatGrinderCastArmed(triggerArgs, functionArgs)
+	local projectileId = triggerArgs.ProjectileId
+	local dataProperties = {}
+	if game.HeroHasTrait('SelfCastBoon') and projectileId ~= game.SessionMapState.FamiliarCastProjectileId then
+		dataProperties.AttachToOwner = true
+		dataProperties.IgnoreCancelAttachedProjectiles = true
+	end
+	game.CreateProjectileFromUnit({
+		Name = functionArgs.ProjectileName,
+		Id = game.CurrentRun.Hero.ObjectId,
+		ProjectileDestinationId = projectileId,
+		FireFromTarget = true,
+		DamageMultiplier = functionArgs.DamageMultiplier,
+		DataProperties = dataProperties,
+		BlastRadiusModifier = cast_area_multiplier(),
+	})
+end
+
+
 once('MeatGrinderBloodSpill', function()
 	if not config.BoonChanges.MeatGrinder.Enabled then return end
 

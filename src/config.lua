@@ -15,6 +15,10 @@ local config = {
       Enabled = true;
     };
 
+    ArcticGale = {
+      Enabled = true;
+    };
+
     ArterialSpray = {
       Enabled = true;
     };
