@@ -181,7 +181,7 @@ function breaker_rush_splash()
 end
 
 
-- Two separate reasons the weapon list goes stale, and this repairs both every room load.
+-- Two separate reasons the weapon list goes stale, and this repairs both every room load.
 --
 -- `once` writes `mod.SetupDone[key]` and never runs its body again for the life of the process, so a
 -- hot reload re-imports this file but does not re-apply the block above -- `TraitData` itself keeps
