@@ -22,7 +22,15 @@ once('RousingReceptionCastDuration', function()
 			ProjectileProperty = property,
 			BaseValue = multiplier,
 			ChangeType = 'Multiply',
+			FalseTraitName = 'HermesCastDiscountBoon',
 		})
+	end
+
+	local discount = game.TraitData.HermesCastDiscountBoon
+	for _, change in ipairs(discount.PropertyChanges) do
+		if change.WeaponName == 'WeaponCast' and (change.ProjectileProperty == 'FuseStart' or change.ProjectileProperty == 'Fuse') then
+			change.FalseTraitName = 'SpawnCastDamageBoon'
+		end
 	end
 end)
 

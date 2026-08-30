@@ -305,6 +305,7 @@ import 'boons/tranquil_gain.lua'
 import 'boons/winter_harvest.lua'
 import 'boons/natural_selection.lua'
 import 'boons/cryo_pounder.lua'
+import 'boons/arctic_gale.lua'
 
 import 'boons/unseen_ire.lua'
 import 'boons/old_grudge.lua'
@@ -399,6 +400,19 @@ function poseidon_splash_cone()
 end
 
 
+function cast_area_multiplier()
+	local multiplier = 1
+
+	for _, data in pairs(game.GetHeroTraitValues('CastProjectileModifiers')) do
+		if data.AreaIncrease then
+			multiplier = multiplier * data.AreaIncrease
+		end
+	end
+
+	return multiplier
+end
+
+
 function wait_for_screens(settle)
 	settle = settle or 0
 
@@ -412,15 +426,6 @@ function wait_for_screens(settle)
 	end
 end
 
--- Nothing opens on top of an open screen. A choice that arrives on a delay -- Concave Stone's random
--- boon is the one that showed this -- used to land over whatever was already up, so a page you were
--- reading became a page you could no longer see. Deferred rather than refused: the offer is still
--- owed, it just waits its turn.
---
--- `OpenUpgradeChoiceMenu`'s return value is read by nothing, in vanilla or here, so handing the
--- caller back nothing while the real open happens on a thread costs nothing. `OpenKeepsakeRackScreen`
--- already refuses outright when its own screen is up (`KeepsakeLogic.lua:605`), which is the same
--- instinct with a shorter reach.
 function defer_screen_open(open, ...)
 	if game.IsEmpty(game.ActiveScreenOrder or {}) then
 		return open(...)

@@ -127,7 +127,8 @@ function anvil_open_sacrifice_menu()
 	source.BoonEditAnvilSacrifice = true
 
 	mod.AnvilSacrificed = nil
-	game.OpenUpgradeChoiceMenu(source)
+	---@diagnostic disable-next-line: undefined-global
+	defer_screen_open(game.OpenUpgradeChoiceMenu, source)
 	return true
 end
 
@@ -149,7 +150,8 @@ end
 function anvil_open_discover_menu()
 	local source = anvil_menu_source()
 	source.UpgradeOptions = nil
-	game.OpenUpgradeChoiceMenu(source)
+	---@diagnostic disable-next-line: undefined-global
+	defer_screen_open(game.OpenUpgradeChoiceMenu, source)
 end
 
 function anvil_unlock_exits()

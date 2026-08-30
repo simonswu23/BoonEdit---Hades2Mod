@@ -212,6 +212,7 @@ mod.tuning.Fireballs = {
 -- 100/120/140/160. Poms cannot be spent on this boon at all -- see `easy_shot.lua`.
 mod.tuning.EasyShot = {
 	DamageMultiplier = 2.0,
+	CritChance = 0.20,
 }
 
 mod.tuning.PoseidonSplash = {

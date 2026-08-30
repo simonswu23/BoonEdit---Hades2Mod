@@ -25,3 +25,16 @@ once('EasyShotDamage', function()
 
 	args.DamageMultiplier.BaseValue = mod.tuning.EasyShot.DamageMultiplier
 end)
+
+
+once('EasyShotCrit', function()
+	if not config.BoonChanges.EasyShot.Enabled then return end
+
+	local easyShot = game.TraitData.OmegaCastVolleyBoon
+	if not easyShot then return end
+
+	easyShot.AddOutgoingCritModifiers = easyShot.AddOutgoingCritModifiers or {
+		ValidProjectiles = { 'ArtemisCastVolley' },
+		Chance = { BaseValue = mod.tuning.EasyShot.CritChance },
+	}
+end)
