@@ -10,6 +10,7 @@ once('RippleEffectOmegaBoons', function()
 
 		ripple.BoonEditRepeatChance = mod.tuning.RippleEffect.RepeatChance
 		ripple.StatLines = { 'BoonEditRippleRepeatStatDisplay' }
+		ripple.BoonEditMaxRepeats = mod.tuning.RippleEffect.MaxRepeats
 		ripple.ExtractValues = {
 			{
 				Key = 'BoonEditRepeatChance',
@@ -17,8 +18,16 @@ once('RippleEffectOmegaBoons', function()
 				Format = 'LuckModifiedPercent',
 				HideSigns = true,
 			},
+			{ Key = 'BoonEditMaxRepeats', ExtractAs = 'TooltipMaxRepeats', SkipAutoExtract = true },
 		}
 	end
+
+	modutil.mod.Path.Wrap("CheckDionysusDebuff", function(base, victim, functionArgs, triggerArgs)
+		if ripple_effect_hangover then
+			return ripple_effect_hangover(base, victim, functionArgs, triggerArgs)
+		end
+		return base(victim, functionArgs, triggerArgs)
+	end)
 
 	modutil.mod.Path.Wrap("CreateProjectileFromUnit", function(base, args)
 		local result = base(args)
@@ -30,42 +39,26 @@ once('RippleEffectOmegaBoons', function()
 end)
 
 
--- Four families and no more. Ares' swords and Icarus' explosion used to be here and are not the
--- kind of thing this is for -- one is a falling blade with its own count, the other a one-off blast.
---
--- Hestia's is the whole fireball list rather than the one name, because this mod widens what counts
--- as a fireball elsewhere (`fireball_projectiles`) and a boon that repeats "your fireballs" should
--- mean the same set everywhere.
+-- The Omega boons Ripple repeats, named one at a time rather than by family. It used to take every
+-- fireball through `fireball_projectiles()`, which is the Fireballs edit's own list and holds this
+-- mod's and other mods' fireballs as well as Hestia's -- so a Waxing Moon Hex-Call or a Volcanic
+-- Crown fed it dozens of projectiles, each repeating and bouncing on.
 local RIPPLE_PROJECTILES = {
-	-- Ocean Swells
-	PoseidonOmegaWave = true,
-
-	-- Hera Rifts
-	ProjectileHeraOmega = true,
-
-	-- Artemis' piercing arrows, off Easy Shot
-	ArtemisCastVolley = true,
+	PoseidonOmegaWave = true,   -- Ocean Swell
+	ProjectileHeraOmega = true, -- Fine Line
+	ArtemisCastVolley = true,   -- Easy Shot
+	ProjectileFireball = true,  -- Controlled Burn
+	IcarusExplosion = true,     -- Explosive Intent
+	ProjectileAresSwordEx = true, -- Cut Above
 }
 
 
 function ripple_effect_covers(name)
-	if RIPPLE_PROJECTILES[name] then return true end
-
-	---@diagnostic disable-next-line: undefined-global
-	return game.Contains(fireball_projectiles(), name)
+	return RIPPLE_PROJECTILES[name] == true
 end
 
-function ripple_effect_repeat(args)
-	if mod.RippleFiring then return end
-	if not config.BoonChanges.RippleEffect.Enabled then return end
-	if not args or not args.Name or not ripple_effect_covers(args.Name) then return end
-	if not game.HeroHasTrait('MoneyDamageBoon') then return end
-
-	-- No check on who fired it. These four are yours by definition -- nothing else in the game makes
-	-- an Ocean Swell or a Hera Rift -- and tying it to Melinoe's own ObjectId quietly dropped every
-	-- one of them that something else spawned on your behalf: a familiar's cast, a Hex-Call's swells,
-	-- anything re-fired through a wrap. However and whenever one is created, it repeats.
-
+-- How many extra helpings this proc earns, each roll dearer than the last.
+function ripple_effect_rolls()
 	local tuning = mod.tuning.RippleEffect
 	local chance = game.GetTotalHeroTraitValue('BoonEditRepeatChance')
 	local repeats = 0
@@ -74,6 +67,40 @@ function ripple_effect_repeat(args)
 		repeats = repeats + 1
 		chance = chance * tuning.Falloff
 	end
+
+	return repeats
+end
+
+
+-- **Drunken Stupor fires no projectile**, so it cannot be named above: it applies a lingering effect
+-- through `ApplyEffect`, behind a `HitByDionysusEx` latch that lets it land once per foe
+-- (`PowersLogic.lua:3721`). Re-applying would refresh that one effect rather than add to it, so a
+-- ripple of it is a heavier dose instead -- the rolls that would have repeated a projectile multiply
+-- what the effect carries.
+function ripple_effect_hangover(base, victim, functionArgs, triggerArgs)
+	if not config.BoonChanges.RippleEffect.Enabled then return base(victim, functionArgs, triggerArgs) end
+	if not game.HeroHasTrait('MoneyDamageBoon') then return base(victim, functionArgs, triggerArgs) end
+	if type(functionArgs and functionArgs.Damage) ~= 'number' then
+		return base(victim, functionArgs, triggerArgs)
+	end
+
+	local repeats = ripple_effect_rolls()
+	if repeats <= 0 then return base(victim, functionArgs, triggerArgs) end
+
+	local dosed = game.ShallowCopyTable(functionArgs)
+	dosed.Damage = functionArgs.Damage * (1 + repeats)
+	return base(victim, dosed, triggerArgs)
+end
+
+
+function ripple_effect_repeat(args)
+	if mod.RippleFiring then return end
+	if not config.BoonChanges.RippleEffect.Enabled then return end
+	if not args or not args.Name or not ripple_effect_covers(args.Name) then return end
+	if not game.HeroHasTrait('MoneyDamageBoon') then return end
+
+
+	local repeats = ripple_effect_rolls()
 	if repeats <= 0 then return end
 
 	local repeated = game.ShallowCopyTable(args)

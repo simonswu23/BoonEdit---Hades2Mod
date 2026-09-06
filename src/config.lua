@@ -67,6 +67,11 @@ local config = {
       Enabled = true;
     };
 
+    -- Offering requirements for vanilla duos and legendaries this mod does not otherwise change.
+    DuoRequirements = {
+      Enabled = true;
+    };
+
     EasyShot = {
       Enabled = true;
     };
@@ -79,11 +84,19 @@ local config = {
       Enabled = true;
     };
 
+    FestiveFog = {
+      Enabled = true;
+    };
+
     GlamourGain = {
       Enabled = true;
     };
 
     GloriousDisaster = {
+      Enabled = true;
+    };
+
+    GrapeJuice = {
       Enabled = true;
     };
 
@@ -121,6 +134,14 @@ local config = {
 
     MeatGrinder = {
       -- Blade Rifts may spill Plasma when they hit a foe.
+      Enabled = true;
+    };
+
+    BurningDesire = {
+      Enabled = true;
+    };
+
+    ControlledBurn = {
       Enabled = true;
     };
 

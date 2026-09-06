@@ -2,16 +2,9 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Blood Spree's lifesteal only pays out while you are already nearly dead. This adds a second way to
--- get it: slaying a foe restores the same amount the boon's Attack and Special do, one kill in five.
--- The amount is read off the boon's own lifesteal figure, so it grows with rarity exactly as the
--- lifesteal does and there is no second number to keep in step.
-
 local BLOOD_SPREE = 'LowHealthLifestealBoon'
 
 
--- The key is a guard, not a name: `once` remembers the string, so changing it would let a hot reload
--- in a live session apply a second `KillEnemy` wrap and roll the chance twice per orphaned kill.
 once('BloodSpreeKillCrit', function()
 
 	modutil.mod.Path.Wrap("KillEnemy", function(base, victim, triggerArgs)
@@ -26,11 +19,17 @@ once('BloodSpreeKillCrit', function()
 	if not trait then return end
 
 	trait.OnEnemyDeathFunction = { Name = _PLUGIN.guid .. '.BloodSpreeKill' }
+
+	trait.BoonEditKillHealChance = mod.tuning.BloodSpree.KillHealChance
+	table.insert(trait.ExtractValues, {
+		Key = 'BoonEditKillHealChance',
+		ExtractAs = 'TooltipKillHealChance',
+		Format = 'LuckModifiedPercent',
+		SkipAutoExtract = true,
+	})
 end)
 
 
--- A foe killed by a lingering effect rather than by a hit has no attacker, so `OnEnemyDeathFunction`
--- never runs for it. These are the ones worth catching anyway.
 local ORPHANED_KILL_EFFECTS = {
 	DamageShareDeath = true,
 }
@@ -62,8 +61,6 @@ function mod.BloodSpreeKill(victim, _args, _triggerArgs)
 	local amount = blood_spree_heal_amount()
 	if amount <= 0 then return end
 
-	-- vanilla puts every point of lifesteal through the healing multiplier before it lands
-	-- (`CombatLogic.lua:1107`), and this boon carries the shrine-upgrade stat line that says so
 	game.Heal(hero, {
 		HealAmount = game.round(amount * game.CalculateHealingMultiplier()),
 		SourceName = BLOOD_SPREE,
@@ -71,9 +68,6 @@ function mod.BloodSpreeKill(victim, _args, _triggerArgs)
 end
 
 
--- `MaxLifesteal` is nested inside `AddOutgoingLifestealModifiers`, and `GetProcessedValue` recurses
--- (`TraitLogic.lua:337`), so the hero's copy of the trait already carries it as a plain number with
--- the rarity multiplier applied. Read off the trait rather than off tuning for that reason.
 function blood_spree_heal_amount()
 	local trait = game.GetHeroTrait(BLOOD_SPREE)
 	local modifiers = trait and trait.AddOutgoingLifestealModifiers

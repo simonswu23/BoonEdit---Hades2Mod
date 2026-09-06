@@ -2,9 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- `WeaponBlink` fires once as the dash goes off; `WeaponSprint` fires over and over for as long as a
--- sprint is held. Named here rather than inline because `breaker_rush_sync` needs the same list, and
--- it must not read it back off `TraitData` -- see there.
 local BREAKER_RUSH_WEAPONS = { 'WeaponBlink', 'WeaponSprint' }
 
 
@@ -23,9 +20,6 @@ once('BreakerRushWaves', function()
 		breaker.RarityLevels[rarity] = { Multiplier = damage / waveDamage }
 	end
 
-	-- Vanilla's own Breaker Rush laid its continuous trail off `WeaponSprint` with a `CheckCooldown`
-	-- for a throttle rather than a thread (`PowersLogic.lua:1881`). The dispatch matches on
-	-- `ValidWeaponsLookup`, not `ValidWeapons` (`CombatLogic.lua:3267`), so both are set.
 	breaker.OnWeaponFiredFunctions = {
 		ValidWeapons = game.DeepCopyTable(BREAKER_RUSH_WEAPONS),
 		ValidWeaponsLookup = game.ToLookup(BREAKER_RUSH_WEAPONS),
@@ -37,12 +31,6 @@ once('BreakerRushWaves', function()
 				BaseValue = 1,
 				DecimalPlaces = 3,
 
-				-- Without this a Pom adds `BaseValue * 1` -- a whole extra splash's worth of damage,
-				-- +60 on a boon that deals 50 at Common. `AbsoluteStackValues` is how vanilla keeps
-				-- a Pom sane: it replaces the base for every stack past the first, so [1] is what
-				-- the first Pom adds and [2] what every one after it does. Vanilla's own Breaker
-				-- Rush carried `{ [1] = 20/80, [2] = 10/80 }` against its 80-damage blast, and
-				-- rewriting `FunctionArgs` wholesale is what dropped it.
 				AbsoluteStackValues = {
 					[1] = mod.tuning.TidalRush.PomDamage.First / waveDamage,
 					[2] = mod.tuning.TidalRush.PomDamage.Rest / waveDamage,
@@ -63,7 +51,7 @@ once('BreakerRushWaves', function()
 	}
 
 	breaker.StatLines = { 'SplashDamageStatDisplay1' }
-	breaker.ExtractValues = {
+	breaker.ExtractValues = with_keyword_extracts({
 		{
 			Key = 'ReportedMultiplier',
 			ExtractAs = 'Damage',
@@ -72,14 +60,8 @@ once('BreakerRushWaves', function()
 			BaseName = 'PoseidonCastSplashSplinter',
 			BaseProperty = 'Damage',
 		},
-	}
+	}, 'KnockbackAmplify')
 
-	-- Froth off the splash itself, not off `CheckSlipApply`. That function only fires when the effect
-	-- landing is `ImpactSlow` (`PowersLogic.lua:1906`), and `ImpactSlow` is the *Cast's* slow -- it is
-	-- how the game knows a foe is standing in a binding circle. Tidal Ring is a Cast boon, so reading
-	-- it works there; Breaker Rush is a dash boon and applies nothing of the sort, so the Froth landed
-	-- only when a Cast happened to be slowing the same foe. Naming the splinter is what makes it the
-	-- splash's own doing, every time.
 	breaker.OnEnemyDamagedAction = {
 		ValidProjectiles = { 'PoseidonCastSplashSplinter' },
 		FunctionName = _PLUGIN.guid .. '.BreakerRushFroth',
@@ -88,14 +70,6 @@ once('BreakerRushWaves', function()
 end)
 
 
--- Applied by hand rather than through the `EffectName` the engine would apply for us. That path ends
--- at `PowersLogic.lua:192`, which does `math.rad(args.ImpactAngle)` with no guard -- and this splash
--- is an INSTANT, radial, `UseStartLocation` blast centred on Melinoe, so its damage arrives with no
--- impact angle at all and the game faults on it. Vanilla never meets this because Tidal Ring, the
--- only other boon firing this projectile, hangs its Froth off `OnEffectApplyFunction` instead.
---
--- The sibling branch at `:226` reads `args.ImpactAngle or 0`, so a nil angle is a case the game
--- itself expects everywhere except the line we were routed through.
 ---@diagnostic disable-next-line: unused-local
 function mod.BreakerRushFroth(victim, _args, triggerArgs)
 	if not config.BoonChanges.BreakerRush.Enabled then return end
@@ -133,9 +107,6 @@ function fire_breaker_rush_wave(args, triggerArgs)
 end
 
 
--- One splash where Melinoe is standing. The splinter is INSTANT with `Fuse = 0.0`, so it goes off
--- on the spot and stays there -- which is the whole of the trail: fired on a beat while she runs, it
--- falls behind on its own.
 function breaker_rush_splash()
 	local hero = game.CurrentRun and game.CurrentRun.Hero
 	if not hero then return end
@@ -147,11 +118,6 @@ function breaker_rush_splash()
 	---@diagnostic disable-next-line: undefined-global
 	local scale, count, graphic = poseidon_splash_cone()
 
-	-- Arterial Spray's *power* half is separate from its extra wave: the wave comes out of
-	-- `ConeModifier` above, but the reduction is a `CreateProjectileFromUnit` wrap that only arms
-	-- itself for the length of a vanilla splash function. Opening the same window by hand is what
-	-- keeps the second wave at the reduced power the tooltip promises rather than full strength.
-	-- It reads the delay to tell the waves apart, which is why the first carries none.
 	---@diagnostic disable-next-line: undefined-global
 	arterial_spray_begin({ ProjectileName = traitArgs.ProjectileName })
 
@@ -181,18 +147,7 @@ function breaker_rush_splash()
 end
 
 
--- Two separate reasons the weapon list goes stale, and this repairs both every room load.
---
--- `once` writes `mod.SetupDone[key]` and never runs its body again for the life of the process, so a
--- hot reload re-imports this file but does not re-apply the block above -- `TraitData` itself keeps
--- the old list until the game is relaunched. And a held boon is a snapshot: `AddTraitToHero`
--- deep-copies `TraitData` into `hero.Traits` at pickup and that copy lives in the save, so even after
--- a relaunch a Breaker Rush taken earlier keeps the one-weapon lookup and never hears `WeaponSprint`
--- -- you get the opening and closing splash and nothing in between.
---
--- So the constant is the source of truth here, not `TraitData`, which may itself be behind. The fire
--- dispatch reads `HeroTraitValuesCache` (`CombatLogic.lua:3266`) rather than the trait, so the cache
--- has to be rebuilt after the edit or nothing changes.
+-- MIGRATION SHIM -- delete before release; see the table in CLAUDE.md.
 function breaker_rush_sync()
 	if not config.BoonChanges.BreakerRush.Enabled then return end
 
@@ -234,9 +189,6 @@ function breaker_rush_set_weapons(fired)
 end
 
 
--- `(weaponData, FunctionArgs, triggerArgs)` -- three, not two (`CombatLogic.lua:3268`). Both weapons
--- come through here, and which one fired is the only thing that tells the dash's opening splash
--- apart from a beat of the trail behind it.
 function mod.BreakerRushStart(weaponData, _args, _triggerArgs)
 	if weaponData and weaponData.Name == 'WeaponSprint' then
 		if game.CheckCooldown('BoonEditBreakerRushTrail', mod.tuning.TidalRush.TrailInterval) then
@@ -245,10 +197,6 @@ function mod.BreakerRushStart(weaponData, _args, _triggerArgs)
 		return
 	end
 
-	-- The opening splash is unconditional, so it does not go through `fire_breaker_rush_wave`: those
-	-- guards exist to decide whether the *closing* one is owed, and now that this handler is signed
-	-- correctly it would be handing them a real `triggerArgs` to read `Canceled` off for the first
-	-- time. The flag is what stops the two end actions from both paying out.
 	breaker_rush_splash()
 	game.SessionMapState.BoonEditBreakerRushStarted = true
 end

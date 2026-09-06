@@ -8,10 +8,6 @@ once('CherishedHeirloom', function()
 	end
 
 	modutil.mod.Path.Wrap("KeepsakeScreenClose", function(base, screen, button)
-		-- The extra keepsake is a choice, not an offer -- so the rack does not let you back out of
-		-- it. `screen.LastTrait` is what you walked in wearing and `GameState.LastAwardTrait` is what
-		-- is picked now, so the two being equal is exactly "nothing was chosen"; that is the same
-		-- pair vanilla reads two lines into its own close to decide whether anything changed.
 		if cherished_heirloom_extra_pending()
 			and screen and screen.LastTrait == game.GameState.LastAwardTrait then
 			return

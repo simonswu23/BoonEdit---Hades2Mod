@@ -37,6 +37,12 @@ once('GloriousDisasterAlwaysSupercharged', function()
 	end
 
 	disaster.ChargeStageModifiers = nil
+
+	for _, change in ipairs(disaster.PropertyChanges or {}) do
+		if change.WeaponProperty == 'ForceMaxChargeRelease' then
+			change.ChangeValue = true
+		end
+	end
 end)
 
 

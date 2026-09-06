@@ -22,16 +22,6 @@ once('ScaldingVapor', function()
 		steam.OnEnemyDamagedAction.ValidProjectiles = fireballs
 		steam.OnEnemyDamagedAction.ValidProjectilesLookup = game.ToLookup(fireballs)
 
-		-- Scorch no longer makes Steam; a fireball does. These two are vanilla's way of saying the
-		-- opposite. `AllEffectsTrigger` is the only gate on whether the action runs at all
-		-- (`PowersLogic.lua:243`), so with it set `CheckSteam` was called on every effect landing on
-		-- every foe you damaged, whatever hit them; `ValidEffect = BurnEffect` then let the Scorch
-		-- ones through. Dropping both leaves `validEffects` as `args.EffectName == nil`, which is
-		-- true for a damage trigger and false for an effect application -- so the projectile list
-		-- above becomes the whole of what decides it.
-		--
-		-- The wrap below already refused those, but it was doing so after the fact and on every
-		-- status tick in the room. This is the same rule written where the game reads it.
 		steam.OnEnemyDamagedAction.AllEffectsTrigger = nil
 		steam.OnEnemyDamagedAction.Args.ValidEffect = nil
 	end

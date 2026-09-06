@@ -2,18 +2,6 @@
 ---@diagnostic disable: lowercase-global
 
 
--- Tidal Ring's splash answers none of the boons that shape a splash, and for a plainer reason than
--- Breaker Rush's did. `CheckPoseidonCastSplash` (`PowersLogic.lua:1857`) does not read
--- `ConeModifier` at all -- it spawns a blank obstacle where the Cast was, fires one splinter at it
--- and returns. So King Tide never widened it and Arterial Spray never doubled it, on a boon that
--- makes the same `PoseidonCastSplashSplinter` the Attack and Special splash does.
---
--- Wrapped rather than replaced: the radius it reads off the Cast's own `ModifiedDamageRadius`, the
--- obstacle it anchors to and the cleanup after are all vanilla's, and worth keeping.
-
-
--- Set only for the length of vanilla's call, and read by the wrap below. King Tide's size has to
--- reach the splash vanilla itself fires, which is the one projectile we do not create.
 local pending = nil
 
 
@@ -46,9 +34,6 @@ once('TidalRingCone', function()
 end)
 
 
--- The waves past the first, fired the way vanilla fired the first: anchored to a blank obstacle at
--- the Cast's own location, at the radius the Cast was carrying. The anchor outlives the last wave
--- rather than vanilla's flat 0.1, since a delayed wave with nothing to spawn on is no wave at all.
 function tidal_ring_extra_waves(functionArgs, triggerArgs, scale, count, graphic)
 	if count < 2 then return end
 	if not functionArgs or not functionArgs.ProjectileName then return end
@@ -65,9 +50,6 @@ function tidal_ring_extra_waves(functionArgs, triggerArgs, scale, count, graphic
 	local radius = tidal_ring_radius(triggerArgs)
 	local last = 0
 
-	-- Arterial Spray's power reduction is a separate wrap that arms itself only inside vanilla's
-	-- splash functions, and reads the delay to tell one wave from another. Opening the same window
-	-- by hand is what keeps these at the reduced power rather than full strength.
 	---@diagnostic disable-next-line: undefined-global
 	arterial_spray_begin(functionArgs)
 

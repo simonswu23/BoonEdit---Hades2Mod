@@ -3,10 +3,6 @@
 
 
 -- Chain Reaction no longer doubles a Blast: a boon effect's cooldown has a chance of being skipped
--- outright instead. A Blast is taken out of that generic path and given its own roll, because
--- CheckMassiveAttack reads the cooldown multiplier on every hit that reaches it and before it has
--- checked the cooldown at all (PowersLogic.lua:3281) -- so the knives were rolling many times a
--- second against a Blast that was not going to fire anyway, and the 30% read as no cooldown.
 
 mod.ChainReactionDisplaying = mod.ChainReactionDisplaying or 0
 
@@ -29,37 +25,32 @@ once('ChainReactionCooldownSkip', function()
 		}
 	end
 
-	modutil.mod.Path.Wrap("GetTotalHeroTraitValue", function(base, propertyName, args)
-		if propertyName == 'OlympianRechargeMultiplier' then
-			-- the read a Blast opens with, armed just below and spent here, so every other
-			-- cooldown asking alongside it still rolls
-			if mod.ChainReactionBlastRead then
-				mod.ChainReactionBlastRead = nil
-			elseif chain_reaction_skips() then
-				chain_reaction_announce()
-				return 0
-			end
-		end
-		return base(propertyName, args)
+	modutil.mod.Path.Wrap("CheckCooldown", function(base, name, time, unmodified)
+		local ready = base(name, time, unmodified)
+		if ready then chain_reaction_eat(name, time) end
+		return ready
 	end)
 
-	-- The Blast that lands is the one that rolls. Whether it landed is read off its own cooldown
-	-- stamp, which CheckMassiveAttack sets through CheckCooldown before it fires anything.
+	modutil.mod.Path.Wrap("AddTraitToHero", function(base, ...)
+		mod.ChainReactionCooldowns = nil
+		return base(...)
+	end)
+
+	modutil.mod.Path.Wrap("RemoveTrait", function(base, ...)
+		mod.ChainReactionCooldowns = nil
+		return base(...)
+	end)
+
 	modutil.mod.Path.Wrap("CheckMassiveAttack", function(base, victim, functionArgs, triggerArgs)
 		local name = functionArgs and functionArgs.Name
-		local before = name and chain_reaction_stamp(name)
+		mod.ChainReactionSkipped = nil
 
-		mod.ChainReactionBlastRead = true
 		base(victim, functionArgs, triggerArgs)
-		mod.ChainReactionBlastRead = nil
 
-		if not name or chain_reaction_stamp(name) == before then return end
+		if not name or mod.ChainReactionSkipped ~= name then return end
+		mod.ChainReactionSkipped = nil
 
-		local skips = chain_reaction_armed() and rolls(mod.tuning.ChainReaction.SkipChance)
-		chain_reaction_log(name, skips)
-		if not skips then return end
-
-		chain_reaction_announce()
+		chain_reaction_log(name, true)
 		chain_reaction_ready(functionArgs.TraitName, name)
 	end)
 
@@ -72,15 +63,6 @@ once('ChainReactionCooldownSkip', function()
 		end)
 	end
 end)
-
-
--- Read fresh either side of the Blast rather than held, since a room boundary can hand
--- SessionState a new table.
-function chain_reaction_stamp(name)
-	local session = game.SessionState
-	local cooldowns = session and session.GlobalCooldowns
-	return cooldowns and cooldowns[name]
-end
 
 
 function chain_reaction_log(name, skipped)
@@ -100,9 +82,17 @@ function chain_reaction_armed()
 end
 
 
-function chain_reaction_skips()
+function chain_reaction_eat(name, time)
+	if name == nil or type(time) ~= 'number' or time <= 0 then return false end
 	if not chain_reaction_armed() then return false end
-	return rolls(mod.tuning.ChainReaction.SkipChance)
+	if not chain_reaction_owns(name) then return false end
+	if not rolls(mod.tuning.ChainReaction.SkipChance) then return false end
+
+	game.ResetCooldown(name)
+	mod.ChainReactionSkipped = name
+	chain_reaction_announce()
+
+	return true
 end
 
 
@@ -130,4 +120,65 @@ function chain_reaction_announce()
 		Cooldown = mod.tuning.ChainReaction.TextCooldown,
 		PreDelay = 0.1,
 	})
+end
+
+
+-- Whether this cooldown belongs to a boon Melinoe is holding.
+--
+-- `CheckCooldown` is the game's one general-purpose timer and 136 places call it -- most of them
+-- presentation, throttling a voice line or a screen shake or a text pop, several times a second and
+-- with no boon behind them. Rolling on all of those is what made the boon announce itself
+-- constantly. A cooldown only counts here if a held trait actually names it.
+--
+-- A boon writes its cooldown into its action's arguments as a `Name`/`Cooldown` pair -- that is the
+-- shape the HUD reads to draw a recharge ring (`HUDLogic.lua:1481`, `:1502`, `:1509`), at no fixed
+-- depth, so the sweep is recursive.
+--
+-- The prefix match is for the handful whose key is built at the call site rather than written down:
+-- Athena's invulnerability is `"AthenaInvulnerability" .. ObjectId` against a trait that says only
+-- `AthenaInvulnerability`.
+local function chain_reaction_collect(node, names, depth)
+	if type(node) ~= 'table' or depth > 5 then return end
+
+	local name = rawget(node, 'Name')
+	if type(name) == 'string' and type(rawget(node, 'Cooldown')) == 'number' then
+		names[name] = true
+	end
+
+	for _, value in pairs(node) do
+		if type(value) == 'table' then
+			chain_reaction_collect(value, names, depth + 1)
+		end
+	end
+end
+
+
+function chain_reaction_cooldowns()
+	if mod.ChainReactionCooldowns then return mod.ChainReactionCooldowns end
+
+	local names = {}
+	local hero = game.CurrentRun and game.CurrentRun.Hero
+
+	for _, trait in ipairs((hero and hero.Traits) or {}) do
+		chain_reaction_collect(trait, names, 0)
+	end
+
+	for _, extra in ipairs(mod.tuning.ChainReaction.ExtraCooldowns) do
+		names[extra] = true
+	end
+
+	mod.ChainReactionCooldowns = names
+	return names
+end
+
+
+function chain_reaction_owns(name)
+	local names = chain_reaction_cooldowns()
+	if names[name] then return true end
+
+	for owned in pairs(names) do
+		if #name > #owned and name:sub(1, #owned) == owned then return true end
+	end
+
+	return false
 end

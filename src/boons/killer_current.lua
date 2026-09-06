@@ -9,14 +9,14 @@ once('KillerCurrentBolt', function()
 	killerCurrent.AddOutgoingDamageModifiers = nil
 	killerCurrent.BoonEditBoltChance = mod.tuning.KillerCurrent.BoltChance
 	killerCurrent.StatLines = { 'BoonEditKillerCurrentStatDisplay' }
-	killerCurrent.ExtractValues = {
+	killerCurrent.ExtractValues = with_keyword_extracts({
 		{
 			Key = 'BoonEditBoltChance',
 			ExtractAs = 'Chance',
 			Format = 'LuckModifiedPercent',
 			HideSigns = true,
 		},
-	}
+	}, 'KnockbackAmplify')
 	killerCurrent.OnEnemyDamagedAction = {
 		FunctionName = _PLUGIN.guid .. '.KillerCurrentBolt',
 	}
@@ -29,9 +29,6 @@ function mod.KillerCurrentBolt(victim, functionArgs, triggerArgs)
 	if not victim or not victim.ActiveEffects or not victim.ActiveEffects.AmplifyKnockbackEffect then return end
 	if not rolls(mod.tuning.KillerCurrent.BoltChance) then return end
 
-	-- After the roll, not before: `CheckCooldown` starts the timer when it passes, so testing it
-	-- first would spend the cooldown on hits that were never going to bolt anyway. Meat Grinder's
-	-- plasma drop is ordered the same way for the same reason.
 	if not game.CheckCooldown('BoonEditKillerCurrentBolt', mod.tuning.KillerCurrent.BoltCooldown) then
 		return
 	end

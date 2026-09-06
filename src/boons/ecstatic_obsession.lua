@@ -44,7 +44,7 @@ once('EcstaticObsession', function()
 		'BoonEditObsessionChanceStatDisplay',
 	}
 
-	obsession.ExtractValues = {
+	obsession.ExtractValues = with_keyword_extracts({
 		{
 			Key = 'BoonEditCharmChance',
 			ExtractAs = 'TooltipChance',
@@ -54,7 +54,7 @@ once('EcstaticObsession', function()
 		{ Key = 'BoonEditDamagePerFriendly', ExtractAs = 'TooltipPerFriendly', Format = 'Percent' },
 		{ Key = 'BoonEditCharmDuration', ExtractAs = 'TooltipDuration' },
 		{ Key = 'BoonEditMaxDamageBonus', ExtractAs = 'TooltipMaxBonus', Format = 'Percent' },
-	}
+	}, 'Weak')
 
 	game.EffectData.WeakEffect.OnApplyFunctionName = _PLUGIN.guid .. '.EcstaticObsessionWeak'
 end)
@@ -81,9 +81,13 @@ local function obsession_guardian(unit)
 end
 
 
--- A Guardian breaks Charm several times faster than a lesser foe does, so nothing stops the next
--- Weak that lands from putting it straight back under. Lesser foes are left uncapped.
 local function obsession_charm_ready(unit)
+	-- A boss mid-phase-change is invulnerable and waiting on its own AI thread to carry it across.
+	-- Charm hands it to the charmed AI, which never reaches that transition, so the boss sits immune
+	-- until the Charm runs out.
+	if unit.ReachedAIStageEnd then return false end
+	if unit.ObjectId and game.IsInvulnerable({ Id = unit.ObjectId }) then return false end
+
 	if not obsession_guardian(unit) then return true end
 
 	return game.CheckCooldown('BoonEditObsessionCharm' .. tostring(unit.ObjectId),

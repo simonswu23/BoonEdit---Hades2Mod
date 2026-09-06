@@ -15,9 +15,13 @@ once('NaturalSelectionPoms', function()
 		}
 
 		selection.BoonEditEncountersPerPom = mod.tuning.NaturalSelection.EncountersPerPom
+		selection.BoonEditPomsOnPickup = mod.tuning.NaturalSelection.PomsOnPickup
+		selection.BoonEditLevelsPerPom = mod.tuning.NaturalSelection.LevelsPerPom
 		selection.StatLines = { 'BoonEditNaturalSelectionStatDisplay' }
 		selection.ExtractValues = {
 			{ Key = 'BoonEditEncountersPerPom', ExtractAs = 'TooltipEncounters' },
+			{ Key = 'BoonEditPomsOnPickup', ExtractAs = 'TooltipPoms', SkipAutoExtract = true },
+			{ Key = 'BoonEditLevelsPerPom', ExtractAs = 'TooltipLevelsPerPom', SkipAutoExtract = true },
 		}
 	end
 
@@ -119,17 +123,6 @@ function natural_selection_check_pom()
 end
 
 
--- Vanilla settles a pom's options once and keeps them. `CreateBoonLootButtons` regenerates only when
--- `UpgradeOptions` is nil, or when a StackOnly loot is still holding a boon you no longer own
--- (`UpgradeChoiceLogic.lua:117`) -- so these were filled at the moment they were dropped, and what a
--- pom offered had been decided before you walked over to it. Looking at the same pom twice showed
--- the same answer, and so did a second pom out of the same handful.
---
--- Clearing the options is the whole of the reroll: vanilla fills them back in on its own path, with
--- the rarity and priority rules intact, rather than us second-guessing what belongs in the list. The
--- seed is walked on each time so two poms, or two looks at one, do not land on the same three.
---
--- Kept on `CurrentRun` rather than a local, so the walk survives a save.
 function natural_selection_reroll(source)
 	if not config.BoonChanges.NaturalSelection.Enabled then return end
 	if not source or not source.BoonEditNaturalSelection then return end

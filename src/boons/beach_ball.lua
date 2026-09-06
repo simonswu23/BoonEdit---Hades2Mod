@@ -8,15 +8,6 @@ function beach_ball_rebalanced()
 end
 
 
--- The ball answers none of the boons that shape a splash, for the third distinct reason in this
--- god's kit. Breaker Rush fired its splash straight past `CheckPoseidonSplash`; Tidal Ring's own
--- vanilla function never read `ConeModifier` at all; the ball is not a splash function's doing in
--- the first place -- it is a projectile that flies off and detonates, so there is nowhere in vanilla
--- the field could have been read even in principle.
---
--- Its death is the moment its blast lands, so that is where the extra wave belongs. The wave is the
--- radial splinter rather than another ball: a ball is steered and grows over a second and a half,
--- and firing a second one loose is not what "the splash happened again" looks like.
 once('BeachBallCone', function()
 	if not beach_ball_rebalanced() then return end
 
@@ -53,8 +44,6 @@ function mod.BeachBallWaves(triggerArgs, _args)
 	})
 	if not anchor then return end
 
-	-- The wave hits for what the ball's blast hits for, so the two read as one effect happening
-	-- twice. Arterial Spray's own reduction is applied on top of that by its wrap, not here.
 	local base = game.GetBaseDataValue({
 		Type = 'Projectile',
 		Name = tuning.WaveProjectile,

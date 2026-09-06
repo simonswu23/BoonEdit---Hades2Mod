@@ -49,13 +49,13 @@ once('BurningMeteor', function()
 
 	combustion.BoonEditFireballMultiplier = mod.tuning.BurningMeteor.FireballMultiplier
 	combustion.StatLines = { 'BoonEditMeteorDamageStatDisplay' }
-	combustion.ExtractValues = {
+	combustion.ExtractValues = with_keyword_extracts({
 		{
 			Key = 'BoonEditFireballMultiplier',
 			ExtractAs = 'TooltipFireballDamage',
 			Format = 'PercentDelta',
 		},
-	}
+	}, 'Burn')
 end)
 
 

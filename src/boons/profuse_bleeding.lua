@@ -28,12 +28,12 @@ once('ProfuseBleedingBloodSpill', function()
 	}
 
 	rend.StatLines = { 'BoonEditBloodSpillChanceStatDisplay' }
-	rend.ExtractValues = {
+	rend.ExtractValues = with_keyword_extracts({
 		{
 			Key = 'ReportedDropChance',
 			ExtractAs = 'TooltipDropChance',
 			Format = 'LuckModifiedPercent',
 			HideSigns = true,
 		},
-	}
+	}, 'Rend')
 end)

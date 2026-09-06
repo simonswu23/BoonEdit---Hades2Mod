@@ -6,11 +6,37 @@ if config.BoonChanges.GlamourGain.Enabled then
 	boon_text({
 		Traits = {
 			AphroditeManaBoon = {
-				Description = 'Every second, inflict {$Keywords.Weak} on nearby foes, restoring {!Icons.Mana} for {#AltUpgradeFormat}each {#Prev}.',
+				Description = 'Every second, inflict {$Keywords.Weak} on nearby foes, restoring {!Icons.Mana} for {#ItalicFormat}each {#Prev}.',
 			},
 		},
 		StatLines = {
 			BoonEditGlamourManaStatDisplay = { Name = 'Magick per Foe:', Index = 1 },
+		},
+	})
+end
+
+if config.BoonChanges.FestiveFog.Enabled then
+	boon_text({
+		Traits = {
+			FogDamageBonusBoon = {
+				Description = 'A fog appears now and again. While you are in it, you deal more ' ..
+					'damage and take {#AltUpgradeFormat}' ..
+					math.floor((1 - mod.tuning.FestiveFog.Shelter) * 100 + 0.5) ..
+					'% {#Prev}less.',
+			},
+		},
+	})
+end
+
+if config.BoonChanges.GrapeJuice.Enabled then
+	boon_text({
+		Keywords = {
+			DrinkDrop = {
+				Description = 'Restores {#UpgradeFormat}' .. mod.tuning.GrapeJuice.Heal ..
+					'{#Prev}{!Icons.Health} and gives your very next move ' ..
+					'{#UpgradeFormat}+{$TooltipData.ExtractData.Damage} {#Prev}{$Keywords.BaseDamage}, ' ..
+					'then later reappears in a random spot.',
+			},
 		},
 	})
 end
@@ -21,7 +47,7 @@ if config.BoonChanges.HeartyAppetite.Enabled then
 			MaxHealthDamageBoon = {
 				Description = 'You deal more damage with your {$Keywords.WeaponSet} the more {!Icons.HealthUpTotal} ' ..
 					'you have. Gain a healing reward now and every ' ..
-					'{$TooltipData.ExtractData.TooltipEncountersPerFood} {$Keywords.EncounterPlural}..',
+					'{$TooltipData.ExtractData.TooltipEncountersPerFood} {$Keywords.EncounterPlural}.',
 			},
 		},
 		StatLines = {
@@ -56,20 +82,12 @@ if config.BoonChanges.CarnalPleasure.Enabled then
 	boon_text({
 		Traits = {
 			BloodManaBurstBoon = {
-				Description = 'Your {$Keywords.HeartBurst} are larger and deal more damage, plus ' ..
-					'extra for any {!Icons.BloodDropIcon} you hold.',
+				Description = 'Whenever you collect {!Icons.BloodDropIcon}, restore {!Icons.Health} ' ..
+					'and you may create a {$Keywords.HeartBurst}.',
 			},
 		},
 		StatLines = {
-			BoonEditCarnalPleasurePlasmaStatDisplay = { Name = 'Bonus Damage:', Index = 1 },
-		},
-	})
-end
-
-if config.BoonChanges.CarnalPleasure.Enabled and mod.tuning.CarnalPleasure.ShowHeartthrobCapacity then
-	boon_text({
-		StatLines = {
-			BoonEditCarnalPleasureCapacityStatDisplay = { Name = 'Max Heartthrobs:', Index = 2 },
+			BoonEditCarnalPleasureHealStatDisplay = { Name = 'Health Restored per {$Keywords.BloodDrop_NoTooltip}:', Index = 2 },
 		},
 	})
 end
@@ -79,8 +97,8 @@ if config.BoonChanges.SmolderingForge.Enabled then
 		Traits = {
 			SlamManaBurstBoon = {
 				DisplayName = 'Smoldering Forge',
-				Description = 'Damaging a foe with {$Keywords.DelayedKnockback} may create ' ..
-					'a {$Keywords.HeartBurst}.',
+				Description = 'Your {$Keywords.Attack} and {$Keywords.Special} against a foe with ' ..
+					'{$Keywords.DelayedKnockback} may create a {$Keywords.HeartBurst}.',
 			},
 		},
 		StatLines = {
@@ -123,6 +141,18 @@ if config.BoonChanges.MeatGrinder.Enabled then
 	})
 end
 
+if config.BoonChanges.ControlledBurn.Enabled then
+	boon_text({
+		Traits = {
+			FireballManaSpecialBoon = {
+				Description = 'Your {$Keywords.AttackEX} and {$Keywords.SpecialEX} also launch a ' ..
+					'fireball, but use {#ManaFormat}+{$TooltipData.ExtractData.TooltipManaCost}' ..
+					'{#Prev}{!Icons.Mana}.',
+			},
+		}
+	})
+end
+
 if config.BoonChanges.ProfuseBleeding.Enabled then
 	boon_text({
 		Traits = {
@@ -147,8 +177,8 @@ if config.BoonChanges.BloodSpree.Enabled then
 					'{$TooltipData.ExtractData.ReportedRequirement}{!Icons.Health}, your ' ..
 					'{$Keywords.AttackSet} and {$Keywords.SpecialSet} restore {!Icons.Health}. ' ..
 					'Whenever you slay a foe, you have a {#AltUpgradeFormat}' ..
-					math.floor(mod.tuning.BloodSpree.KillHealChance * 100) ..
-					'% {#Prev}chance to restore that much {!Icons.Health}.',
+					'{$TooltipData.ExtractData.TooltipKillHealChance}% {#Prev}chance to restore ' ..
+					'that much {!Icons.Health}.',
 			},
 		},
 	})
@@ -199,17 +229,18 @@ if config.BoonChanges.TranquilGain.Enabled then
 end
 
 if config.BoonChanges.NaturalSelection.Enabled then
-	local poms = mod.tuning.NaturalSelection
 	boon_text({
 		Traits = {
 			GoodStuffBoon = {
-				Description = 'Gain {#AltUpgradeFormat}' .. poms.PomsOnPickup .. '{!Icons.Pom} {#Prev}worth {#AltUpgradeFormat}+'
-					.. poms.LevelsPerPom .. '{#Prev}{$Keywords.PomLevel} each, then {#AltUpgradeFormat}1 {#Prev}more every {#AltUpgradeFormat}'
-					.. poms.EncountersPerPom .. ' {#Prev}{$Keywords.EncounterPlural}.',
+				Description = 'Gain {#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipPoms}' ..
+					'{#Prev}{!Icons.Pom} worth {#AltUpgradeFormat}+' ..
+					'{$TooltipData.ExtractData.TooltipLevelsPerPom} {#Prev}{$Keywords.PomLevel} each, ' ..
+					'then {#BoldFormatGraft}1 {#Prev}more every {#AltUpgradeFormat}' ..
+					'{$TooltipData.ExtractData.TooltipEncounters} {#Prev}{$Keywords.EncounterPlural}.',
 			},
 		},
 		StatLines = {
-			BoonEditNaturalSelectionStatDisplay = { Name = '{$Keywords.EncounterPlural} per {!Icons.Pom}:', Index = 1 },
+			BoonEditNaturalSelectionStatDisplay = { Name = '{$Keywords.EncounterPlural} per {$Keywords.PomLevel}:', Index = 1 },
 		},
 	})
 end
@@ -304,7 +335,7 @@ if config.BoonChanges.SeismicHammer.Enabled then
 			},
 		},
 		StatLines = {
-			BoonEditSeismicHammerStatDisplay = { Name = 'Blast Recharge Reduction (Sec.):', Index = 1 },
+			BoonEditSeismicHammerStatDisplay = { Name = 'Blast Recharge Reduction:', Index = 1, Suffix = ' Sec.' },
 		},
 	})
 end
@@ -427,8 +458,8 @@ if config.BoonChanges.RippleEffect.Enabled then
 	boon_text({
 		Traits = {
 			MoneyDamageBoon = {
-				Description = 'The bonus effects your {$Keywords.Omega} trigger may occur again, up to '
-					.. '{#AltUpgradeFormat}' .. mod.tuning.RippleEffect.MaxRepeats .. ' {#Prev}more times.',
+				Description = 'The bonus effects your {$Keywords.Omega} trigger may occur again, up to ' ..
+					'{#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipMaxRepeats} {#Prev}more times.',
 			},
 		},
 		StatLines = {
@@ -516,7 +547,8 @@ if ionicGainOn ~= nil and ionicGainOn.Enabled then
 			},
 		},
 		StatLines = {
-			BoonEditIonicGainRegenStatDisplay = { Name = 'Magick per Sec. Nearby:', Index = 2 },
+			BoonEditIonicGainRegenStatDisplay = { Name = 'Magick Restored Nearby:', Index = 2,
+				Suffix = ' {#Prev}{#ItalicFormat}(every 1 Sec.)' },
 		},
 	})
 end

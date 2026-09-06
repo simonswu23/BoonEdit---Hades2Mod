@@ -49,17 +49,8 @@ once('MeatGrinderBloodSpill', function()
 			Chance = { BaseValue = mod.tuning.MeatGrinder.PlasmaChance },
 			Cooldown = mod.tuning.MeatGrinder.PlasmaCooldown,
 			Name = 'BloodDrop',
-			ReportValues = { ReportedPlasmaChance = 'Chance' },
 		},
 	}
-
-	table.insert(grinder.StatLines, 'BoonEditMeatGrinderPlasmaStatDisplay')
-	table.insert(grinder.ExtractValues, {
-		Key = 'ReportedPlasmaChance',
-		ExtractAs = 'TooltipPlasmaChance',
-		Format = 'LuckModifiedPercent',
-		HideSigns = true,
-	})
 end)
 
 

@@ -14,20 +14,24 @@ once('SmolderingForge', function()
 	forge.OnProjectileCreationFunction = nil
 
 	forge.BoonEditHeartthrobChance = tuning.HeartthrobChance
+
+	local weapons = game.AddLinkedWeapons(game.WeaponSets.HeroPrimarySecondaryWeapons)
 	forge.OnEnemyDamagedAction = {
 		FunctionName = _PLUGIN.guid .. '.SmolderingForgeHeartthrob',
+		ValidWeapons = weapons,
+		ValidWeaponsLookup = game.ToLookup(weapons),
 	}
 
 	forge.FlavorText = 'BoonEditSmolderingForgeFlavorText'
 	forge.StatLines = { 'BoonEditSmolderingForgeStatDisplay' }
-	forge.ExtractValues = {
+	forge.ExtractValues = with_keyword_extracts({
 		{
 			Key = 'BoonEditHeartthrobChance',
 			ExtractAs = 'Chance',
 			Format = 'LuckModifiedPercent',
 			HideSigns = true,
 		},
-	}
+	}, 'HeartBurst')
 end)
 
 

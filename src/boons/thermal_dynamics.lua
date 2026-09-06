@@ -28,14 +28,14 @@ once('ThermalDynamicsAllLightning', function()
 
 	thermal.BoonEditScorchFraction = mod.tuning.ThermalDynamics.ScorchFraction
 	thermal.StatLines = { 'BoonEditThermalScorchStatDisplay' }
-	thermal.ExtractValues = {
+	thermal.ExtractValues = with_keyword_extracts({
 		{
 			Key = 'BoonEditScorchFraction',
 			ExtractAs = 'TooltipScorchFraction',
 			Format = 'Percent',
 			HideSigns = true,
 		},
-	}
+	}, 'Burn')
 end)
 
 
