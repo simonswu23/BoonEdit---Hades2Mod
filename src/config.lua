@@ -242,6 +242,24 @@ local config = {
     };
   };
 
+  KeepsakeChanges = {
+    CallingCard = {
+      Enabled = true;
+    };
+
+    ConcaveStone = {
+      Enabled = true;
+    };
+
+    MetallicDroplet = {
+      Enabled = true;
+    };
+
+    WhiteAntler = {
+      Enabled = true;
+    };
+  };
+
   Debug = {
     LogChainReaction = false;
 

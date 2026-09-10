@@ -179,6 +179,8 @@ mod.tuning.RousingReception = {
 mod.tuning.CherishedHeirloom = {
 	ExtraKeepsake = true,
 	ExtraKeepsakeInMenuOnly = true,
+	KeepAllKeepsakes = false,
+	RefreshHeldKeepsake = true,
 }
 
 mod.tuning.SecondWind = {
@@ -273,6 +275,16 @@ mod.tuning.ThermalDynamics = {
 
 mod.tuning.HarmForTheAfflicted = {
 	Interval = 0.3,
+}
+
+mod.tuning.ConcaveStone = {}
+
+mod.tuning.CallingCard = {}
+
+mod.tuning.WhiteAntler = {}
+
+mod.tuning.MetallicDroplet = {
+	ResidualFraction = 0.5,
 }
 
 mod.tuning.Pandemonium = {

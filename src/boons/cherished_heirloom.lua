@@ -2,6 +2,92 @@
 ---@diagnostic disable: lowercase-global
 
 
+function heirloom_requip_fresh(trait)
+	local traitName = trait.Name
+	local rarity = game.GetRarityKey(game.GetKeepsakeLevel(traitName, true))
+	game.UnequipKeepsake(game.CurrentRun.Hero, traitName, { SkipValidateHealth = true, AdvanceKeepsakeMoment = true })
+	game.EquipKeepsake(game.CurrentRun.Hero, traitName, { ForceRarity = rarity, FromLoot = true })
+	return game.GetHeroTrait(traitName)
+end
+
+
+HEIRLOOM_KEEPSAKE_REFRESH = {
+	ManaOverTimeRefundKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	BossPreDamageKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	LowHealthCritKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	SpellTalentKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	ArmorGainKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	TempHammerKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	FountainRarityKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	UnpickedBoonKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	SkipEncounterKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	BossMetaUpgradeKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	AthenaEncounterKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	DecayingBoostKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	ReincarnationKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	TimedBuffKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	RarifyKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	GoldifyKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	HadesAndPersephoneKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+	DoorHealReserveKeepsake = function(trait) heirloom_requip_fresh(trait) end,
+
+	BonusMoneyKeepsake = function(trait)
+		game.AddResource('Money', game.round(trait.BonusMoney * game.GetTotalHeroTraitValue('MoneyMultiplier', { IsMultiplier = true })), 'BonusMoneyKeepsake')
+	end,
+
+	RandomBlessingKeepsake = function(trait)
+		local fresh = heirloom_requip_fresh(trait)
+		if fresh then fresh.CurrentRoom = 0 end
+	end,
+
+	EscalatingKeepsake = function(trait)
+		local oldRate = trait.EscalatingKeepsakeGrowthPerRoom
+		local increments = (oldRate and oldRate > 0) and (trait.EscalatingKeepsakeValue - 1.0) / oldRate or 0
+		local fresh = heirloom_requip_fresh(trait)
+		if fresh and increments > 0 then
+			fresh.EscalatingKeepsakeValue = 1.0 + increments * fresh.EscalatingKeepsakeGrowthPerRoom
+		end
+	end,
+
+	DeathVengeanceKeepsake = function() end,
+	BlockDeathKeepsake = function() end,
+	DamagedDamageBoostKeepsake = function() end,
+}
+
+
+HEIRLOOM_FORCE_GOD_KEEPSAKES = {
+	'ForceZeusBoonKeepsake', 'ForceHeraBoonKeepsake', 'ForceAresBoonKeepsake', 'ForcePoseidonBoonKeepsake',
+	'ForceApolloBoonKeepsake', 'ForceDemeterBoonKeepsake', 'ForceAphroditeBoonKeepsake',
+	'ForceHephaestusBoonKeepsake', 'ForceHestiaBoonKeepsake',
+}
+
+for _, godKeepsakeName in ipairs(HEIRLOOM_FORCE_GOD_KEEPSAKES) do
+	HEIRLOOM_KEEPSAKE_REFRESH[godKeepsakeName] = function(trait)
+		local fresh = heirloom_requip_fresh(trait)
+		if not fresh or fresh.Rarity ~= 'Heroic' then return end
+
+		fresh.BoonEditHeirloomGodRarify = fresh.BoonEditHeirloomGodRarify or {
+			RequireFated = true,
+			RequireNotExcludeFromLastRunBoon = true,
+			MultiUse = true,
+			Uses = 0,
+			MaxRarity = 3,
+			GodBoonName = fresh.ForceBoonName,
+		}
+		fresh.BoonEditHeirloomGodRarify.Uses = fresh.BoonEditHeirloomGodRarify.Uses + 1
+	end
+end
+
+
+function heirloom_refresh_keepsake(traitName)
+	local refresh = HEIRLOOM_KEEPSAKE_REFRESH[traitName]
+	if not refresh then return end
+
+	local trait = game.GetHeroTrait(traitName)
+	if trait then refresh(trait) end
+end
+
+
 once('CherishedHeirloom', function()
 	if config.BoonChanges.CherishedHeirloom.Enabled then
 		game.TraitData.KeepsakeLevelBoon.AcquireFunctionName = _PLUGIN.guid .. '.CherishedHeirloomAcquire'
@@ -9,12 +95,13 @@ once('CherishedHeirloom', function()
 
 	modutil.mod.Path.Wrap("KeepsakeScreenClose", function(base, screen, button)
 		if cherished_heirloom_extra_pending()
-			and screen and screen.LastTrait == game.GameState.LastAwardTrait then
+			and screen and screen.LastTrait == mod.HeirloomPriorKeepsake then
 			return
 		end
 
 		local extra = cherished_heirloom_extra_pending()
 		local incoming = nil
+		local priorKeepsake = mod.HeirloomPriorKeepsake
 		if extra then
 			mod.HeirloomSkipUnequip = true
 			mod.HeirloomExtraPending = nil
@@ -33,6 +120,7 @@ once('CherishedHeirloom', function()
 		if extra then
 			mod.HeirloomSkipUnequip = nil
 			mod.HeirloomIncoming = nil
+			mod.HeirloomPriorKeepsake = nil
 
 			if blocked and incoming and #blocked > blockedCount and blocked[#blocked] == screen.LastTrait then
 				blocked[#blocked] = incoming
@@ -40,6 +128,11 @@ once('CherishedHeirloom', function()
 
 			if game.CurrentRun and screen.LastTrait and game.HeroHasTrait(screen.LastTrait) then
 				game.GameState.LastAwardTrait = screen.LastTrait
+				heirloom_confirm_special_keepsake(screen.LastTrait)
+			end
+
+			if mod.tuning.CherishedHeirloom.RefreshHeldKeepsake and incoming and incoming == priorKeepsake then
+				heirloom_refresh_keepsake(incoming)
 			end
 
 			cherished_heirloom_place_keepsakes()
@@ -107,18 +200,50 @@ function heirloom_hold_keepsake(trait)
 	end
 end
 
+function heirloom_special_keepsake()
+	return game.CurrentRun and game.CurrentRun.BoonEditHeirloomSpecialKeepsake
+end
+
+function heirloom_is_special_keepsake(traitName)
+	return traitName ~= nil and traitName == heirloom_special_keepsake()
+end
+
+function heirloom_confirm_special_keepsake(traitName)
+	if not game.CurrentRun then return end
+	game.CurrentRun.BoonEditHeirloomSpecialKeepsake = traitName
+
+	local trait = game.GetHeroTrait(traitName)
+	if trait then trait.BoonEditHeirloomSpecial = true end
+end
+
 function cherished_heirloom_place_keepsakes()
 	if not cherished_heirloom_active() then return end
 
 	local equipped = game.GameState.LastAwardTrait
+	local special = heirloom_special_keepsake()
 	for _, trait in ipairs(game.CurrentRun.Hero.Traits or {}) do
 		if game.GetKeepsakeData(trait.Name) then
-			heirloom_hold_keepsake(trait)
+			if mod.tuning.CherishedHeirloom.KeepAllKeepsakes then
+				heirloom_hold_keepsake(trait)
+			end
+			if trait.Name == special then
+				trait.BoonEditHeirloomSpecial = true
+			end
 			if trait.Name ~= equipped and trait.ActiveSlotOffsetIndex ~= nil then
 				heirloom_demote_keepsake(trait)
 			end
 		end
 	end
+end
+
+function heirloom_equipped_keepsake()
+	if not game.CurrentRun or not game.CurrentRun.Hero then return nil end
+	for _, trait in ipairs(game.CurrentRun.Hero.Traits or {}) do
+		if game.GetKeepsakeData(trait.Name) and trait.ActiveSlotOffsetIndex ~= nil then
+			return trait.Name
+		end
+	end
+	return nil
 end
 
 function mod.CherishedHeirloomAcquire(args, traitData)
@@ -128,6 +253,7 @@ function mod.CherishedHeirloomAcquire(args, traitData)
 
 	if not mod.tuning.CherishedHeirloom.ExtraKeepsake then return end
 	mod.HeirloomExtraPending = true
+	mod.HeirloomPriorKeepsake = heirloom_equipped_keepsake()
 	game.thread(cherished_heirloom_open_rack)
 end
 

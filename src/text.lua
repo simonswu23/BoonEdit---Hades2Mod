@@ -365,15 +365,59 @@ if config.BoonChanges.AllTogether.Enabled then
 end
 
 if config.BoonChanges.CherishedHeirloom.Enabled then
-	local extra = ''
-	if mod.tuning.CherishedHeirloom.ExtraKeepsake then
-		extra = ' Equip one now.'
+	local hold = mod.tuning.CherishedHeirloom.KeepAllKeepsakes and
+		' {#ItalicFormat}(if possible) {#Prev}and do not expire this night' or ''
+	local extra = mod.tuning.CherishedHeirloom.ExtraKeepsake and ' Equip one now.' or ''
+	if mod.tuning.CherishedHeirloom.ExtraKeepsake and mod.tuning.CherishedHeirloom.RefreshHeldKeepsake then
+		extra = extra .. ' Choosing your own refreshes it.'
 	end
 
 	boon_text({
 		Traits = {
 			KeepsakeLevelBoon = {
-				Description = 'Your {$Keywords.Keepsakes} are stronger {#ItalicFormat}(if possible) {#Prev}and do not expire this night.' .. extra,
+				Description = 'Your {$Keywords.Keepsakes} are stronger' .. hold .. '.' .. extra,
+			},
+		},
+	})
+end
+
+if config.KeepsakeChanges.ConcaveStone.Enabled then
+	boon_text({
+		Traits = {
+			UnpickedBoonKeepsake = {
+				Description = 'After choosing a {$Keywords.GodBoon} or {!Icons.Hammer}, {#AltUpgradeFormat}{$TooltipData.ExtractData.Chance}% {#Prev}of the time it is doubled, once this night.',
+			},
+		},
+	})
+end
+
+if config.KeepsakeChanges.CallingCard.Enabled then
+	boon_text({
+		Traits = {
+			RarifyKeepsake = {
+				Description = 'While at the {$Keywords.Random}, you can {$Keywords.RarityUpgrade} Olympian blessings straight to {#BoldFormat}Heroic {#Prev}up to {#UpgradeFormat}{$TooltipData.ExtractData.Uses} {#Prev}time(s) this night.',
+			},
+		},
+	})
+end
+
+if config.KeepsakeChanges.WhiteAntler.Enabled then
+	boon_text({
+		Traits = {
+			LowHealthCritKeepsake = {
+				Description = 'Gain {#AltUpgradeFormat}+{$TooltipData.ExtractData.Chance}% {#Prev}{$Keywords.Crit} damage chance for the rest of the night, but you are limited to {#AltPenaltyFormat}{$TooltipData.ExtractData.Health}{!Icons.HealthDown}{#Prev}.',
+			},
+		},
+	})
+end
+
+if config.KeepsakeChanges.MetallicDroplet.Enabled then
+	boon_text({
+		Traits = {
+			TimedBuffKeepsake = {
+				Description = 'You move, strike, and {$Keywords.HoldAlt} {#BoldFormatGraft}{$TooltipData.ExtractData.Speed}% {#Prev}faster for the next {#UpgradeFormat}{$TooltipData.ExtractData.Duration} Sec{#Prev}, keeping {#AltUpgradeFormat}' ..
+					math.floor(mod.tuning.MetallicDroplet.ResidualFraction * 100 + 0.5) ..
+					'% {#Prev}of that boost for the rest of the night after it ends.',
 			},
 		},
 	})

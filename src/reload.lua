@@ -22,6 +22,7 @@ function prefix_SetupMap()
 	reload_config()
 	debug_grant_test_boons()
 	cherished_heirloom_place_keepsakes()
+	white_antler_restore()
 	---@diagnostic disable-next-line: undefined-global
 	pandemonium_sync_slots()
 	---@diagnostic disable-next-line: undefined-global
@@ -363,6 +364,12 @@ import 'boons/harm_for_the_afflicted.lua'
 import 'boons/ionic_gain.lua'
 import 'boons/glorious_disaster.lua'
 import 'boons/pandemonium.lua'
+
+
+import 'keepsakes/concave_stone.lua'
+import 'keepsakes/calling_card.lua'
+import 'keepsakes/white_antler.lua'
+import 'keepsakes/metallic_droplet.lua'
 
 
 import 'requirements.lua'
