@@ -55,28 +55,96 @@ HEIRLOOM_KEEPSAKE_REFRESH = {
 }
 
 
-HEIRLOOM_FORCE_GOD_KEEPSAKES = {
-	'ForceZeusBoonKeepsake', 'ForceHeraBoonKeepsake', 'ForceAresBoonKeepsake', 'ForcePoseidonBoonKeepsake',
-	'ForceApolloBoonKeepsake', 'ForceDemeterBoonKeepsake', 'ForceAphroditeBoonKeepsake',
-	'ForceHephaestusBoonKeepsake', 'ForceHestiaBoonKeepsake',
+HEIRLOOM_FORCE_GOD_DATA = {
+	ForceZeusBoonKeepsake = { CoreTraits = 'ZeusCoreTraits', Legendary = 'SpawnKillBoon', Wrath = 'ZeusWrathBoon' },
+	ForceHeraBoonKeepsake = { CoreTraits = 'HeraCoreTraits', Legendary = 'AllElementalBoon', Wrath = 'HeraWrathBoon' },
+	ForceAresBoonKeepsake = { CoreTraits = 'AresCoreTraits', Legendary = 'DoubleBloodDropBoon', Wrath = 'AresWrathBoon' },
+	ForcePoseidonBoonKeepsake = { CoreTraits = 'PoseidonCoreTraits', Legendary = 'AmplifyConeBoon', Wrath = 'PoseidonWrathBoon' },
+	ForceApolloBoonKeepsake = { CoreTraits = 'ApolloCoreTraits', Legendary = 'DoubleExManaBoon', Wrath = 'ApolloWrathBoon' },
+	ForceDemeterBoonKeepsake = { CoreTraits = 'DemeterCoreTraits', Legendary = 'InstantRootKill', Wrath = 'DemeterWrathBoon' },
+	ForceAphroditeBoonKeepsake = { CoreTraits = 'AphroditeCoreTraits', Legendary = 'RandomStatusBoon', Wrath = 'AphroWrathBoon' },
+	ForceHephaestusBoonKeepsake = { CoreTraits = 'HephaestusCoreTraits', Legendary = 'WeaponUpgradeBoon', Wrath = 'HephWrathBoon' },
+	ForceHestiaBoonKeepsake = { CoreTraits = 'HestiaCoreTraits', Legendary = 'BurnSprintBoon', Wrath = 'HestiaWrathBoon' },
 }
 
-for _, godKeepsakeName in ipairs(HEIRLOOM_FORCE_GOD_KEEPSAKES) do
+for godKeepsakeName, _ in pairs(HEIRLOOM_FORCE_GOD_DATA) do
 	HEIRLOOM_KEEPSAKE_REFRESH[godKeepsakeName] = function(trait)
 		local fresh = heirloom_requip_fresh(trait)
 		if not fresh or fresh.Rarity ~= 'Heroic' then return end
 
-		fresh.BoonEditHeirloomGodRarify = fresh.BoonEditHeirloomGodRarify or {
-			RequireFated = true,
-			RequireNotExcludeFromLastRunBoon = true,
-			MultiUse = true,
-			Uses = 0,
-			MaxRarity = 3,
-			GodBoonName = fresh.ForceBoonName,
-		}
+		fresh.BoonEditHeirloomGodRarify = fresh.BoonEditHeirloomGodRarify or { Uses = 0 }
 		fresh.BoonEditHeirloomGodRarify.Uses = fresh.BoonEditHeirloomGodRarify.Uses + 1
 	end
 end
+
+
+function heirloom_force_god_boon_data(traitName)
+	if not traitName then return nil, nil end
+	for keepsakeName, data in pairs(HEIRLOOM_FORCE_GOD_DATA) do
+		if game.Contains(game.LinkedTraitData[data.CoreTraits] or {}, traitName) then
+			return keepsakeName, data
+		end
+	end
+	return nil, nil
+end
+
+
+function heirloom_force_god_transform(screen, mouseOverButton, data, trait)
+	trait.BoonEditHeirloomGodRarify.Uses = trait.BoonEditHeirloomGodRarify.Uses - 1
+
+	local targetName = nil
+	if not game.HeroHasTrait(data.Legendary) then
+		targetName = data.Legendary
+	elseif game.TraitData[data.Wrath] and not game.HeroHasTrait(data.Wrath) then
+		targetName = data.Wrath
+	end
+
+	if not targetName then
+		mod.HeirloomForceGodHeroicActive = true
+		game.TryUpgradeBoon(screen.Source, screen, mouseOverButton)
+		mod.HeirloomForceGodHeroicActive = nil
+		return
+	end
+
+	local heldTraitName = mouseOverButton.Data.Name
+	game.RemoveTrait(game.CurrentRun.Hero, heldTraitName)
+	local processed = game.GetProcessedTraitData({ Unit = game.CurrentRun.Hero, TraitName = targetName })
+	game.AddTraitToHero({ TraitData = processed, FromLoot = true })
+end
+
+
+once('CherishedHeirloomForceGod', function()
+	modutil.mod.Path.Wrap('UpgradeMouseOverUpgradeChoice', function(base, screen, button)
+		if not config.BoonChanges.CherishedHeirloom.Enabled or not screen or screen.MouseOverButton == nil then
+			return base(screen, button)
+		end
+
+		local lootData = screen.Source
+		if not lootData or (not lootData.GodLoot and not lootData.TreatAsGodLootByShops) then
+			return base(screen, button)
+		end
+
+		local mouseOverButton = screen.MouseOverButton
+		local heldTraitName = mouseOverButton.Data and mouseOverButton.Data.Name
+		local keepsakeName, data = heirloom_force_god_boon_data(heldTraitName)
+		if not keepsakeName then return base(screen, button) end
+
+		local trait = game.GetHeroTrait(keepsakeName)
+		if not trait or trait.Rarity ~= 'Heroic' or not trait.BoonEditHeirloomGodRarify
+			or not trait.BoonEditHeirloomGodRarify.Uses or trait.BoonEditHeirloomGodRarify.Uses <= 0 then
+			return base(screen, button)
+		end
+
+		heirloom_force_god_transform(screen, mouseOverButton, data, trait)
+	end)
+
+	modutil.mod.Path.Wrap('GetUpgradedRarity', function(base, baseRarity, rarityUpgradeOrder)
+		if mod.HeirloomForceGodHeroicActive and baseRarity ~= 'Heroic' then
+			return 'Heroic'
+		end
+		return base(baseRarity, rarityUpgradeOrder)
+	end)
+end)
 
 
 function heirloom_refresh_keepsake(traitName)
