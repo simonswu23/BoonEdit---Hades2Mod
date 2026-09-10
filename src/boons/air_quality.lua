@@ -2,6 +2,25 @@
 ---@diagnostic disable: lowercase-global
 
 
+local function air_quality_floor(attacker, triggerArgs)
+	if not config.BoonChanges.AirQuality.Enabled then return nil end
+	if attacker == nil or attacker ~= game.CurrentRun.Hero then return nil end
+
+	local sourceEffectData = triggerArgs and triggerArgs.EffectName and game.EffectData[triggerArgs.EffectName]
+	if sourceEffectData and sourceEffectData.BlockDamageFloor then return nil end
+
+	local airQuality = game.GetHeroTrait('ElementalDamageFloorBoon')
+	local floor = airQuality and airQuality.BoonEditBaseDamageFloor
+	if not floor then return nil end
+
+	if airQuality.ActivationRequirements and not game.IsGameStateEligible(airQuality, airQuality.ActivationRequirements) then
+		return nil
+	end
+
+	return floor
+end
+
+
 once('AirQualityAdditiveFloor', function()
 	if config.BoonChanges.AirQuality.Enabled then
 		local airQuality = game.TraitData.ElementalDamageFloorBoon
@@ -12,25 +31,26 @@ once('AirQualityAdditiveFloor', function()
 
 	modutil.mod.Path.Wrap("CalculateBaseDamage", function(base, attacker, victim, triggerArgs)
 		local damage = base(attacker, victim, triggerArgs)
-		if not config.BoonChanges.AirQuality.Enabled then return damage end
-		if attacker == nil or attacker ~= game.CurrentRun.Hero then return damage end
 
-		if type(damage) ~= 'number' or damage <= 0 then return damage end
-
-		local sourceEffectData = triggerArgs.EffectName and game.EffectData[triggerArgs.EffectName]
-		if sourceEffectData and sourceEffectData.BlockDamageFloor then return damage end
-
-		local airQuality = game.GetHeroTrait('ElementalDamageFloorBoon')
-		local floor = airQuality and airQuality.BoonEditBaseDamageFloor
-		if not floor then return damage end
-
-		if airQuality.ActivationRequirements and not game.IsGameStateEligible(airQuality, airQuality.ActivationRequirements) then
-			return damage
+		if triggerArgs and type(damage) == 'number' and damage > 0 and air_quality_floor(attacker, triggerArgs) then
+			triggerArgs.BoonEditBaseDamage = damage
 		end
 
-		if damage < floor then
-			return floor
-		end
 		return damage
+	end)
+
+	modutil.mod.Path.Wrap("CalculateBaseDamageAdditions", function(base, attacker, victim, triggerArgs)
+		local addition = base(attacker, victim, triggerArgs)
+
+		local damage = triggerArgs and triggerArgs.BoonEditBaseDamage
+		if type(damage) ~= 'number' or type(addition) ~= 'number' then return addition end
+
+		local floor = air_quality_floor(attacker, triggerArgs)
+		if not floor then return addition end
+
+		local total = damage + addition
+		if total >= floor then return addition end
+
+		return addition + (floor - total)
 	end)
 end)

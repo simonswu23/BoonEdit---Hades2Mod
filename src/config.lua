@@ -157,11 +157,11 @@ local config = {
       Enabled = true;
     };
 
-    Pandemonium = {
+    PassionRush = {
       Enabled = true;
     };
 
-    PassionRush = {
+    PhalanxShot = {
       Enabled = true;
     };
 
@@ -194,6 +194,10 @@ local config = {
     };
 
     SecondWind = {
+      Enabled = true;
+    };
+
+    SecretCrush = {
       Enabled = true;
     };
 
@@ -237,6 +241,10 @@ local config = {
       Enabled = true;
     };
 
+    WeedKiller = {
+      Enabled = true;
+    };
+
     WinterHarvest = {
       Enabled = true;
     };
@@ -264,6 +272,8 @@ local config = {
     LogChainReaction = false;
 
     LogScaldingVapor = false;
+
+    LogIonicGain = true;
 
     GrantTraits = '';
 

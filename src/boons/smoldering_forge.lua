@@ -31,7 +31,7 @@ once('SmolderingForge', function()
 			Format = 'LuckModifiedPercent',
 			HideSigns = true,
 		},
-	}, 'HeartBurst')
+	}, 'HeartBurst', 'DelayedKnockback')
 end)
 
 

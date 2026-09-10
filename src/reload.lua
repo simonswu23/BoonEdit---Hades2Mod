@@ -24,11 +24,7 @@ function prefix_SetupMap()
 	cherished_heirloom_place_keepsakes()
 	white_antler_restore()
 	---@diagnostic disable-next-line: undefined-global
-	pandemonium_sync_slots()
-	---@diagnostic disable-next-line: undefined-global
 	ionic_gain_start()
-	---@diagnostic disable-next-line: undefined-global
-	breaker_rush_sync()
 	---@diagnostic disable-next-line: undefined-global
 	boon_edit_sync_groups()
 	---@diagnostic disable-next-line: undefined-global
@@ -117,6 +113,10 @@ function rolls(chance)
 	return game.RandomChance(chance * game.GetTotalHeroTraitValue('LuckMultiplier', { IsMultiplier = true }))
 end
 
+function in_run()
+	return game.CurrentRun ~= nil and game.CurrentRun.Hero ~= nil
+end
+
 function is_allied_summon(unit)
 	if not unit then return false end
 	if unit.AlwaysTraitor or unit.Charmed then return true end
@@ -164,6 +164,14 @@ KEYWORD_EXTRACTS = {
 	HeartBurst = {
 		{ ExtractAs = 'Duration', SkipAutoExtract = true, External = true,
 			BaseType = 'ProjectileBase', BaseName = 'AphroditeBurst', BaseProperty = 'Fuse' },
+	},
+	DelayedKnockback = {
+		{ ExtractAs = 'DelayedKnockbackModifier', SkipAutoExtract = true, External = true,
+			BaseType = 'EffectData', BaseName = 'DelayedKnockbackEffect', BaseProperty = 'Modifier',
+			Format = 'PercentDelta' },
+		{ ExtractAs = 'DelayedKnockbackDuration', SkipAutoExtract = true, External = true,
+			BaseType = 'EffectData', BaseName = 'DelayedKnockbackEffect', BaseProperty = 'Duration',
+			DecimalPlaces = 1 },
 	},
 }
 
@@ -254,15 +262,36 @@ function sjson_HelpText(data)
 end
 
 function sjson_TraitText(data)
+	local rewritten = {}
+
 	for _, entry in ipairs(data.Texts) do
 		local rewrite = trait_text[entry.Id]
 		if rewrite then
+			rewritten[entry.Id] = true
 			if rewrite.DisplayName then
 				entry.DisplayName = rewrite.DisplayName
 			end
 			if rewrite.Description then
 				entry.Description = rewrite.Description
 			end
+		end
+	end
+
+	for id, entry in pairs(trait_text) do
+		if not rewritten[id] then
+			local text = { Id = id }
+			local order = { 'Id' }
+
+			if entry.DisplayName then
+				text.DisplayName = entry.DisplayName
+				table.insert(order, 'DisplayName')
+			end
+			if entry.Description then
+				text.Description = entry.Description
+				table.insert(order, 'Description')
+			end
+
+			table.insert(data.Texts, sjson.to_object(text, order))
 		end
 	end
 
@@ -301,6 +330,7 @@ import 'boons/carnal_pleasure.lua'
 import 'boons/smoldering_forge.lua'
 import 'boons/ecstatic_obsession.lua'
 import 'boons/hearty_appetite.lua'
+import 'boons/secret_crush.lua'
 
 import 'boons/stabbing_rush.lua'
 import 'boons/profuse_bleeding.lua'
@@ -309,6 +339,8 @@ import 'boons/hostile_environment.lua'
 import 'boons/blood_spree.lua'
 import 'boons/grape_juice.lua'
 import 'boons/festive_fog.lua'
+
+import 'boons/phalanx_shot.lua'
 
 import 'boons/sun_worshiper.lua'
 import 'boons/dazzling_display.lua'
@@ -320,6 +352,7 @@ import 'boons/winter_harvest.lua'
 import 'boons/natural_selection.lua'
 import 'boons/cryo_pounder.lua'
 import 'boons/arctic_gale.lua'
+import 'boons/weed_killer.lua'
 
 import 'boons/unseen_ire.lua'
 import 'boons/old_grudge.lua'
@@ -363,8 +396,6 @@ import 'boons/harm_for_the_afflicted.lua'
 
 import 'boons/ionic_gain.lua'
 import 'boons/glorious_disaster.lua'
-import 'boons/pandemonium.lua'
-
 
 import 'keepsakes/concave_stone.lua'
 import 'keepsakes/calling_card.lua'

@@ -56,12 +56,23 @@ if config.BoonChanges.HeartyAppetite.Enabled then
 	})
 end
 
+if config.BoonChanges.SecretCrush.Enabled then
+	boon_text({
+		Traits = {
+			FocusRawDamageBoon = {
+				Description = 'Your {$Keywords.AttackSet} and {$Keywords.SpecialSet} gain ' ..
+					'{$Keywords.BaseDamage}, but you {$Keywords.ReserveMana} ' ..
+					'{#ManaFormat}{$TooltipData.ExtractData.TooltipCost}{#Prev}{!Icons.Mana}.',
+			},
+		},
+	})
+end
+
 if config.BoonChanges.DazzlingDisplay.Enabled then
 	boon_text({
 		Traits = {
 			BlindChanceBoon = {
-				Description = 'Your {$Keywords.AttackSet} may inflict {$Keywords.Blind}, ' ..
-					'and your {$Keywords.SpecialSet} as well while you hold {#BoldFormatGraft}Nova Flourish{#Prev}.',
+				Description = 'Your {$Keywords.AttackSet} and {$Keywords.SpecialSet} may inflict {$Keywords.Blind}.',
 			},
 		},
 	})
@@ -251,6 +262,20 @@ if config.BoonChanges.CryoPounder.Enabled then
 			ClearRootBoon = {
 				Description = 'Your blast effects and hammer strikes from {#BoldFormatGraft}Hephaestus {#Prev}deal more damage to {$Keywords.Root}-afflicted foes.',
 			},
+		},
+	})
+end
+
+if config.BoonChanges.WeedKiller.Enabled then
+	boon_text({
+		Traits = {
+			SlowExAttackBoon = {
+				Description = 'Your {$Keywords.AttackEX} and {$Keywords.SpecialEX} deal more damage, ' ..
+					'but use {#ManaFormat}+{$TooltipData.ExtractData.ManaCostAddition}{!Icons.Mana}{#Prev}.',
+			},
+		},
+		StatLines = {
+			BoonEditWeedKillerStatDisplay = { Name = 'Omega Move Damage:', Index = 1 },
 		},
 	})
 end
@@ -590,10 +615,6 @@ if ionicGainOn ~= nil and ionicGainOn.Enabled then
 					'{#Prev}{!Icons.Mana}.',
 			},
 		},
-		StatLines = {
-			BoonEditIonicGainRegenStatDisplay = { Name = 'Magick Restored Nearby:', Index = 2,
-				Suffix = ' {#Prev}{#ItalicFormat}(every 1 Sec.)' },
-		},
 	})
 end
 
@@ -620,22 +641,6 @@ if config.BoonChanges.ScaldingVapor.Enabled then
 			Steam = {
 				Description = 'A burning cloud that rapidly deals damage. Lasts {#BoldFormatGraft}{$TooltipData.ExtractData.Duration} Sec.',
 			},
-		},
-	})
-end
-
-
-if config.BoonChanges.Pandemonium.Enabled then
-	boon_text({
-		Traits = {
-			---@diagnostic disable-next-line: undefined-global
-			[PANDEMONIUM] = {
-				DisplayName = 'Pandemonium',
-				Description = '???',
-			},
-		},
-		Flavor = {
-			BoonEditPandemoniumFlavorText = 'All of them at once, then. Why not?',
 		},
 	})
 end

@@ -23,4 +23,5 @@ once('MoltenTouchGlow', function()
 		},
 	}
 
+	moltenTouch.ExtractValues = with_keyword_extracts(moltenTouch.ExtractValues, 'DelayedKnockback')
 end)

@@ -8,40 +8,52 @@ local function ionic_gain_on()
 end
 
 
-once('IonicGain', function()
-	if not ionic_gain_on() then return end
-
-	local zeusMana = game.TraitData.ZeusManaBoon
-
-	zeusMana.BoonEditManaPerSecond = mod.tuning.IonicGain.ManaPerSecond
-	table.insert(zeusMana.StatLines, 'BoonEditIonicGainRegenStatDisplay')
-	table.insert(zeusMana.ExtractValues, {
-		Key = 'BoonEditManaPerSecond',
-		ExtractAs = 'TooltipManaRegen',
-		DecimalPlaces = 1,
-	})
-end)
-
-
-local function ionic_gain_rate()
-	local trait = game.GetHeroTrait('ZeusManaBoon')
-	if not trait then return 0 end
-
-	local tuning = mod.tuning.IonicGain
-	local scale = tuning.RarityScale[trait.Rarity or 'Common'] or 1
-	return tuning.ManaPerSecond * scale
+local function ionic_gain_active()
+	local hero = game.CurrentRun and game.CurrentRun.Hero
+	return hero ~= nil and not hero.IsDead
 end
 
 
-local function ionic_gain_nearest(heroId)
-	local nearest = nil
+local function ionic_gain_held()
+	return ionic_gain_on() and game.HeroHasTrait('ZeusManaBoon')
+end
+
+
+local function ionic_gain_rarity()
+	local trait = game.GetHeroTrait('ZeusManaBoon')
+	return trait and (trait.Rarity or 'Common') or nil
+end
+
+
+local function ionic_gain_rate()
+	local rarity = ionic_gain_rarity()
+	if not rarity then return 0 end
+
+	local tuning = mod.tuning.IonicGain
+	return tuning.ManaPerSecond * (tuning.RarityScale[rarity] or 1)
+end
+
+
+local function ionic_gain_font(heroId)
+	local nearestId, nearest = nil, nil
 	for _, id in ipairs(game.GetIdsByType({ Name = 'ManaDropZeus' }) or {}) do
 		local distance = game.GetDistance({ Id = heroId, DestinationId = id })
 		if distance and (not nearest or distance < nearest) then
-			nearest = distance
+			nearestId, nearest = id, distance
 		end
 	end
-	return nearest
+	return nearestId, nearest
+end
+
+
+local logged = nil
+
+local function ionic_gain_log(state)
+	if not config.Debug.LogIonicGain then return end
+	if state == logged then return end
+
+	logged = state
+	print('[' .. _PLUGIN.guid .. '] IonicGain ' .. state)
 end
 
 
@@ -49,23 +61,22 @@ function ionic_gain_regen()
 	local tuning = mod.tuning.IonicGain
 	local carried = 0
 
-	while game.CurrentRun and game.CurrentRun.CurrentRoom and game.CurrentRun.Hero
-		and not game.CurrentRun.Hero.IsDead and game.HeroHasTrait('ZeusManaBoon') do
+	while ionic_gain_active() do
+		local nearest = nil
+		if ionic_gain_held() then
+			local _, distance = ionic_gain_font(game.CurrentRun.Hero.ObjectId)
+			nearest = distance
+		end
 
-		if ionic_gain_on() then
-			local hero = game.CurrentRun.Hero
-			local nearest = ionic_gain_nearest(hero.ObjectId)
+		if nearest and nearest <= tuning.Range then
+			local rate = ionic_gain_rate()
+			if rate > 0 then
 
-			if nearest and nearest <= tuning.Range then
-				local rate = ionic_gain_rate()
-				if rate > 0 then
-
-					carried = carried + rate * tuning.Interval
-					local whole = math.floor(carried)
-					if whole > 0 then
-						carried = carried - whole
-						game.ManaDelta(whole, { Silent = false, SWuManaDrip = true })
-					end
+				carried = carried + rate * tuning.Interval
+				local whole = math.floor(carried)
+				if whole > 0 then
+					carried = carried - whole
+					game.ManaDelta(whole, { Silent = false, SWuManaDrip = true })
 				end
 			end
 		else
@@ -77,10 +88,74 @@ function ionic_gain_regen()
 end
 
 
+local function ionic_gain_target(fontId)
+	local range = mod.tuning.IonicGain.StrikeRange
+	local candidates = {}
+
+	for _, unit in pairs(game.ActiveEnemies or {}) do
+		if unit and unit.ObjectId and not unit.IsDead and not is_allied_summon(unit) then
+			local distance = game.GetDistance({ Id = unit.ObjectId, DestinationId = fontId })
+			if distance and distance <= range then
+				table.insert(candidates, unit)
+			end
+		end
+	end
+
+	if #candidates == 0 then return nil, 0 end
+	return game.GetRandomValue(candidates), #candidates
+end
+
+
+local function ionic_gain_bolt(victim)
+	local rarity = ionic_gain_rarity()
+	local damage = rarity and mod.tuning.IonicGain.StrikeDamage[rarity]
+	if type(damage) ~= 'number' or damage <= 0 then return end
+
+	local baseDamage = game.GetBaseDataValue({ Type = 'Projectile', Name = 'ZeusEchoStrike', Property = 'Damage' })
+	if type(baseDamage) ~= 'number' or baseDamage <= 0 then
+		baseDamage = 100
+	end
+
+	game.CreateProjectileFromUnit({
+		Name = 'ZeusEchoStrike',
+		Id = game.CurrentRun.Hero.ObjectId,
+		DestinationId = victim.ObjectId,
+		FireFromTarget = true,
+		DamageMultiplier = damage / baseDamage,
+	})
+end
+
+
+function ionic_gain_strikes()
+	local tuning = mod.tuning.IonicGain
+
+	while ionic_gain_active() do
+		local fontId = ionic_gain_held() and ionic_gain_font(game.CurrentRun.Hero.ObjectId)
+
+		if not fontId then
+			ionic_gain_log('waiting -- no Font on the field')
+		else
+			local victim, nearby = ionic_gain_target(fontId)
+			if not victim then
+				ionic_gain_log('Font ' .. tostring(fontId) .. ', no foe within ' .. tostring(tuning.StrikeRange))
+			else
+				ionic_gain_log('striking ' .. tostring(victim.Name) .. ', ' .. tostring(nearby) ..
+					' in range of Font ' .. tostring(fontId))
+				ionic_gain_bolt(victim)
+			end
+		end
+
+		local recharge = game.GetTotalHeroTraitValue('OlympianRechargeMultiplier', { IsMultiplier = true })
+		game.wait(tuning.StrikeInterval * recharge, game.RoomThreadName)
+	end
+end
+
+
 function ionic_gain_start()
 	if not ionic_gain_on() then return end
-	if not game.CurrentRun or not game.CurrentRun.Hero then return end
-	if not game.HeroHasTrait('ZeusManaBoon') then return end
+	if not in_run() then return end
 
+	logged = nil
 	game.thread(ionic_gain_regen)
+	game.thread(ionic_gain_strikes)
 end

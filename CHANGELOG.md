@@ -14,6 +14,7 @@ Every change below can be switched off independently in
 
 - **Glamour Gain** — New Effect: Every 1 second, you inflict Weak on nearby foes. Gain mana for each one.
 - **Hearty Appetite** — Additionally restores your health to full when on pickup, and increases your healing for the rest of the night by 50%.
+- **Secret Crush** — The Bonus Power now reaches your Special as well as your Attack, for the same reserved Magick.
 
 ### Dionysus
 
@@ -27,6 +28,10 @@ Every change below can be switched off independently in
 - **Profuse Bleeding** — New(?) Effect: foes with wounds have a small chance to drop plasma after taking damage. It is no longer a sword boon: rewritten it never makes a falling blade, so it no longer unlocks Coffin Nail or Cutting Edge, the two duos that improve them.
 - **Stabbing Rush** — Falling blades keep dropping for the entire duration of your sprint.
 
+### Athena
+
+- **Phalanx Shot** — Rearms after 1 second rather than 2.
+
 ### Apollo
 
 - **Easy Shot** — The piercing arrow deals 100 / 120 / 140 / 160 damage, doubled from 50 / 60 / 70 / 80. A Pom of Power can no longer be spent on it: the boon has no per-level figure of its own, so a Pom was adding a whole second arrow's worth for one level.
@@ -37,6 +42,7 @@ Every change below can be switched off independently in
 
 - **Local Climate** — Additionally, buff your regular cast damage as well.
 - **Tranquil Gain** — New Effect: when channeling your Omega moves for 0.5 seconds, rapidly restore mana.
+- **Weed Killer** — Now buffs your Omega Special as well as your Omega Attack, and charges the same Magick surcharge on it. Its stat line reads “Omega Move Damage” rather than “Omega Attack Damage” to match.
 
 ### Hades
 
@@ -90,7 +96,7 @@ Every change below can be switched off independently in
 ### Zeus
 
 - **Ionic Gain** — Additionally, standing near the Font slowly restores Magick.
-- **Air Quality** — Now floors your base damage, instead of flooring the finished hit after all multipliers.
+- **Air Quality** — Now floors your base damage, instead of flooring the finished hit after all multipliers. The floor lands at the end of the base reckoning rather than the start of it: the game asks for base damage, adds every flat bonus to it, and only then multiplies (`CombatLogic.lua:1171-1187`), so the floor is applied to that finished sum and the multipliers work on top of it — a flat bonus can no longer be swallowed by a floor that had already been applied without it.
 
 ### Duo Boons
 
@@ -106,7 +112,7 @@ Every change below can be switched off independently in
 - **Hostile Environment** (Demeter × Ares) — Additionally, your regular cast also follows you around. Arctic Gale's gust rides along with it, on your cast and on your familiar's under Aspect of Circe, rather than only on a cast fired with Attack held.
 - **Killer Current** (Zeus × Poseidon) — New Effect: Froth-afflicted foes have a 30% chance of being struck by lightning for 30 after taking damage, at most twice a second. Froth sits on a foe for a while and every hit that lands rolls again, so a fast weapon into a Frothed crowd was rolling many times a second.
 - **Love Handles → Smoldering Forge** (Aphrodite × Hephaestus) — Replaced: striking a foe with Glow with your Attack or Special has a 20% chance to create a Heartthrob. The roll is a blow you land yourself — it no longer answers every source of damage that reaches a Glowing foe, so nothing you left on one ticks it over.
-- **Natural Selection** (Demeter × Poseidon) — New Effect: on pickup, gain 3 triple-poms. Every 8 encounters, gain another one. Each pom rolls its own boons when you open it rather than when it drops — the game settles a pom's options once and keeps them, so every pom out of one handful, and every look at the same pom, had been showing the same three.
+- **Natural Selection** (Demeter × Poseidon) — New Effect: on pickup, gain 3 triple-poms. Every 8 encounters, gain another one. Each pom rolls its own boons when you open it rather than when it drops — the game settles a pom's options once and keeps them, so every pom out of one handful, and every look at the same pom, had been showing the same three. Rolling them at the door was not enough on its own: the choice menu re-seeds the run's randomness from the number of that loot you have taken, and since each option costs a single draw, three poms from one handful read the same sequence one step apart and arrived at the same three boons. The roll now happens after that re-seed, from a point of its own well clear of its neighbours, and a pom keeps the boons it rolled if you close the menu and open it again.
 - **Ripple Effect** (Hera × Poseidon) — New Effect: repeats the Omega procs of six boons — Ocean Swell, Fine Line, Easy Shot, Controlled Burn, Explosive Intent and Cut Above — with a 50% chance to occur again, up to 4 times, each with diminishing chances (50% / 25% / 12.5% / 6.25%). Those six by name and nothing else: it used to take every fireball through the Fireballs edit's own list, which holds this mod's and other mods' fireballs as well as Hestia's, so a Hex-Call throwing a dozen of them handed Ripple a dozen chances to repeat and the screen filled with bouncing fire. It no longer asks who fired the projectile either: however and whenever one of the six is created, it repeats, so a familiar's cast or a Hex-Call's swells count like your own. Dionysus' Drunken Stupor is in as well, differently: it fires no projectile but applies a lingering effect once per foe, so a ripple of it makes that one dose heavier rather than repeating it.
 - **Seismic Servo → Seismic Hammer** (Hephaestus × Poseidon) — Replaced: your Cast erupts into your Omega Cast after being struck by a Hephaestus explosion. Also reduces the cooldowns of Volcanic Strike, Volcanic Flourish, and Land Mine flatly by 1 second.
 - **Sun Worshiper** (Apollo × Hera) — Additional foes have a 30% chance to also be summoned in combat after being slain, up to 10 extra per encounter.
@@ -115,7 +121,6 @@ Every change below can be switched off independently in
 
 ### Legendary Boons
 
-- **Pandemonium** (Chaos) — New Legendary: puts all gods in your pool tonight, removes all boon requirements, increases boon offering chances, and allows core boons to be stacked.
 - **All Together** (Hera) — Gain an additional essence of each type upon pickup.
 - **Fire Away → Burning Meteor** (Hestia) — Replaced: Fireball effects from Hestia are 50% larger and stronger, and inflict Scorch equal to the damage they deal.
 - **Paid Dues → Second Wind** (Hermes) — Replaced: You can cast and dash an additional time, and dashes chain more quickly.
@@ -135,8 +140,8 @@ Every change below can be switched off independently in
 
 - **Every boon description is written the way the game writes its own.** Checked against the game's text files rather than by eye: every `{$Keywords.…}`, `{!Icons.…}` and `{#Format}` token in the mod now resolves to something that exists. Numbers are no longer baked into the wording — Blood Spree's kill-heal chance, Natural Selection's Poms and levels, and Ripple Effect's repeat limit are read off the boon through `ExtractData`, as vanilla does, so the tooltip and the code cannot drift apart; Blood Spree's now shows the luck-scaled figure the roll actually uses. Hearty Appetite's description ended in two full stops.
 
-- **Keyword tooltips opened from a reworked boon printed raw tokens.** A keyword resolves its numbers against the boon whose tooltip you opened it from, not against the keyword — so vanilla hangs Rend's duration, Scorch's rate, Froth's chance and Heartthrob's fuse on the boons that name them. Seven boons here replace their `ExtractValues` outright and so threw those away: Smoldering Forge (Heartthrob), Profuse Bleeding (Rend), Thermal Dynamics and Burning Meteor (Scorch), Killer Current and Breaker Rush (Froth), and Ecstatic Obsession (Weak, whose extracts were handed to Nervous Wreck in the swap and never replaced). All seven now declare what they name, through the same `with_keyword_extracts` helper MoreDuosMod uses, copied from the traits vanilla puts them on. Every entry is external and skips auto-extraction, so no stat line moved.
-- **Stat lines carry their units on the value, not in the label.** Not one of the game's own 242 stat-line labels contains a unit, and not one contains an icon; four of this mod's did. Seismic Hammer's "Blast Recharge Reduction (Sec.):" is now "Blast Recharge Reduction:" against a value reading "1 Sec.", and Ionic Gain's rate is written "(every 1 Sec.)" the way vanilla writes every other per-second stat line.
+- **Keyword tooltips opened from a reworked boon printed raw tokens.** A keyword resolves its numbers against the boon whose tooltip you opened it from, not against the keyword — so vanilla hangs Rend's duration, Scorch's rate, Froth's chance and Heartthrob's fuse on the boons that name them. Seven boons here replace their `ExtractValues` outright and so threw those away: Smoldering Forge (Heartthrob), Profuse Bleeding (Rend), Thermal Dynamics and Burning Meteor (Scorch), Killer Current and Breaker Rush (Froth), and Ecstatic Obsession (Weak, whose extracts were handed to Nervous Wreck in the swap and never replaced). All seven now declare what they name, through the same `with_keyword_extracts` helper MoreDuosMod uses, copied from the traits vanilla puts them on. Four more name Glow, which vanilla hangs on Furnace Blast alone — Anvil Ring, Anvil Rush, Molten Touch and Smoldering Forge all inflict it or read it now, and all four declare its modifier and duration. Every entry is external and skips auto-extraction, so no stat line moved.
+- **Stat lines carry their units on the value, not in the label.** Not one of the game's own 242 stat-line labels contains a unit, and not one contains an icon; four of this mod's did. Seismic Hammer's "Blast Recharge Reduction (Sec.):" is now "Blast Recharge Reduction:" against a value reading "1 Sec.".
 
 - **A boon only counts as what this mod makes it, while this mod is making it.** The game answers "is this a splash boon", "does this make plasma", "does this Froth" from lists of names, and a boon rewritten into one of those roles has to join the list. Those additions used to be one-way: switching an edit off left the list still claiming a boon that no longer did the thing. Membership is now reconciled against the config every room, in both directions — so Meat Grinder counts as a plasma source only while its edit is on, Breaker Rush Froths and splashes only while its own is, and Profuse Bleeding goes back to being a falling-sword boon the moment its rewrite is switched off.
 

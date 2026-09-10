@@ -20,6 +20,8 @@ once('AnvilRing', function()
 	for _, level in pairs(cast.RarityLevels) do
 		level.Multiplier = level.Multiplier - cut
 	end
+
+	cast.ExtractValues = with_keyword_extracts(cast.ExtractValues, 'DelayedKnockback')
 end)
 
 
@@ -74,7 +76,7 @@ once('SmithyRush', function()
 	}
 
 	dash.StatLines = { 'BlastDamageStatDisplay1' }
-	dash.ExtractValues = {
+	dash.ExtractValues = with_keyword_extracts({
 		{
 			Key = 'ReportedMultiplier',
 			ExtractAs = 'Damage',
@@ -83,7 +85,7 @@ once('SmithyRush', function()
 			BaseName = 'HephCastBlast',
 			BaseProperty = 'Damage',
 		},
-	}
+	}, 'DelayedKnockback')
 end)
 
 

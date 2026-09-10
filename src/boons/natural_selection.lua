@@ -30,9 +30,11 @@ once('NaturalSelectionPoms', function()
 		natural_selection_check_pom()
 	end)
 
-	modutil.mod.Path.Wrap("OpenUpgradeChoiceMenu", function(base, source, args)
-		natural_selection_reroll(source)
-		return base(source, args)
+	modutil.mod.Path.Wrap("CreateBoonLootButtons", function(base, screen, lootData, reroll, args)
+		if not reroll then
+			natural_selection_reroll(lootData)
+		end
+		return base(screen, lootData, reroll, args)
 	end)
 end)
 
@@ -55,12 +57,14 @@ end
 
 local NATURAL_SELECTION_ROLL_STRIDE = 64
 
-function natural_selection_spread_choices(pom, index)
+function natural_selection_mark_pom(pom)
 	if not pom then return end
 
-	game.RandomSynchronize(index * NATURAL_SELECTION_ROLL_STRIDE)
-	pom.UpgradeOptions = nil
-	game.SetTraitsOnLoot(pom)
+	local run = game.CurrentRun
+	if not run then return end
+
+	run.BoonEditNaturalSelectionRoll = (run.BoonEditNaturalSelectionRoll or 0) + 1
+	pom.BoonEditNaturalSelection = run.BoonEditNaturalSelectionRoll
 end
 
 function natural_selection_drop_poms(count, levels)
@@ -89,9 +93,7 @@ function natural_selection_drop_poms(count, levels)
 			OffsetY = game.RandomFloat(-NATURAL_SELECTION_POM_SPREAD, NATURAL_SELECTION_POM_SPREAD),
 		})
 
-		natural_selection_spread_choices(pom, index)
-
-		if pom then pom.BoonEditNaturalSelection = true end
+		natural_selection_mark_pom(pom)
 
 		if pom and pom.ObjectId then
 			game.ApplyUpwardForce({ Id = pom.ObjectId, Speed = game.RandomFloat(500, 700) })
@@ -125,13 +127,10 @@ end
 
 function natural_selection_reroll(source)
 	if not config.BoonChanges.NaturalSelection.Enabled then return end
-	if not source or not source.BoonEditNaturalSelection then return end
 
-	local run = game.CurrentRun
-	if run then
-		run.BoonEditNaturalSelectionRoll = (run.BoonEditNaturalSelectionRoll or 0) + 1
-		game.RandomSynchronize(run.BoonEditNaturalSelectionRoll * NATURAL_SELECTION_ROLL_STRIDE)
-	end
+	local roll = source and source.BoonEditNaturalSelection
+	if type(roll) ~= 'number' then return end
 
+	game.RandomSynchronize(roll * NATURAL_SELECTION_ROLL_STRIDE)
 	source.UpgradeOptions = nil
 end

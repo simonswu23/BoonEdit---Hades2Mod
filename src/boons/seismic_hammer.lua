@@ -57,7 +57,7 @@ SEISMIC_BLAST_BOONS = {
 function seismic_hammer_report(traitData)
 	if not config.BoonChanges.SeismicHammer.Enabled then return end
 	if not traitData or not SEISMIC_BLAST_BOONS[traitData.Name] then return end
-	if not game.HeroHasTrait('MassiveCastBoon') then return end
+	if not in_run() or not game.HeroHasTrait('MassiveCastBoon') then return end
 
 	local action = traitData.OnEnemyDamagedAction
 	local full = action and action.Args and action.Args.Cooldown

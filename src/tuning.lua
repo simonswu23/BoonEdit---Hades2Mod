@@ -76,6 +76,16 @@ mod.tuning.IonicGain = {
 		Epic = 1.67,
 		Heroic = 2.00,
 	},
+
+	StrikeDamage = {
+		Common = 15,
+		Rare = 20,
+		Epic = 25,
+		Heroic = 30,
+	},
+
+	StrikeRange = 700,
+	StrikeInterval = 1,
 }
 
 mod.tuning.BeachBall = {
@@ -111,6 +121,10 @@ mod.tuning.TranquilGain = {
 
 mod.tuning.WinterHarvest = {
 	ExecuteThreshold = 0.15,
+}
+
+mod.tuning.PhalanxShot = {
+	Cooldown = 1,
 }
 
 mod.tuning.NaturalSelection = {
@@ -285,12 +299,4 @@ mod.tuning.WhiteAntler = {}
 
 mod.tuning.MetallicDroplet = {
 	ResidualFraction = 0.5,
-}
-
-mod.tuning.Pandemonium = {
-	KeepsakeOfferChance = 0.10,
-
-	MaxGodsPerRun = 99,
-
-	ExtraDoorEntries = 1,
 }

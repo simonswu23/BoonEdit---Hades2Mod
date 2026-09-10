@@ -147,48 +147,6 @@ function breaker_rush_splash()
 end
 
 
--- MIGRATION SHIM -- delete before release; see the table in CLAUDE.md.
-function breaker_rush_sync()
-	if not config.BoonChanges.BreakerRush.Enabled then return end
-
-	local repaired = false
-
-	local source = game.TraitData.PoseidonSprintBoon
-	if source and breaker_rush_weapons_stale(source.OnWeaponFiredFunctions) then
-		breaker_rush_set_weapons(source.OnWeaponFiredFunctions)
-		repaired = true
-	end
-
-	local held = game.GetHeroTrait('PoseidonSprintBoon')
-	if held and breaker_rush_weapons_stale(held.OnWeaponFiredFunctions) then
-		breaker_rush_set_weapons(held.OnWeaponFiredFunctions)
-		game.UpdateHeroTraitDictionary()
-		repaired = true
-	end
-
-	if repaired then
-		print('[' .. _PLUGIN.guid .. '] Breaker Rush was carrying an older weapon list; refreshed it')
-	end
-end
-
-
-function breaker_rush_weapons_stale(fired)
-	if not fired then return false end
-
-	local lookup = fired.ValidWeaponsLookup or {}
-	for _, name in ipairs(BREAKER_RUSH_WEAPONS) do
-		if not lookup[name] then return true end
-	end
-	return false
-end
-
-
-function breaker_rush_set_weapons(fired)
-	fired.ValidWeapons = game.DeepCopyTable(BREAKER_RUSH_WEAPONS)
-	fired.ValidWeaponsLookup = game.ToLookup(BREAKER_RUSH_WEAPONS)
-end
-
-
 function mod.BreakerRushStart(weaponData, _args, _triggerArgs)
 	if weaponData and weaponData.Name == 'WeaponSprint' then
 		if game.CheckCooldown('BoonEditBreakerRushTrail', mod.tuning.TidalRush.TrailInterval) then
