@@ -89,13 +89,24 @@ function heirloom_force_god_boon_data(traitName)
 end
 
 
+function heirloom_screen_offers(screen, traitName)
+	if not traitName or not screen or not screen.UpgradeButtons then return false end
+	for _, otherButton in pairs(screen.UpgradeButtons) do
+		if otherButton.Data and otherButton.Data.Name == traitName then
+			return true
+		end
+	end
+	return false
+end
+
+
 function heirloom_force_god_transform(screen, mouseOverButton, data, trait)
 	trait.BoonEditHeirloomGodRarify.Uses = trait.BoonEditHeirloomGodRarify.Uses - 1
 
 	local targetName = nil
-	if not game.HeroHasTrait(data.Legendary) then
+	if not game.HeroHasTrait(data.Legendary) and not heirloom_screen_offers(screen, data.Legendary) then
 		targetName = data.Legendary
-	elseif game.TraitData[data.Wrath] and not game.HeroHasTrait(data.Wrath) then
+	elseif game.TraitData[data.Wrath] and not game.HeroHasTrait(data.Wrath) and not heirloom_screen_offers(screen, data.Wrath) then
 		targetName = data.Wrath
 	end
 
