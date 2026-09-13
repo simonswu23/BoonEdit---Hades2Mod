@@ -72,7 +72,15 @@ if config.BoonChanges.DazzlingDisplay.Enabled then
 	boon_text({
 		Traits = {
 			BlindChanceBoon = {
-				Description = 'Your {$Keywords.AttackSet} and {$Keywords.SpecialSet} may inflict {$Keywords.Blind}.',
+				Description = 'Your {$Keywords.AttackSet} and {$Keywords.SpecialSet} inflict ' ..
+					'{$Keywords.Blind}. Foes afflicted by it may take {$Keywords.Crit} ' ..
+					'damage from them.',
+			},
+		},
+		StatLines = {
+			BoonEditDazzlingCritStatDisplay = {
+				Name = '{$Keywords.Crit} Chance vs. {$Keywords.Blind}:',
+				Index = 1,
 			},
 		},
 	})

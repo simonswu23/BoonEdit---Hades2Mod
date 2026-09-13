@@ -35,7 +35,7 @@ Every change below can be switched off independently in
 ### Apollo
 
 - **Easy Shot** — The piercing arrow deals 100 / 120 / 140 / 160 damage, doubled from 50 / 60 / 70 / 80. A Pom of Power can no longer be spent on it: the boon has no per-level figure of its own, so a Pom was adding a whole second arrow's worth for one level.
-- **Dazzling Display** — Additionally inflicts Blind with your Special while you hold Nova Flourish, and Nova Flourish now makes it eligible to be offered in the first place. Blind chance raised to 15% / 20% / 25% / 30% across the rarities.
+- **Dazzling Display** — Additionally inflicts Blind with your Special while you hold Nova Flourish, and Nova Flourish now makes it eligible to be offered in the first place. It now Blinds on every hit rather than rolling for it, and the roll it used to make has moved rather than gone: 8% / 12% / 15% / 20% across the rarities is now the chance your Attack and Special deal Critical damage to a foe already Dazed. The rarities still buy something, and the boon reads as a pair — it applies the status, then pays you for hitting into it. The tooltip's stat line follows, reading “Critical Chance vs. Daze”.
 - **Extra Dose** — Additionally, your Special has the same chance to strike twice.
 
 ### Demeter

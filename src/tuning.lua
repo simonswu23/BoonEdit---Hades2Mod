@@ -154,15 +154,21 @@ mod.tuning.AnvilOfFates = {
 	Discoveries = 2,
 }
 
--- 15 / 20 / 25 / 30% across the rarities, off a Common of 0.15
+-- Crit chance is 8 / 12 / 15 / 20% across the rarities, off a Common of 0.08
 mod.tuning.DazzlingDisplay = {
-	Chance = 0.15,
+	Chance = 1.0,
 
-	RarityMultipliers = {
+	CritChance = 0.08,
+
+	-- What each Pom past the first adds, carried over from the Blind chance these values used to
+	-- ramp. Without them a level re-adds the whole base figure, which is far too much.
+	CritStackValues = { 0.05, 0.03, 0.02, 0.01 },
+
+	CritRarityMultipliers = {
 		Common = 1.0,
-		Rare = 20 / 15,
-		Epic = 25 / 15,
-		Heroic = 30 / 15,
+		Rare = 12 / 8,
+		Epic = 15 / 8,
+		Heroic = 20 / 8,
 	},
 }
 
