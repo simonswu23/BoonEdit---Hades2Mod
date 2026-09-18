@@ -1,0 +1,2 @@
+regex:^Content[\/]Scripts[\/].*\.lua$
+regex:^Content[\/]Game[\/]Text[\/]en[\/].*\.sjson$
