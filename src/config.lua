@@ -249,7 +249,41 @@ local config = {
     };
   };
 
+  HammerChanges = {
+    DualMoonshot = {
+      Enabled = true;
+    };
+
+    EnduringCoil = {
+      Enabled = true;
+    };
+
+    HiddenHelix = {
+      Enabled = true;
+    };
+
+    HiddenKnives = {
+      Enabled = true;
+    };
+
+    ReaperKnives = {
+      Enabled = true;
+    };
+
+    RisingHelix = {
+      Enabled = true;
+    };
+
+    WhirlingHelix = {
+      Enabled = true;
+    };
+  };
+
   KeepsakeChanges = {
+    AromaticPhial = {
+      Enabled = true;
+    };
+
     CallingCard = {
       Enabled = true;
     };

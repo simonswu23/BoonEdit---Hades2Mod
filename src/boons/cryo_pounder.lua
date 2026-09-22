@@ -2,11 +2,16 @@
 ---@diagnostic disable: lowercase-global
 
 
-once('CryoPounderHammers', function()
+local GLOW_EFFECT = 'DelayedKnockbackEffect'
+
+once('CryoPounderGlow', function()
 	if not config.BoonChanges.CryoPounder.Enabled then return end
 
 	local modifiers = game.TraitData.ClearRootBoon.AddOutgoingDamageModifiers
 
-	table.insert(modifiers.ValidProjectiles, 'HephCastBlast')
-	modifiers.ValidProjectilesLookup = game.ToLookup(modifiers.ValidProjectiles)
+	modifiers.ValidProjectiles = nil
+	modifiers.ValidProjectilesLookup = nil
+
+	modifiers.ValidActiveEffects = { GLOW_EFFECT }
+	modifiers.ActiveRootMultiplier = mod.tuning.CryoPounder.FrozenGlowMultiplier
 end)

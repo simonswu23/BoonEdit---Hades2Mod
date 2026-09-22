@@ -4,6 +4,33 @@
 
 mod.tuning = {}
 
+mod.tuning.ReaperKnives = {
+	HitVulnerabilityMultiplier = 1.5,
+	ReturnDelay = 0.138,
+
+	Fuse = 1,
+}
+
+mod.tuning.EnduringCoil = {
+	FuseMultiplier = 2,
+}
+
+mod.tuning.HiddenHelix = {
+	ExtraProjectiles = 2,
+}
+
+mod.tuning.HiddenKnives = {
+	RingDegrees = 360,
+}
+
+mod.tuning.RisingHelix = {
+	MaxDamageBonus = 0.50,
+}
+
+mod.tuning.WhirlingHelix = {
+	SpeedMultiplier = 2.0,
+}
+
 mod.tuning.CarnalPleasure = {
 	HeartthrobChance = 0.35,
 
@@ -144,6 +171,10 @@ mod.tuning.AnvilRush = {
 	TrailInterval = 0.5,
 }
 
+mod.tuning.CryoPounder = {
+	FrozenGlowMultiplier = 1.5,
+}
+
 mod.tuning.MoltenTouch = {
 	GlowMultiplier = 1.2,
 	GlowStackValues = { 1.1, 1.05 },
@@ -154,19 +185,16 @@ mod.tuning.AnvilOfFates = {
 	Discoveries = 2,
 }
 
--- Crit chance is 8 / 12 / 15 / 20% across the rarities, off a Common of 0.08
 mod.tuning.DazzlingDisplay = {
 	Chance = 1.0,
 
-	CritChance = 0.08,
+	PotencyBonus = 0.03,
 
-	CritStackValues = { 0.05, 0.03, 0.02, 0.01 },
-
-	CritRarityMultipliers = {
-		Common = 1.0,
-		Rare = 12 / 8,
-		Epic = 15 / 8,
-		Heroic = 20 / 8,
+	PotencyRarityMultipliers = {
+		Common = 1,
+		Rare = 2,
+		Epic = 3,
+		Heroic = 4,
 	},
 }
 
@@ -298,6 +326,13 @@ mod.tuning.ConcaveStone = {}
 mod.tuning.CallingCard = {}
 
 mod.tuning.WhiteAntler = {}
+
+mod.tuning.AromaticPhial = {
+	Blessings = 1,
+	HeroicBlessings = 2,
+
+	RefreshUses = 1,
+}
 
 mod.tuning.MetallicDroplet = {
 	ResidualFraction = 0.5,

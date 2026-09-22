@@ -24,6 +24,8 @@ function prefix_SetupMap()
 	cherished_heirloom_place_keepsakes()
 	white_antler_restore()
 	---@diagnostic disable-next-line: undefined-global
+	aromatic_phial_apply()
+	---@diagnostic disable-next-line: undefined-global
 	ionic_gain_start()
 	---@diagnostic disable-next-line: undefined-global
 	boon_edit_sync_groups()
@@ -172,6 +174,13 @@ KEYWORD_EXTRACTS = {
 		{ ExtractAs = 'DelayedKnockbackDuration', SkipAutoExtract = true, External = true,
 			BaseType = 'EffectData', BaseName = 'DelayedKnockbackEffect', BaseProperty = 'Duration',
 			DecimalPlaces = 1 },
+	},
+	Blind = {
+		{ ExtractAs = 'BlindChance', SkipAutoExtract = true, External = true,
+			BaseType = 'EffectData', BaseName = 'BlindEffect', BaseProperty = 'MissChance',
+			Format = 'Percent' },
+		{ ExtractAs = 'BlindDuration', SkipAutoExtract = true, External = true,
+			BaseType = 'EffectData', BaseName = 'BlindEffect', BaseProperty = 'Duration' },
 	},
 }
 
@@ -397,10 +406,19 @@ import 'boons/harm_for_the_afflicted.lua'
 import 'boons/ionic_gain.lua'
 import 'boons/glorious_disaster.lua'
 
+import 'keepsakes/aromatic_phial.lua'
 import 'keepsakes/concave_stone.lua'
 import 'keepsakes/calling_card.lua'
 import 'keepsakes/white_antler.lua'
 import 'keepsakes/metallic_droplet.lua'
+
+import 'hammeredit/dual_moonshot.lua'
+import 'hammeredit/reaper_knives.lua'
+import 'hammeredit/enduring_coil.lua'
+import 'hammeredit/hidden_helix.lua'
+import 'hammeredit/hidden_knives.lua'
+import 'hammeredit/rising_helix.lua'
+import 'hammeredit/whirling_helix.lua'
 
 
 import 'requirements.lua'

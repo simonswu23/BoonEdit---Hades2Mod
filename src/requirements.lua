@@ -237,6 +237,15 @@ once('BoonRequirements', function()
 		end
 	end
 
+	if config.BoonChanges.CryoPounder.Enabled then
+		game.TraitRequirements.ClearRootBoon = {
+			OneFromEachSet = {
+				{ 'HephaestusCastBoon', 'HephaestusSprintBoon', 'MassiveKnockupBoon' },
+				game.LinkedTraitData.DemeterRootTraits,
+			},
+		}
+	end
+
 	if config.BoonChanges.DazzlingDisplay.Enabled then
 		game.TraitRequirements.BlindChanceBoon = {
 			PriorityChance = 0.25,
@@ -351,13 +360,13 @@ once('BoonRequirements', function()
 			return kept, dropped
 		end
 
-		for _, traitName in ipairs({
-			'MassiveDamageBoon',
-			'MassiveKnockupBoon',
-			'BlindClearBoon',
-			'ClearRootBoon',
-			'DoubleMassiveAttackBoon',
-		}) do
+		local massiveTraits = { 'MassiveDamageBoon', 'MassiveKnockupBoon', 'DoubleMassiveAttackBoon' }
+		if not config.BoonChanges.CryoPounder.Enabled then
+			table.insert(massiveTraits, 'ClearRootBoon')
+		end
+		table.insert(massiveTraits, 'BlindClearBoon')
+
+		for _, traitName in ipairs(massiveTraits) do
 			local requirements = game.TraitRequirements[traitName]
 			if requirements then
 				if requirements.OneOf then

@@ -64,6 +64,7 @@ once('BreakerRushWaves', function()
 
 	breaker.OnEnemyDamagedAction = {
 		ValidProjectiles = { 'PoseidonCastSplashSplinter' },
+		ValidProjectilesLookup = game.ToLookup({ 'PoseidonCastSplashSplinter' }),
 		FunctionName = _PLUGIN.guid .. '.BreakerRushFroth',
 		Args = {},
 	}

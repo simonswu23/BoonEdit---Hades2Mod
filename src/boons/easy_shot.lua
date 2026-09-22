@@ -23,8 +23,11 @@ once('EasyShotCrit', function()
 	local easyShot = game.TraitData.OmegaCastVolleyBoon
 	if not easyShot then return end
 
+	local projectiles = { 'ArtemisCastVolley' }
+
 	easyShot.AddOutgoingCritModifiers = easyShot.AddOutgoingCritModifiers or {
-		ValidProjectiles = { 'ArtemisCastVolley' },
+		ValidProjectiles = projectiles,
+		ValidProjectilesLookup = game.ToLookup(projectiles),
 		Chance = { BaseValue = mod.tuning.EasyShot.CritChance },
 	}
 end)

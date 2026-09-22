@@ -14,6 +14,7 @@ once('MoltenTouchGlow', function()
 		{
 			ValidActiveEffects = { GLOW_EFFECT },
 			ValidWeapons = game.WeaponSets.HeroPrimarySecondaryWeapons,
+			ValidWeaponsLookup = game.ToLookup(game.WeaponSets.HeroPrimarySecondaryWeapons),
 			ValidWeaponMultiplier = {
 				BaseValue = tuning.GlowMultiplier,
 				SourceIsMultiplier = true,

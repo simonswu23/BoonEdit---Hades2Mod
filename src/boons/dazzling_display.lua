@@ -3,52 +3,39 @@
 
 
 local DAZZLING_TRAIT = 'BlindChanceBoon'
+local NOVA_STRIKE = 'ApolloWeaponBoon'
 local NOVA_FLOURISH = 'ApolloSpecialBoon'
 local BLIND_EFFECT = 'BlindEffect'
 
 
-once('DazzlingDisplayCoversSpecial', function()
+once('DazzlingDisplayNovaOnly', function()
 	if not config.BoonChanges.DazzlingDisplay.Enabled then return end
 
 	local trait = game.TraitData[DAZZLING_TRAIT]
 	local tuning = mod.tuning.DazzlingDisplay
 
-	local chance = trait.OnEnemyDamagedAction.Chance
-	chance.BaseValue = tuning.Chance
-	chance.AbsoluteStackValues = nil
-
-	for rarity, multiplier in pairs(tuning.CritRarityMultipliers) do
+	for rarity, multiplier in pairs(tuning.PotencyRarityMultipliers) do
 		if trait.RarityLevels[rarity] then
 			trait.RarityLevels[rarity].Multiplier = multiplier
 		end
 	end
 
-	local weapons = game.AddLinkedWeapons(game.WeaponSets.HeroPrimarySecondaryWeapons)
-
-	trait.AddOutgoingCritModifiers = {
-		ValidWeapons = weapons,
-		ValidWeaponsLookup = game.ToLookup(weapons),
-		ValidActiveEffects = { BLIND_EFFECT },
-		Chance = {
-			BaseValue = tuning.CritChance,
-			AbsoluteStackValues = game.DeepCopyTable(tuning.CritStackValues),
+	trait.OnEnemyDamagedAction = {
+		ValidWeapons = {},
+		FunctionName = _PLUGIN.guid .. '.DazzlingDisplayBlind',
+		Args = {
+			Chance = tuning.Chance,
+			MissChanceBonus = { BaseValue = tuning.PotencyBonus },
+			ReportValues = { ReportedMissBonus = 'MissChanceBonus' },
 		},
-		ReportValues = { ReportedCritBonus = 'Chance' },
 	}
 
-	trait.StatLines = { 'BoonEditDazzlingCritStatDisplay' }
+	trait.StatLines = { 'BoonEditDazzlingPotencyStatDisplay' }
 
-	for index = #trait.ExtractValues, 1, -1 do
-		if trait.ExtractValues[index].Key == 'ReportedChance' then
-			table.remove(trait.ExtractValues, index)
-		end
-	end
-
-	table.insert(trait.ExtractValues, {
-		Key = 'ReportedCritBonus',
-		ExtractAs = 'CritBonus',
-		Format = 'LuckModifiedPercent',
-	})
+	---@diagnostic disable-next-line: undefined-global
+	trait.ExtractValues = with_keyword_extracts({
+		{ Key = 'ReportedMissBonus', ExtractAs = 'MissBonus', Format = 'Percent', IncludeSigns = true },
+	}, 'Blind')
 
 	modutil.mod.Path.Wrap('AddTraitToHero', function(base, args)
 		local added = base(args)
@@ -65,13 +52,33 @@ function dazzling_display_widen()
 	local action = trait and trait.OnEnemyDamagedAction
 	if not action then return end
 
-	local weapons = game.WeaponSets.HeroPrimaryWeapons
+	local weapons = {}
+	if game.HeroHasTrait(NOVA_STRIKE) then
+		weapons = game.ConcatTableValues(weapons, game.WeaponSets.HeroPrimaryWeapons)
+	end
 	if game.HeroHasTrait(NOVA_FLOURISH) then
-		weapons = game.ConcatTableValues(
-			game.ShallowCopyTable(weapons), game.WeaponSets.HeroSecondaryWeapons)
+		weapons = game.ConcatTableValues(weapons, game.WeaponSets.HeroSecondaryWeapons)
 	end
 
 	weapons = game.AddLinkedWeapons(weapons)
 	action.ValidWeapons = weapons
 	action.ValidWeaponsLookup = game.ToLookup(weapons)
+end
+
+
+---@diagnostic disable-next-line: unused-local
+function mod.DazzlingDisplayBlind(victim, args, triggerArgs)
+	if not config.BoonChanges.DazzlingDisplay.Enabled then return end
+	if not victim or not rolls(args.Chance) then return end
+
+	local hero = game.CurrentRun and game.CurrentRun.Hero
+	if not hero then return end
+
+	local vanilla = game.EffectData[BLIND_EFFECT].EffectData
+	game.ApplyEffect({
+		DestinationId = victim.ObjectId,
+		Id = hero.ObjectId,
+		EffectName = BLIND_EFFECT,
+		DataProperties = { MissChance = vanilla.MissChance + (args.MissChanceBonus or 0) },
+	})
 end

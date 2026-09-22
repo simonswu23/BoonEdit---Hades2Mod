@@ -170,15 +170,52 @@ end
 once('CherishedHeirloom', function()
 	if config.BoonChanges.CherishedHeirloom.Enabled then
 		game.TraitData.KeepsakeLevelBoon.AcquireFunctionName = _PLUGIN.guid .. '.CherishedHeirloomAcquire'
+
+		game.TraitData.BaseBoonUpgradeKeepsake.RarityLevels.Heroic = { Multiplier = 3 }
+		for keepsakeName in pairs(HEIRLOOM_FORCE_GOD_DATA) do
+			local keepsake = game.TraitData[keepsakeName]
+			if keepsake and keepsake.RarityLevels then
+				keepsake.RarityLevels.Heroic = keepsake.RarityLevels.Heroic or { Multiplier = 3 }
+			end
+		end
 	end
 
+	modutil.mod.Path.Wrap('HandleUpgradeToggle', function(base, screen, button, textOverride)
+		local data = button and button.Data
+		local picked = data and data.Unlocked and data.Gift
+		local traitData = picked and game.TraitData[picked]
+
+		if traitData and traitData.Slot == 'Keepsake' then
+			mod.HeirloomPicked = picked
+		end
+
+		return base(screen, button, textOverride)
+	end)
+
 	modutil.mod.Path.Wrap("KeepsakeScreenClose", function(base, screen, button)
-		if cherished_heirloom_extra_pending()
-			and screen and screen.LastTrait == mod.HeirloomPriorKeepsake then
+		local extra = cherished_heirloom_extra_pending()
+		local picked = mod.HeirloomPicked
+		mod.HeirloomPicked = nil
+
+		if extra and picked and picked == mod.HeirloomPriorKeepsake and not mod.HeirloomRefreshUsed then
+			mod.HeirloomRefreshUsed = true
+			base(screen, button)
+
+			if mod.tuning.CherishedHeirloom.RefreshHeldKeepsake then
+				heirloom_refresh_keepsake(picked)
+			end
+
+			cherished_heirloom_place_keepsakes()
+			game.thread(cherished_heirloom_open_rack)
 			return
 		end
 
-		local extra = cherished_heirloom_extra_pending()
+		if extra and screen and screen.LastTrait == game.GameState.LastAwardTrait then
+			mod.HeirloomExtraPending = nil
+			mod.HeirloomPriorKeepsake = nil
+			return base(screen, button)
+		end
+
 		local incoming = nil
 		local priorKeepsake = mod.HeirloomPriorKeepsake
 		if extra then
@@ -332,6 +369,7 @@ function mod.CherishedHeirloomAcquire(args, traitData)
 
 	if not mod.tuning.CherishedHeirloom.ExtraKeepsake then return end
 	mod.HeirloomExtraPending = true
+	mod.HeirloomRefreshUsed = nil
 	mod.HeirloomPriorKeepsake = heirloom_equipped_keepsake()
 	game.thread(cherished_heirloom_open_rack)
 end

@@ -72,14 +72,14 @@ if config.BoonChanges.DazzlingDisplay.Enabled then
 	boon_text({
 		Traits = {
 			BlindChanceBoon = {
-				Description = 'Your {$Keywords.AttackSet} and {$Keywords.SpecialSet} inflict ' ..
-					'{$Keywords.Blind}. Foes afflicted by it may take {$Keywords.Crit} ' ..
-					'damage from them.',
+				Description = 'Your {#BoldFormatGraft}Nova Strike{#Prev} and {#BoldFormatGraft}Nova Flourish' ..
+					'{#Prev} inflict {$Keywords.Blind}, {#UpgradeFormat}+{$TooltipData.ExtractData.MissBonus}% ' ..
+					'{#Prev}more likely to make foes miss.',
 			},
 		},
 		StatLines = {
-			BoonEditDazzlingCritStatDisplay = {
-				Name = '{$Keywords.Crit} Chance vs. {$Keywords.Blind}:',
+			BoonEditDazzlingPotencyStatDisplay = {
+				Name = '{$Keywords.Blind} Potency:',
 				Index = 1,
 			},
 		},
@@ -268,7 +268,8 @@ if config.BoonChanges.CryoPounder.Enabled then
 	boon_text({
 		Traits = {
 			ClearRootBoon = {
-				Description = 'Your blast effects and hammer strikes from {#BoldFormatGraft}Hephaestus {#Prev}deal more damage to {$Keywords.Root}-afflicted foes.',
+				Description = '{$Keywords.Root}-afflicted foes with {$Keywords.DelayedKnockback} take ' ..
+					'{#UpgradeFormat}{$TooltipData.ExtractData.TooltipDamageBonus} {#Prev}damage from any source.',
 			},
 		},
 	})
@@ -648,6 +649,51 @@ if config.BoonChanges.ScaldingVapor.Enabled then
 		Keywords = {
 			Steam = {
 				Description = 'A burning cloud that rapidly deals damage. Lasts {#BoldFormatGraft}{$TooltipData.ExtractData.Duration} Sec.',
+			},
+		},
+	})
+end
+
+
+if config.HammerChanges.DualMoonshot.Enabled then
+	boon_text({
+		Traits = {
+			StaffTripleShotTrait = {
+				Description = 'Your {$Keywords.SpecialSet} fire {#UpgradeFormat}{$TooltipData.ExtractData.Projectiles} {#Prev}projectiles.',
+			},
+		},
+	})
+end
+
+if config.HammerChanges.ReaperKnives.Enabled then
+	boon_text({
+		Traits = {
+			DaggerSpecialReturnTrait = {
+				DisplayName = 'Hook Knives',
+				Description = 'Your {$Keywords.SpecialSet} return to you and deal {#UpgradeFormat}' ..
+					'{$TooltipData.ExtractData.DamageIncrease:P} {#Prev}damage striking foes from behind.',
+			},
+		},
+	})
+end
+
+if config.HammerChanges.EnduringCoil.Enabled then
+	boon_text({
+		Traits = {
+			TorchSpecialImpactTrait = {
+				Description = 'Your {$Keywords.SpecialSet} last {#UpgradeFormat}{$TooltipData.ExtractData.Duration}% {#Prev}longer.',
+			},
+		},
+	})
+end
+
+if config.HammerChanges.HiddenKnives.Enabled then
+	boon_text({
+		Traits = {
+			DaggerSpecialFanTrait = {
+				Description = 'Your {$Keywords.SpecialSet} deal {#UpgradeFormat}{$TooltipData.ExtractData.DamageIncrease:P} ' ..
+					'{#Prev}damage and your {$Keywords.SpecialEX} fires {#UpgradeFormat}+{$TooltipData.ExtractData.Amount} ' ..
+					'{#Prev}shots in a ring around you.',
 			},
 		},
 	})
