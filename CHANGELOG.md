@@ -13,51 +13,46 @@ Every change below can be switched off independently in
 ### Aphrodite
 
 - **Glamour Gain** — New Effect: Every 1 second, you inflict Weak on nearby foes. Gain mana for each one.
-- **Hearty Appetite** — Additionally restores your health to full when on pickup, and increases your healing for the rest of the night by 50%.
-- **Secret Crush** — The Bonus Power now reaches your Special as well as your Attack, for the same reserved Magick.
-
-### Dionysus
-
-- **Festive Fog** — Standing in the fog also softens what hits you, by 40%. Hung on the fog rather than on the boon: the mark the cloud puts on you is what the damage bonus is already gated on, so the shelter reads "you are standing in a Dionysus fog" whatever put the fog there — including HexCalls' Distress Call revel, which raises the same cloud without the boon. That reduction used to live in Distress Call and be polled ten times a second; it answers the fog directly now.
-- **Grape Juice** — Also restores 20 health when you pick it up. Hung on the drink itself rather than on the boon that leaves it, so anything that puts one on the floor pays it — including HexCalls' Distress Call, whose Dionysus revel drops the same item.
-
-### Ares
-
-- **Blood Spree** — Additionally, slaying a foe has a 20% chance to restore health. It restores the same amount the boon's Attack and Special do, so it grows with rarity the same way, and unlike the lifesteal it does not wait for you to be nearly dead.
-
-- **Meat Grinder** — Additionally, your Blade Rift may spill plasma: 20% each time it damages a foe, at most four drops a second. The chance grows with rarity, and each Pom adds another 20%. It has no stat line for that chance — the one it used to name was never defined, and printed a raw token. The Plasma counter stays up while you hold it: the game took the counter down whenever another Plasma boon left you, since its own check names only the three vanilla ones.
-
-- **Profuse Bleeding** — New(?) Effect: foes with wounds have a small chance to drop plasma after taking damage. It is no longer a sword boon: rewritten it never makes a falling blade, so it no longer unlocks Coffin Nail or Cutting Edge, the two duos that improve them.
-- **Stabbing Rush** — Falling blades keep dropping for the entire duration of your sprint.
-
-### Athena
-
-- **Phalanx Shot** — Rearms after 1 second rather than 2.
+- **Secret Crush** — Also applies to your special.
 
 ### Apollo
 
-- **Easy Shot** — The piercing arrow deals 100 / 120 / 140 / 160 damage, doubled from 50 / 60 / 70 / 80. A Pom of Power can no longer be spent on it: the boon has no per-level figure of its own, so a Pom was adding a whole second arrow's worth for one level. Its 20% Critical chance is now actually confined to the arrow. Every gate on a Critical modifier reads a lookup table built from the list of projectiles rather than the list itself, and reads a missing one as "no restriction at all" — and the only thing that ever builds it runs over the game's own trait data before any mod has touched it, and is skipped outright when a boon is copied onto you. The list was there and the lookup was not, so the chance sat on every source of damage you had, including ones that fire no weapon. The lookup is written alongside the list now, here and in the three other places in the mod that named weapons or projectiles without one.
-- **Dazzling Display** — Reworked: only Nova Strike and Nova Flourish hits inflict Blind now, rather than any Attack or Special — it no longer fires on a plain vanilla weapon before you've picked up either boon. The Critical-Chance-vs-Daze half is gone entirely, replaced with a flat +3% / +6% / +9% / +12% (by rarity) added straight to Daze's own miss chance, so the boon makes the status itself hit harder rather than paying you separately for finding one. That bonus does not grow from a Pom of Power — Daze's potency is not a per-level figure, the same reasoning Easy Shot's own damage already follows above. The tooltip's stat line now reads “Daze Potency”.
-- **Extra Dose** — Additionally, your Special has the same chance to strike twice.
+- **Easy Shot** — Piercing arrow damage increased to 100 / 120 / 140 / 160, and has a 20% chance to crit.
+- **Dazzling Display** — Nova Flourish also applies Daze. Daze rate bumped up to 100%, and rarity scaling improves Daze potency by +3% / +6% / +9% / +12%.
+- **Extra Dose** — Also applies to your special.
+
+### Ares
+
+- **Blood Spree** — Additionally, killing a foe has a 20% chance to restore health (equal to the base health restoration amount).
+- **Meat Grinder** — Additionally, each hit of the blade rift per foe has a 20% chance to spill plasma. Counts as a plasma boon.
+- **Profuse Bleeding** — New(?) Effect: foes with wounds have a small chance to drop plasma after taking damage. Counts as a plasma boon.
+- **Stabbing Rush** — Falling blades drop for the entire duration of your sprint.
+
+### Athena
+
+- **Phalanx Shot** — Re-arm time decreased to 1 second.
 
 ### Demeter
 
-- **Local Climate** — Additionally, buff your regular cast damage as well.
-- **Tranquil Gain** — New Effect: when channeling your Omega moves for 0.5 seconds, rapidly restore mana. The half-second shrinks with channel speed, and the restore starts the moment your Omega is charged if that comes sooner, so a fast channel never ends before it begins.
-- **Weed Killer** — Now buffs your Omega Special as well as your Omega Attack, and charges the same Magick surcharge on it. Its stat line reads “Omega Move Damage” rather than “Omega Attack Damage” to match.
+- **Local Climate** — Also applies to your normal cast.
+- **Tranquil Gain** — New Effect: when channeling your Omega moves for 0.5 seconds, rapidly restore mana.
+- **Weed Killer** — Also applies to omega special.
+
+### Dionysus
+
+- **Festive Fog** — Also reduces taken damage by 40% while standing in the fog.
+- **Grape Juice** — Also restores 20 health on pickup.
 
 ### Hades
 
 - **Unseen Ire** — Cooldown reduced to 30 seconds.
-- **Old Grudge** — No longer a one-time use internally, allowing it to fire multiple times.
 
 ### Hephaestus
 
-- **Anvil Ring** — Additionally, inflicts Glow in exchange for a slight decrease in power.
-- **Heavy Metal** — Additionally, foes' attacks cannot knock you back while you hold it.
-- **Molten Touch** — Additionally deals bonus damage to foes afflicted with Glow.
-- **Smithy Rush** — New Effect: when you start and stop dashing, a hammer strikes the area, dealing damage and inflicting Glow. The area it covers is drawn as a ring on the ground, Hephaestus' own Cast circle shrunk to the size of the strike — the hammer landed with nothing marking how far it reached. The ring appears as the hammer meets the ground rather than as it is raised, and at the spot it lands on rather than wherever you have moved to by then.
-- **Smithy Rush** — Random rarity upgrades, Bridal Glow's among them, can pick it. The game only lets them pick Hephaestus' blast boons while they have more than 2 Sec. of recharge left to lose, and the rewrite has no recharge at all: its rarity raises damage instead.
+- **Anvil Ring** — Additionally, inflicts Glow on each hit. Slightly decreased power.
+- **Heavy Metal** — Additionally, prevents foes attacks from knocking you back.
+- **Molten Touch** — Additionally, deals bonus damage to foes with Glow.
+- **Smithy Rush** — New Effect: During your dash, a hammer strikes in your trail, dealing damage and inflicting Glow.
 
 ### Hera
 
@@ -65,121 +60,86 @@ Every change below can be switched off independently in
 
 ### Hermes
 
-- **Smithy Rush, Breaker Rush and Passion Rush drop an impact when dashes are chained.** All three fire on the start and the end of a dash, so a double dash should land four; with Second Wind held it landed three. Beginning a second dash interrupts the first, and the game reports that first dash as cancelled — which these three were reading as "this dash did not really end" and skipping the strike for. That test was there to catch a dash flowing into a sprint, but the sprint is already tested for on its own, so cancelling covered nothing but this. The interrupted dash is not always reported as ending at all, though, so there is nothing to un-skip in that case — a dash that begins while the last one is still open now settles that one first. That settling lands a beat behind rather than on the same frame, because a dash ends exactly where the next one starts — fired together the two sit on top of each other and read as a single hit, which is what made the fourth look missing even once it was firing.
-
-- **Stutter Step** — Also quickens the beat your Rush boons strike on while you hold the Sprint. It only ever shortened the Dash's own recharge, which leaves it doing nothing at all for a build carrying a Rush boon and sprinting on it. It now takes the Sprint's own firing beat down by the same **20% / 23% / 26% / 29%** it takes the Dash recharge down by, so every Rush boon that lays strikes behind you lays them closer together; the trail cooldowns Smithy Rush, Breaker Rush and Passion Rush keep of their own are scaled by the same figure, since those gate independently of the weapon. Blinding Rush is untouched, as asked — its Blind is applied on contact through `OnSprintAction` rather than on that beat, so there is no interval there to shorten.
-
-- **Hard Target → Post Haste** — Replaced: reduces boon effect cooldowns by 20%/2%5/30%/35%.
+- **Hard Target** replaced with: **Post Haste**: reduces boon effect cooldowns by 20%/25%/30%/35%.
 
 ### Hestia
 
-- **Cardio Gain** — Additionally, restores mana when sprinting.
-- **Snuffed Candle → Volcanic Crown** — Replaced: as your Omega Cast detonates, it releases a ring of 5 fireballs from its center, the lobbed fireballs HexCalls' Waxing Moon throws. It waits for the detonation rather than going off as you arm the Cast, the way vanilla's own boons that act when an Omega Cast expires do. Each deals 100 / 125 / 150 / 175 damage by rarity, and a Pom of Power adds 25, then 20, then 15 for every one after. A fireball bounces twice on its way outward, landing three times in all, and every landing leaves burning ground that damages foes standing in it five times a second for 5 seconds. They are fireballs from Hestia to everything that asks, in both mods: Burning Meteor, Scalding Vapor and Fourth Degree here, Room Temperature and Glowing Brand in MoreDuos, and any vanilla boon that names Controlled Burn's fireball. The burning ground joins them wherever Heat Rush's does alongside it, which is how both count as Olympian damage. Both are credited to Volcanic Crown on the end-of-run damage screen. It is offered with no prerequisites, and counts wherever Glowing Coal or Controlled Burn is asked for. Burning Meteor takes it in that set rather than in its third, where Snuffed Candle sat, so it cannot fill both at once; Warm Breeze still takes it in Snuffed Candle's place.
+- **Cardio Gain** — Additionally, restores mana while sprinting.
+- **Controlled Burn** — Also applies to omega attack.
+- **Snuffed Candle** replaced with: **Volcanic Crown**: when your Omega Cast fires, release a ring of 5 fireballs from the center that hit for 100 / 125 / 150 / 175 damage each bounce.
 
 ### Medea
 
-- **Harm for the Afflicted** — Damage triggers on every new curse inflicted on each individual foe.
+- **Harm for the Afflicted** — Curse damage triggers on every new curse inflicted on each foe.
 
 ### Poseidon
 
-- **King Tide** — Adjusted requirements.
-- **Slippery Slope** — Pinned to Wave Strike, Trident Flourish and Breaker Rush. Its requirement was a bare "any splash boon", so every boon added to that group below became a fresh way to unlock it, Beach Ball included. It is the Froth it puts on those three's waves that it works on — Breaker Rush throws the same splinter, and no longer Froths on its own, so Slippery Slope is what gives it one.
-- **Breaker Rush** — reshaped. The dash impact no longer throws a ring of splinters out from under you; it is drawn as a single Cast circle on the ground, the width of the strike itself, pulsing **twice** per impact. Everything it catches inside that ring has a wave launched at it, thrown from Melinoë along the line between you and shoving it back — the same shape High Surf answers an approaching foe with, rather than a splash going off on top of each one. Before, the splinters were thrown outward from under you whether anything was there or not. Each of those waves deals **20 / 25 / 30 / 35** across the rarities. It is still a wave effect throughout: King Tide's widening and Arterial Spray's second wave are read before the splashes go out, applied to each of them, and the whole burst is bracketed the way the Cast splash is, so every boon that answers a splash still answers this one. It no longer inflicts Froth by itself: as a wave boon it sits in Wave Strike and Wave Flourish's bucket — King Tide, Arterial Spray and Glacial Advance count it there, and Slippery Slope takes it as a requirement — and it has left every Froth bucket, so Scalding Vapor, Killer Current, Bubbling Cauldron and Razor Shoals no longer count it. Arterial Spray's second wave carries its own red cone here rather than the red nova the round splashes use, since each of these is thrown one way at one foe — the nova read as a wall of circles going off across the arena.
-- **Breaker Rush** counts as a splash boon. It already makes a splash — it fires the same
-  splinters Poseidon's Attack and Special do, which is what King Tide's bonus and Slippery Slope's
-  Froth key on — but the game's own list of "splash boons" named only Attack and Special, so it
-  could not be the boon that unlocks a splash upgrade. Beach Ball was already added to that list;
-  Breaker Rush joins it. High Surf throws the same splinter but is kept off the list, so it unlocks
-  none of them, and King Tide still takes it where the game does. Tidal Ring is left as the game has it: a Froth boon,
-  not a splash one, so it no longer answers King Tide, Arterial Spray or Glacial Advance. King Tide's own requirement is pinned to Poseidon's
-  Attack and Special by name so that widening the list does not quietly drop that condition.
-- **Controlled Burn** — fires on an Omega Attack as well as an Omega Special, and charges its Magick on both. The fireball's own Omega check lives inside the function the boon calls, so the weapon list was the only thing gating it to the Special.
-- **Burning Desire** — additionally lifts the ceiling on Scorch, from vanilla's 999. Silent: nothing is added to its wording, since the boon already reads as the one that keeps Scorch from burning away, and a stack limit is not a number you track until you hit it.
-- **Breaker Rush** — New Effect: when you start and stop dashing, deal damage with a watery splash that knocks back foes, and leave a trail of the same splashes behind you while you hold a sprint, one every half second. The splash deals 50 / 55 / 60 / 65 across the rarities, and now answers Arterial Spray and King Tide like any other splash — it was fired straight rather than through the game's own splash function, which is the only place either of those is read, so it never got a second wave or the extra size. King Tide's damage bonus always reached it, which is what made the gap easy to miss. A Pom of Power adds 20 to that, and 10 for each one after — vanilla's own figures for this boon, which rewriting the effect had dropped, leaving each Pom adding a whole further splash's worth.
+- **Breaker Rush** — New Effect: Your dash creates a pulsing puddle that creates a wave when coming in contact with foes, knocking them back and dealing **20 / 25 / 30 / 35** damage. Counts as a splash boon.
 
 ### Zeus
 
 - **Ionic Gain** — Additionally, standing near the Font slowly restores Magick.
-- **Air Quality** — Now floors your base damage, instead of flooring the finished hit after all multipliers. The floor lands at the end of the base reckoning rather than the start of it: the game asks for base damage, adds every flat bonus to it, and only then multiplies (`CombatLogic.lua:1171-1187`), so the floor is applied to that finished sum and the multipliers work on top of it — a flat bonus can no longer be swallowed by a floor that had already been applied without it.
-- **Arc Flash** — Its bonus damage now applies to every Blitz, however it goes off: when a foe takes enough damage, when it runs out, or when Omega damage sets it off at once, which it still does. The stat line reads “Bonus Blitz Damage”.
+- **Air Quality** — Now floors your base damage before all multipliers.
+- **Arc Flash** — Extra Blitz damage is flatly applied to all Blitz instead of only ones triggered by omega attacks.
 
 ### Duo Boons
 
-- **Arterial Spray** (Poseidon × Ares) — The second wave's strike chance is improved to 100%, in exchange for its power reduced to 30%. It is offered off any splash boon rather than off Wave Strike and Trident Flourish alone, so it follows whatever counts as a splash — minus the duos among them, since a duo unlocking another duo is not how the pool reads and this mod's own widening is what put Beach Ball in that group. Glacial Advance in the duos mod reads the same way.
-- **Beach Ball** (Apollo × Poseidon) — Is now considered a Splash Boon, and max damage increased to 400. Its blast answers King Tide and Arterial Spray as well, which nothing in the game could have done for it: the ball is not made by a splash function at all, it is a projectile that flies off and detonates, so there was nowhere the boons that shape a splash could have been read. The extra wave lands where the ball did, marked with the same red nova the other round splashes use.
+- **Arterial Spray** (Poseidon × Ares) — The second wave's strike chance is improved to 100%, in exchange for its power reduced to 30%.
+- **Beach Ball** (Apollo × Poseidon) — Is now considered a Splash Boon, and max damage increased to 400.
 - **Brave Face** (Hephaestus × Hera) — Resists up to 50% of any damage rather than 30%, and each point resisted costs 5 Magick instead of 10.
-- **Chain Reaction** (Hestia × Hephaestus) — New Effect: Boon effect cooldowns have a 50% chance of being skipped. Announces itself on screen when it fires, once per cooldown it actually eats — and only for cooldowns a boon you are holding actually owns. The game runs one general-purpose timer that 136 places call, most of them throttling a voice line or a screen shake several times a second with no boon behind them, so rolling on all of those had it announcing itself constantly. It used to roll whenever anything read the recharge speed, which is not the same thing at all — the HUD reads it to draw a recharge arc, and boons like Athena's Phalanx Shot read it on a repeating timer whether or not anything is happening, so it rolled and announced itself over and over with no combat in sight. A Blast rolls on the Blast that lands rather than on every hit, so a fast weapon no longer rolls its way past the cooldown many times a second; when the roll comes up, the Blast is ready again at once. Now counts as a chance-based effect for Success Rate, which can be offered off it.
-- **Carnal Pleasure** (Aphrodite × Ares) — Every Plasma you collect creates a Heartthrob, where vanilla gives each one a 35% chance. That chance is a tuning value now rather than the fixed figure in the game's data, so it can be moved without touching the roll itself, which stays vanilla's — luck and all. It is also offered on vanilla's own pairing again: any Aphrodite core boon rather than Heart Breaker alone, against any Plasma source. The earlier version — larger Heartthrobs, bonus damage scaling off Plasma held, a cap of 12 following you, and Plasma counting as 10 Magick toward Heart Breaker — is gone.
-- **Cherished Heirloom** (Demeter × Hera) — Equip an extra keepsake on pickup. That extra one is a choice rather than an offer: the rack opens by itself once the screen is clear, and closing it decides what you walk away with — pick something and it is yours, close without picking and the extra keepsake goes unspent. Keepsake effects no longer expire tonight by default — that half is off behind `CherishedHeirloom.KeepAllKeepsakes`. The keepsake you choose through the rack is remembered on the run itself (`CurrentRun.BoonEditHeirloomSpecialKeepsake`) rather than on the trait object, so the bonus survives being unequipped and re-equipped later — and marked out from an ordinary one (`BoonEditHeirloomSpecial`) for the HUD and anything else that wants to check. Refreshing a keepsake no longer throws away what it had left owing. The refresh works by taking the keepsake off and putting it back on at the higher rarity, which on the six that hold a single unspent use — Crystal Figurine, Athena's, Cosmic Egg, White Antler, the Aromatic Phial and Echo's — discarded the one they were still carrying and handed back one in its place, so an upgrade was worth nothing but the rarity. Whatever is unspent is carried across and added to the fresh keepsake's own, so a Crystal Figurine refreshed before its boss now pays out twice rather than once. Re-picking the keepsake you already hold through that rack refreshes it instead of doing nothing, and costs you nothing: the extra keepsake is still owed, so the rack reopens for the real choice (once per pickup, or the two would loop). Vanilla only records a pick when the name differs from what is worn, so the press itself is now what marks a choice — without that, "chose the one I am wearing" and "closed without touching anything" were the same thing on the way out, and the refresh could never fire at all. Behind `CherishedHeirloom.RefreshHeldKeepsake`. A per-keepsake table (`HEIRLOOM_KEEPSAKE_REFRESH`) covers all 33 vanilla keepsakes: most are re-equipped fresh (regranting mana, spell drops, hammers, timers, blessings, and resetting any spent uses, exactly as vanilla's own `AcquireFunctionName`/`SetupFunction` machinery would for a first-time pickup); Gold Purse re-pays its gold directly, since vanilla hands that out from the rack-close code rather than the usual acquire pipeline; Discordant Bell keeps its existing bonus rather than resetting it, scaling the same number of rooms' worth of growth up to whatever rate the refresh landed at; and the nine Force-a-God keepsakes now reach Heroic at all — they stopped at Epic, and a keepsake is only allowed past its last declared rarity if it declares one, so they never wore Heroic's own colours in the rack and the tier below could never be reached. The numbers vanilla scales are untouched at that tier; what Heroic buys is that, refreshed while held there, they earn a use that transforms one of that god's own boons: into their Legendary if it isn't already held or sitting on the same page as another choice, else into their Wrath under the same condition if Wrath of Olympus is installed, else it falls back to rarifying that boon straight to Heroic. Both bypass the boon's own requirements entirely, since they are granted directly rather than offered. It also waits for the screen to be clear before it opens, rather than counting down a fixed pause — anything that offers a boon on a delay of its own, Concave Stone's random one especially, used to land on top of it.
-- **Cryo Pounder** (Demeter × Hephaestus) — Reworked: a foe that is both **Frozen and Glowing** takes **+50%** damage, from anything. It used to pay that bonus only to Hephaestus' own blasts landing on a Frozen foe, which asked for one god's status and the other god's weapon; it now asks for one status from each and lets any source collect. The two conditions have to come from two different fields — the list of statuses a damage modifier can require is an *any* test wherever it appears, so naming both would have paid out on either. Freeze is read off the separate Root check instead — the engine's own name for the field, which is only consulted once the Glow gate has already let the modifier through. **It is now offered beside Anvil Ring, Smithy Rush or Furnace Blast** rather than the blast group, which held Volcanic Strike and Volcanic Flourish and neither of the other two. Smithy Rush is stripped from that group elsewhere in this mod, since it no longer makes a blast — Cryo Pounder is exempt from that removal now, because it no longer wants a blast either.
-- **Nervous Wreck** (Aphrodite x Hera) — Swapped: same effect as before (as Aphrodite's legendary), but kept Ecstatic Obession's old requirements.
-- **Glorious Disaster** (Apollo × Zeus) — No longer needs the extra channeled Magick, and bolts hit for 50 rather than 20 damage. A fully charged Omega Cast releases itself again: the boon switches that off in the game because it adds a second charge stage to hold into, and removing that stage left the switch behind with nothing to protect.
-- **Hostile Environment** (Demeter × Ares) — Additionally, your regular cast also follows you around. Arctic Gale's gust rides along with it, on your cast and on your familiar's under Aspect of Circe, rather than only on a cast fired with Attack held.
-- **Killer Current** (Zeus × Poseidon) — New Effect: Froth-afflicted foes have a 30% chance of being struck by lightning for 30 after taking damage, at most twice a second. Froth sits on a foe for a while and every hit that lands rolls again, so a fast weapon into a Frothed crowd was rolling many times a second.
-- **Love Handles → Smoldering Forge** (Aphrodite × Hephaestus) — Replaced: striking a foe with Glow with your Attack or Special has a 20% chance to create a Heartthrob. The roll is a blow you land yourself — it no longer answers every source of damage that reaches a Glowing foe, so nothing you left on one ticks it over.
-- **Natural Selection** (Demeter × Poseidon) — New Effect: on pickup, gain 3 triple-poms. Every 8 encounters, gain another one. Each pom rolls its own boons when you open it rather than when it drops — the game settles a pom's options once and keeps them, so every pom out of one handful, and every look at the same pom, had been showing the same three. Rolling them at the door was not enough on its own: the choice menu re-seeds the run's randomness from the number of that loot you have taken, and since each option costs a single draw, three poms from one handful read the same sequence one step apart and arrived at the same three boons. The roll now happens after that re-seed, from a point of its own well clear of its neighbours, and a pom keeps the boons it rolled if you close the menu and open it again.
-- **Ripple Effect** (Hera × Poseidon) — New Effect: repeats the Omega procs of six boons — Ocean Swell, Fine Line, Easy Shot, Controlled Burn, Explosive Intent and Cut Above — with a 50% chance to occur again, up to 4 times, each with diminishing chances (50% / 25% / 12.5% / 6.25%). Those six by name and nothing else: it used to take every fireball through the Fireballs edit's own list, which holds this mod's and other mods' fireballs as well as Hestia's, so a Hex-Call throwing a dozen of them handed Ripple a dozen chances to repeat and the screen filled with bouncing fire. It no longer asks who fired the projectile either: however and whenever one of the six is created, it repeats, so a familiar's cast or a Hex-Call's swells count like your own. Dionysus' Drunken Stupor is in as well, differently: it fires no projectile but applies a lingering effect once per foe, so a ripple of it makes that one dose heavier rather than repeating it.
-- **Seismic Servo → Seismic Hammer** (Hephaestus × Poseidon) — Replaced: your Cast erupts into your Omega Cast after being struck by a Hephaestus explosion. Also reduces the cooldowns of Volcanic Strike, Volcanic Flourish, and Land Mine flatly by 1 second.
-- **Sun Worshiper** (Apollo × Hera) — Additional foes have a 30% chance to also be summoned in combat after being slain, up to 10 extra per encounter.
-- **Scalding Vapor** (Hestia × Poseidon) — Creating Steam no longer consumes Froth and Steam can trigger Froth. Steam now comes from a fireball and from nothing else: inflicting Scorch on a Frothed foe used to make it too, which is what the boon did before the rework and not what it says now. **Steam also stacks, up to 5 clouds a foe.** Vanilla keeps one cloud per foe and a further fireball only restarts its timer; each fireball on a Frothed foe now adds a cloud of its own, and once five are up the oldest is restarted instead, so a steady stream of fireballs holds the stack at full. Each cloud pulses 20 damage every quarter-second for two seconds across everything near the foe. Adjusted requirements.
-- **Thermal Dynamics** (Hestia × Zeus) — Inflicts Scorch equal to the damage your Blitz deals, rather than a flat 160 a strike. It still answers only Blitz.
+- **Burning Desire** — additionally lifts the ceiling on Scorch, from vanilla's 999.
+- **Chain Reaction** (Hestia × Hephaestus) — New Effect: Boon effect cooldowns have a 50% chance of being skipped.
+- **Carnal Pleasure** (Aphrodite × Ares) — 100% chance of creating heartthrobs on plasma pickup.
+- **Cherished Heirloom** (Demeter × Hera) — When upgrading your current keepsake to Heroic, double-dip on its ability. Additionally, equip an extra keepsake on pickup, and gain its effects for the rest of the night.
+- **Cryo Pounder** (Demeter × Hephaestus) — Reworked: Frozen foes with Glow take 50% extra damage.
+- **Ecstatic Obsession** replaced with **Nervous Wreck** (Aphrodite x Hera): same effect as before (as Aphrodite's legendary), but kept Ecstatic Obession's old requirements.
+- **Glorious Disaster** (Apollo × Zeus) — No longer needs the extra channeled Magick, and bolts hit for 50 each (up fro 20).
+- **Hearty Appetite** — Additionally grants a large healing drop on pickup, and again every 5 encounters, and all healing is improved by 50% tonight.
+- **Hostile Environment** (Demeter × Ares) — Additionally, your regular cast also follows you around. With Circe's Staff aspect, also follows Familiars.
+- **Killer Current** (Zeus × Poseidon) — New Effect: Froth-afflicted foes have a 30% chance of being struck by lightning after taking damage (30 damage per bolt).
+- **Love Handles** replaced with **Smoldering Forge** (Aphrodite × Hephaestus) — striking a foe with Glow with Weapon has a 25% chance to create a Heartthrob.
+- **Natural Selection** (Demeter × Poseidon) — New Effect: on pickup, gain 3 triple-poms. Every 8 encounters, gain another one.
+- **Ripple Effect** (Hera × Poseidon): Projectile repeat effect has a 50% chance to strike again, and again with 25% / 12.5% / 6.25%, up to 4 times total. Repeatable projectile list is expanded to include Ocean Swell, Fine Line, Easy Shot, Controlled Burn, Explosive Intent and Cut Above.
+- **Seismic Servo** replaed with **Seismic Hammer** (Hephaestus × Poseidon) — Replaced: your Cast erupts into your Omega Cast after being struck by a Hephaestus blast. Also flatly reduces the cooldowns of Volcanic Strike and Volcanic Flourish by 1 second.
+- **Sun Worshiper** (Apollo × Hera) — Additional foes have a 30% chance to also be summoned in combat after being slain, up to 10 per encounter.
+- **Scalding Vapor** (Hestia × Poseidon) — Reworked: Steam no longer consumes Froth when activated, and steam damage can stack up to 5 times per foe + proc Froth. Steam can now only be created by Fireballs instead of any fire source.
+- **Thermal Dynamics** (Hestia × Zeus) — Scorch share from Blitz increased to 100% of Blitz damage.
+
+
+### Legendary Boons
+
+- **All Together** (Hera) — Gains +1 elemental essence of each type upon pickup.
+- **Fire Away** replaced with **Burning Meteor** (Hestia): Fireball effects from Hestia are 50% larger and stronger, and inflict Scorch equal to the damage they deal.
+- **Paid Dues** replaced with **Second Wind** (Hermes): You can cast and dash an additional time.
+- **Premium Service** (Hephaestus) — Additionally, all weapon upgrades increase in rank tonight, and gain an Anvil of Fates on pickup.
+- **Shocking Loss** (Zeus) — 1% chance to destroy foes outright when they take damage from lightning, the first strike has a 25% chance instead. Now deals 9999 damage to guardians instead of destroying them.
+- **Winter Harvest** (Demeter) — Executes from 15% rather than 10%, and sums boss HP across all phases for calculation. Can now skip more boss phases (Prometheus, Zagreus, Typhon).
+- **Nervous Wreck** replaced with **Ecstatic Obsession** (Aphrodite): when you inflict Weak, you have a 30% chance to inflict Charm for 5 seconds instead. 5-second cooldown between Charming the same foe again, and Charmed foes cannot damage Melinoe.
 
 ### Hammer Upgrades
 
 - **Dual Moonshot** (Staff) — No longer costs range and fuse to fire the extra projectile.
-- **Reaper Knives → Hook Knives** (Dagger) — Reverted to its EA-launch implementation: the dagger throw pierces everything, returns to you quickly, and deals 50% more damage striking a foe from behind — rather than the flat area-damage bonus it currently gives. The Omega Special's knives pierce and return as well, once their own flight time is up.
-- **Enduring Coil** (Torch) — Makes Special projectiles last +100% longer (double) rather than adding a flat +2 Sec., and reaches the regular Special as well as the EX Special now.
-- **Hidden Knives** (Dagger) — Its EX Special once again fires its shots out in a ring around you, the way EA-launch's Spiral Knives did before the Warsong Update rework dropped it in favor of a flat +projectiles/+speed/+damage bundle. That bundle is untouched; the ring is added on top. Sureshot Flurry forces the same weapon's fire angle back to a straight line, and now explicitly wins that fight rather than leaving the two to race: holding both keeps Hidden Knives' extra projectiles, speed and damage, fired dead straight instead of ringed. The ring closes at every charge stage rather than at one of them: the gap between knives is worked out from however many that stage actually throws, so Aspect of Pan's extra stages spread their shots out too instead of throwing them on top of the ones already there.
-- **Hidden Helix** (Torch) — Its extra-projectile bonus, already applied to both the regular and EX Special, is raised to +2 from +1. It reaches Aspect of Supay now too. The bonus is added to whatever count a charge stage already declares, and Supay replaces the Omega Special's stage with one that names no count at all — so there was nothing to add to and the stage fell through to the weapon's own figure. A stage that declares no count is given one before the bonus lands.
-- **Rising Helix** (Torch) — Its damage bonus now tops out at +50% rather than +25%.
-- **Whirling Helix** (Torch) — Its orbit-speed bonus is raised to 100% from 20%.
+- **Reaper Knives → Hook Knives** (Dagger) — Reverted to its EA-launch implementation.
+- **Hidden Knives** (Dagger) — Fires in a Spiral pattern around you (like Spiral Knives in EA-launch), with extra knives. Firing angle overridden by Sureshot Flurry if also held.
+- **Enduring Coil** (Torch) — Special projectiles last +100% longer (double) rather than adding a flat +2 Sec., and applies to the regular special projectile as well.
+- **Hidden Helix** (Torch) — Gain +2 extra projectiles instead of +1.
+- **Rising Helix** (Torch) — Makes bonus damage increased to 50%
+- **Whirling Helix** (Torch) — Projectile speed bonus increased to 100%
 
-### Legendary Boons
+### Weapon Aspects
 
-- **All Together** (Hera) — Gain an additional essence of each type upon pickup.
-- **Fire Away → Burning Meteor** (Hestia) — Replaced: Fireball effects from Hestia are 50% larger and stronger, and inflict Scorch equal to the damage they deal.
-- **Paid Dues → Second Wind** (Hermes) — Replaced: You can cast and dash an additional time, and dashes chain more quickly.
-- **Premium Service** (Hephaestus) — Additionally, all weapon upgrades increase in rank tonight, and gain an Anvil of Fates on pickup.
-- **Shocking Loss** (Zeus) — Rolls on every hit, not just the first. The first hit on a foe keeps vanilla's 25% chance; every hit after it, ticks of damage over time included, has a 1% chance. Guardians are rolled for too, and if this activates against one, they take 9999 damage instead. That is set damage, dealt through vanilla's own spawn-kill projectile so nothing multiplies it, and counted as Shocking Loss on the end-of-run damage screen rather than by the projectile's name. The tooltip's stat line now reads “Destruction Chance per Hit”, and the description gives the first-hit chance.
-- **Winter Harvest** (Demeter) — Executes from 15% rather than 10%, and sums boss HP across all phases for calculation. Can now skip more boss phases (Prometheus, Zagreus, Typhon).
-- **Nervous Wreck → Ecstatic Obsession** (Aphrodite × Hera) — Replaced: when you inflict Weak, you have a 30% chance to inflict Charm for 5 seconds instead. **A Charmed foe now hits its former allies ten times as hard**, which is what Charm was worth in the first game and what the sequel dropped — there, the status is a bare change of allegiance and nothing more, so a Charmed foe fought for you at its own unremarkable damage. The bonus lands only on targets that are neither you nor yours, and is taken back the moment the Charm ends. **Charm also breaks the attack the foe was in the middle of**, the way the first game interrupts a unit the instant its allegiance flips: the wind-up is abandoned and its looping tell is silenced, unless the attack is one the game marks as uninterruptible. It used to do this only for foes it had decided *not* to Charm, which was backwards. A Guardian cannot be Charmed again until 5 seconds after the last Charm **ends** — previously the wait ran alongside the Charm rather than after it, and since the two were the same length a Guardian could be held under almost without a gap. Deal 10% more damage for each nearby character fighting for you, up to 50%.
-
-### Aspects
-
-- **Aspect of Supay** (Umbral Flames) — Its Rush-boon damage bonus is restored to what it was before EA Patch 11: **+15% / +30% / +45% / +60% / +75% / +97.5%** across the six tiers, against the current +10% through +45%. That patch cut it twice over — the base figure and the rarity ladder it is scaled by — which is why the top end lost more than half its value; both halves are put back. Only the damage bonus is reverted. The aspect was reworked elsewhere in the same window — its Omega cost, its automatic fire, its projectile counts and its orbit damage all moved — and all of that is left as it is today.
+- **Aspect of Supay** (Umbral Flames) — Rush-boon damage bonus restored to EA levels
 
 ### Keepsakes
 
-- **Concave Stone** (Echo) — Instead of granting a Boon you passed over, it now makes a copy of a major reward you collect: a Boon, Daedalus Hammer, Pom of Power, Centaur Heart, Soul Tonic or Path of Stars. Each one rolls the keepsake's own chance (25% per rarity level, luck-modified) until a copy appears, once per night. The copy drops beside you the way Poseidon's doubled rewards do, but with Echo's voice and flourish. Shop purchases and rewards the game already marks as not doublable are skipped. Vanilla's pick-another-boon roll no longer comes from the stone, so Pandemonium's double boon now works alongside it.
+- **Concave Stone** (Echo) — New Effect: Chance to copy your next major reward instead
 - **Calling Card** (Zagreus) — Each use now rarifies straight to Heroic rather than one rarity at a time.
-- **Aromatic Phial** (Narcissus) — Now reaches Heroic, where it raises **two** Common blessings at the next fountain rather than one. It stopped at Epic, and a keepsake is only allowed past its last declared rarity if it declares one, so the tier was unreachable rather than merely unrewarded — which is also why it never wore Heroic's own colours in the rack. The rarity it raises blessings to is unchanged at Heroic; the count is what grows. Refreshing it through Cherished Heirloom's rack adds a fountain to whatever it still owes rather than re-equipping it fresh, which would have thrown away one you had not spent.
-- **White Antler** (Artemis) — No longer restricted to the next region: the crit chance and the health limit it comes with hold for as long as you wear it, re-applied fresh at every room load once vanilla's own end-of-region reset clears it, using the same restore Cherished Heirloom's refresh uses. Take it off and the bargain ends with it. The one exception is the keepsake Cherished Heirloom hands you through its rack — that one is remembered on the run rather than on the keepsake, so it holds for the rest of the night whatever you go on to wear.
-- **Metallic Droplet** (Hermes) — Keeps half its move/strike/cast speed boost for the rest of the night once the timer runs out, instead of losing all of it.
+- **Metallic Droplet** (Hermes) — Now keeps half its move/strike/cast speed boost once the timer runs out.
+- **White Antler** (Artemis) — Keeps its effects as long as its held.
+
+- **Aromatic Phial** (Narcissus) — New Heroic rarity, where it raises **two** Common blessings at the next fountain rather than one.
+- **Olympian Keepsakes** - New Heroic rarity, can transform boons of any rarity into Legendary (or Heroic, if Legendary is already offered / held) instead.
 
 ### Other
-
-- **Every boon description is written the way the game writes its own.** Checked against the game's text files rather than by eye: every `{$Keywords.…}`, `{!Icons.…}` and `{#Format}` token in the mod now resolves to something that exists. Numbers are no longer baked into the wording — Blood Spree's kill-heal chance, Natural Selection's Poms and levels, and Ripple Effect's repeat limit are read off the boon through `ExtractData`, as vanilla does, so the tooltip and the code cannot drift apart; Blood Spree's now shows the luck-scaled figure the roll actually uses. Hearty Appetite's description ended in two full stops.
-
-- **Keyword tooltips opened from a reworked boon printed raw tokens.** A keyword resolves its numbers against the boon whose tooltip you opened it from, not against the keyword — so vanilla hangs Rend's duration, Scorch's rate, Froth's chance and Heartthrob's fuse on the boons that name them. Seven boons here replace their `ExtractValues` outright and so threw those away: Smoldering Forge (Heartthrob), Profuse Bleeding (Rend), Thermal Dynamics and Burning Meteor (Scorch), Killer Current and Breaker Rush (Froth), and Ecstatic Obsession (Weak, whose extracts were handed to Nervous Wreck in the swap and never replaced). All seven now declare what they name, through the same `with_keyword_extracts` helper MoreDuosMod uses, copied from the traits vanilla puts them on. Four more name Glow, which vanilla hangs on Furnace Blast alone — Anvil Ring, Anvil Rush, Molten Touch and Smoldering Forge all inflict it or read it now, and all four declare its modifier and duration. Every entry is external and skips auto-extraction, so no stat line moved.
-- **Stat lines carry their units on the value, not in the label.** Not one of the game's own 242 stat-line labels contains a unit, and not one contains an icon; four of this mod's did. Seismic Hammer's "Blast Recharge Reduction (Sec.):" is now "Blast Recharge Reduction:" against a value reading "1 Sec.".
-
-- **A boon only counts as what this mod makes it, while this mod is making it.** The game answers "is this a splash boon", "does this make plasma", "does this Froth" from lists of names, and a boon rewritten into one of those roles has to join the list. Those additions used to be one-way: switching an edit off left the list still claiming a boon that no longer did the thing. Membership is now reconciled against the config every room, in both directions — so Meat Grinder counts as a plasma source only while its edit is on, Breaker Rush splashes only while its own is, and Profuse Bleeding goes back to being a falling-sword boon the moment its rewrite is switched off.
-  - **These lists now reach every boon offered off them with Wrath of Olympus installed.** That mod rebuilds the game's requirement table from a copy, which leaves each requirement holding a frozen snapshot of the list it was written against, so no change to the list reached it. The reworked Profuse Bleeding still unlocked Coffin Nail and Cutting Edge that way, and the same held for every requirement built on the sword, Plasma, splash, Hera link and Hephaestus blast lists. Each copy is pointed back at the live list every room.
-
-- **A reworked boon counts wherever the boon it now acts like counts, and nowhere it has stopped acting like it.** The lists above were three of many the game reads a role from; the rest now follow too.
-  - **Success Rate** is offered off the reworks that now roll a chance — Meat Grinder's Plasma, Profuse Bleeding's spill, Blood Spree's kill heal, Killer Current's bolt, Ecstatic Obsession's Charm, Smoldering Forge's Heartthrob and Sun Worshiper's extra summon, beside Chain Reaction's skip — and no longer off Arterial Spray, Dazzling Display or Carnal Pleasure, which this mod makes certain. Any of these tuned to 100% drops out the same way.
-  - **Breaker Rush** answers wherever Wave Strike and Wave Flourish are both asked for, which adds Ripple Effect.
-  - **Rousing Reception** counts as a Hitch boon: Hereditary Bane, Dying Wish and Incandescent Aura can be offered off it, and Selene's Infection inflicts Hitch off it.
-  - **Smithy Rush** no longer counts as a blast boon, so Premium Service is not offered off it, and neither are Seismic Servo or Love Handles while their own reworks are off.
-  - **Glow**: Cryo Pounder and Smoldering Forge count Anvil Ring and Smithy Rush only while those two actually inflict it, and Infection now inflicts Glow off them.
-  - **Plasma**: Universal Donor and Sanguinary Savor read the Plasma list itself rather than a copy of it, and an unrewritten Profuse Bleeding, which still answers Plasma, is offered off any Plasma source, Meat Grinder included.
-  - **King Tide** stays pinned to Wave Strike and Wave Flourish with Breaker Rush's rework off as well. It had been reading the shared splash list there, so Beach Ball could unlock it.
-
-- **Tremor fires Smithy Rush's and Breaker Rush's vanilla effect.** The Leap Hex's Tremor applies your Rush boon on landing, and reads what to fire off the boon's own data — which both rewrites had replaced. With Breaker Rush it threw a script error; with Smithy Rush its blast went off at the wrong strength. Each keeps vanilla's args for Tremor alone, so it fires Smithy Rush's blast and Breaker Rush's second blast at vanilla's own damage and rarity scaling.
-
-- **Nothing opens on top of an open screen.** A choice that arrives on a delay used to land over whatever was already up, so a page you were reading became a page you could no longer see. Those now wait their turn instead — the offer is deferred, never dropped.
-
-- **The reworks run in the Training Grounds.** Anything that checks Melinoë is alive stopped there, since the game marks her dead on the death that sends you home and leaves her that way until the next run begins. That took out Glamour Gain, Tranquil Gain, Stabbing Rush's repeating blades, Power Surge, Volcanic Crown, Ecstatic Obsession's bonus, and what Anvil Rush, Passion Rush and Breaker Rush do as a rush ends. Vanilla still counts the Training Grounds as live — it is what keeps the Torch autofiring there — and these now do the same. Glamour Gain also treats the Training Grounds as a fight, and starts as a hub room loads rather than only when the boon is taken there. It and Breaker Rush count Skelly as a foe too: the game marks NPCs to skip boon effects, but still aims at and Hitches a training target, which Nemesis also is while her damage contest runs. Ionic Gain still does nothing there, as its Font comes from the game's own spawner, which never runs in the hub.
-
 - **Anvil of Fates** — Instead of random chance, choose from up to 3 hammer upgrades to sacrifice / gain.
-- **Glow** — Now stacks: each further application makes a foe take 5% more damage, up to 35%. Each stack expires independently.
+- **Glow** — Now stacks: each further stack makes the target take 5% more damage, up to 35%, and expires independently.

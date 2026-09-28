@@ -66,7 +66,11 @@ function mod.MeatGrinderPlasma(victim, functionArgs, triggerArgs)
 	if not game.RandomChance(chance * luck) then return end
 
 	local cooldown = functionArgs.Cooldown or mod.tuning.MeatGrinder.PlasmaCooldown
-	if not game.CheckCooldown('BoonEditMeatGrinderPlasma', cooldown) then return end
+	local cooldownKey = 'BoonEditMeatGrinderPlasma'
+	if mod.tuning.MeatGrinder.PlasmaCooldownPerFoe then
+		cooldownKey = cooldownKey .. tostring(victim.ObjectId)
+	end
+	if not game.CheckCooldown(cooldownKey, cooldown) then return end
 
 	game.thread(game.CreateBloodDrop, victim, functionArgs)
 end

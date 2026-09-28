@@ -72,7 +72,7 @@ mod.tuning.HeartyAppetite = {
 }
 
 mod.tuning.SmolderingForge = {
-	HeartthrobChance = 0.20,
+	HeartthrobChance = 0.25,
 }
 
 mod.tuning.EcstaticObsession = {
@@ -95,6 +95,7 @@ mod.tuning.EcstaticObsession = {
 mod.tuning.MeatGrinder = {
 	PlasmaChance = 0.20,
 	PlasmaCooldown = 0.25,
+	PlasmaCooldownPerFoe = true,
 }
 
 mod.tuning.ProfuseBleeding = {
@@ -261,7 +262,7 @@ mod.tuning.BurningMeteor = {
 }
 
 mod.tuning.CardioGain = {
-	SprintManaGain = 0.75,
+	SprintManaGain = 1.0,
 }
 
 mod.tuning.VolcanicCrown = {
