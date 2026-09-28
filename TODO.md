@@ -20,3 +20,4 @@ The full investigation lives in MoreDuos' `TODO.md`; do both together.
 
 - concave stone: gate to copy only your next boon / hammer reward
 - metallic droplet: extra move speed bonuses only active while still held
+- double check Heroic Olympian keepsake behavior

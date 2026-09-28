@@ -4,7 +4,7 @@ local config = {
 
   AspectChanges = {
     AspectOfSupay = {
-      Enabled = true;
+      Enabled = false;
     };
   };
 
@@ -261,31 +261,31 @@ local config = {
 
   HammerChanges = {
     DualMoonshot = {
-      Enabled = true;
+      Enabled = false;
     };
 
     EnduringCoil = {
-      Enabled = true;
+      Enabled = false;
     };
 
     HiddenHelix = {
-      Enabled = true;
+      Enabled = false;
     };
 
     HiddenKnives = {
-      Enabled = true;
+      Enabled = false;
     };
 
     ReaperKnives = {
-      Enabled = true;
+      Enabled = false;
     };
 
     RisingHelix = {
-      Enabled = true;
+      Enabled = false;
     };
 
     WhirlingHelix = {
-      Enabled = true;
+      Enabled = false;
     };
   };
 
@@ -295,19 +295,19 @@ local config = {
     };
 
     CallingCard = {
-      Enabled = true;
+      Enabled = false;
     };
 
     ConcaveStone = {
-      Enabled = true;
+      Enabled = false;
     };
 
     MetallicDroplet = {
-      Enabled = true;
+      Enabled = false;
     };
 
     WhiteAntler = {
-      Enabled = true;
+      Enabled = false;
     };
   };
 

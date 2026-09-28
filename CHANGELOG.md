@@ -118,27 +118,31 @@ Every change below can be switched off independently in
 
 ### Hammer Upgrades
 
+#### Disabled by Default:
 - **Dual Moonshot** (Staff) — No longer costs range and fuse to fire the extra projectile.
 - **Reaper Knives → Hook Knives** (Dagger) — Reverted to its EA-launch implementation.
 - **Hidden Knives** (Dagger) — Fires in a Spiral pattern around you (like Spiral Knives in EA-launch), with extra knives. Firing angle overridden by Sureshot Flurry if also held.
 - **Enduring Coil** (Torch) — Special projectiles last +100% longer (double) rather than adding a flat +2 Sec., and applies to the regular special projectile as well.
 - **Hidden Helix** (Torch) — Gain +2 extra projectiles instead of +1.
-- **Rising Helix** (Torch) — Makes bonus damage increased to 50%
-- **Whirling Helix** (Torch) — Projectile speed bonus increased to 100%
+- **Rising Helix** (Torch) — Makes bonus damage increased to 50%.
+- **Whirling Helix** (Torch) — Projectile speed bonus increased to 100%.
 
 ### Weapon Aspects
 
-- **Aspect of Supay** (Umbral Flames) — Rush-boon damage bonus restored to EA levels
+#### Disabled by Default:
+- **Aspect of Supay** (Umbral Flames) — Rush-boon damage bonus restored to EA levels.
 
 ### Keepsakes
 
-- **Concave Stone** (Echo) — New Effect: Chance to copy your next major reward instead
-- **Calling Card** (Zagreus) — Each use now rarifies straight to Heroic rather than one rarity at a time.
-- **Metallic Droplet** (Hermes) — Now keeps half its move/strike/cast speed boost once the timer runs out.
-- **White Antler** (Artemis) — Keeps its effects as long as its held.
-
+#### Enabled by Default:
 - **Aromatic Phial** (Narcissus) — New Heroic rarity, where it raises **two** Common blessings at the next fountain rather than one.
 - **Olympian Keepsakes** - New Heroic rarity, can transform boons of any rarity into Legendary (or Heroic, if Legendary is already offered / held) instead.
+
+#### Disabled by Default:
+- **Concave Stone** (Echo) — New Effect: Chance to copy your next major reward instead.
+- **Calling Card** (Zagreus) — Now rarifies all boons straight to Heroic.
+- **Metallic Droplet** (Hermes) — Now keeps half its move/strike/cast speed boost once the timer runs out.
+- **White Antler** (Artemis) — Keeps its effects as long as its held.
 
 ### Other
 - **Anvil of Fates** — Instead of random chance, choose from up to 3 hammer upgrades to sacrifice / gain.
