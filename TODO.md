@@ -21,3 +21,5 @@ The full investigation lives in MoreDuos' `TODO.md`; do both together.
 - concave stone: gate to copy only your next boon / hammer reward
 - metallic droplet: extra move speed bonuses only active while still held
 - double check Heroic Olympian keepsake behavior
+
+- make sure requirement dependencies check not on whether a mod is enabled, but whether or not a change is enabled -- cross reference with moreduos
