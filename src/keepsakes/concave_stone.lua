@@ -2,29 +2,101 @@
 ---@diagnostic disable: lowercase-global
 
 
+local STONE = 'UnpickedBoonKeepsake'
+local CERTAIN = 1000
+
+local concaveStoneForcing = false
+local concaveStoneCopied = false
+
+
 function concave_stone_active()
-	return config.KeepsakeChanges.ConcaveStone.Enabled and game.HeroHasTrait('UnpickedBoonKeepsake')
+	return config.KeepsakeChanges.ConcaveStone.Enabled and game.HeroHasTrait(STONE)
+end
+
+
+local function concave_stone_major(source)
+	if source.GodLoot or source.TreatAsGodLootByShops then return true end
+	return game.Contains(mod.tuning.ConcaveStone.Rewards, source.Name)
+end
+
+
+local function concave_stone_roll(source)
+	if not source or source.CanDuplicate == false or not concave_stone_active() then return false end
+	if not concave_stone_major(source) then return false end
+
+	local trait = game.GetHeroTrait(STONE)
+	if not trait.BoonEditRewardChance or not trait.Uses or trait.Uses <= 0 then return false end
+
+	local luck = game.GetTotalHeroTraitValue('LuckMultiplier', { IsMultiplier = true })
+	return game.RandomChance(trait.BoonEditRewardChance * luck)
+end
+
+
+local function concave_stone_copy(source, base, ...)
+	if not concave_stone_roll(source) then return base(...) end
+
+	local couldDuplicate = source.CanDuplicate
+	source.CanDuplicate = true
+	concaveStoneForcing = true
+
+	local result = base(...)
+
+	if concaveStoneForcing then
+		concaveStoneForcing = false
+		source.CanDuplicate = couldDuplicate
+	else
+		game.ReduceTraitUses(game.GetHeroTrait(STONE))
+	end
+	return result
+end
+
+
+local function concave_stone_presentation(args)
+	local objectId = args.ObjectId
+	game.ApplyUpwardForce({ Id = objectId, Speed = game.RandomFloat(500, 700) })
+	game.ApplyForce({ Id = objectId, Speed = game.RandomFloat(75, 260), Angle = game.RandomFloat(0, 360) })
+	game.wait(0.75)
+	game.thread(game.PlayVoiceLines, game.GlobalVoiceLines.EchoKeepsakeLines, true)
+
+	game.PlaySound({ Name = '/SFX/Menu Sounds/PortraitEmoteSparklySFX' })
+	local toastAnchor = game.SpawnObstacle({ Name = 'BlankObstacle', DestinationId = game.CurrentRun.Hero.ObjectId, Group = 'Combat_Menu_Additive' })
+	game.DrawScreenRelative({ Id = toastAnchor })
+	game.CreateAnimation({ Name = 'BiomeStateGoldFx', DestinationId = toastAnchor, Group = 'Combat_Menu_Additive' })
+	game.thread(game.InCombatText, objectId, 'DoubleBoonSuccess', 0.75)
 end
 
 
 once('ConcaveStone', function()
+	if config.KeepsakeChanges.ConcaveStone.Enabled then
+		local stone = game.TraitData[STONE]
+		stone.BoonEditRewardChance = stone.DoubleBoonChance
+		stone.DoubleBoonChance = nil
+		for _, extract in ipairs(stone.ExtractValues or {}) do
+			if extract.Key == 'DoubleBoonChance' then extract.Key = 'BoonEditRewardChance' end
+		end
+	end
+
+	modutil.mod.Path.Wrap('GetTotalHeroTraitValue', function(base, propertyName, args)
+		if concaveStoneForcing and propertyName == 'DoubleRewardChance' then
+			concaveStoneForcing = false
+			concaveStoneCopied = true
+			return CERTAIN
+		end
+		return base(propertyName, args)
+	end)
+
 	modutil.mod.Path.Wrap('HandleUpgradeChoiceSelection', function(base, screen, button, args)
-		args = args or {}
-		local doubling = not args.BoonEditConcaveStoneDouble and concave_stone_active()
-		local trait = doubling and game.GetHeroTrait('UnpickedBoonKeepsake')
-		local chance = trait and trait.DoubleBoonChance
-		if trait then trait.DoubleBoonChance = 0 end
+		if args and args.DoubleBoonChance then return base(screen, button, args) end
+		return concave_stone_copy(screen and screen.Source, base, screen, button, args)
+	end)
 
-		base(screen, button, args)
+	modutil.mod.Path.Wrap('UseConsumableItem', function(base, consumableItem, args, user)
+		return concave_stone_copy(consumableItem, base, consumableItem, args, user)
+	end)
 
-		if trait then trait.DoubleBoonChance = chance end
-		if not doubling or not trait or not trait.Uses or trait.Uses <= 0 then return end
-		if not button.LootData or button.LootData.BlockDoubleBoon then return end
-		if not (button.LootData.GodLoot or button.LootData.TreatAsGodLootByShops or button.LootData.StackOnly) then return end
-		if not game.RandomChance(chance * game.GetTotalHeroTraitValue('LuckMultiplier', { IsMultiplier = true })) then return end
-
-		game.ReduceTraitUses(trait)
-		game.thread(game.DoubleBoonPresentation, screen, button)
-		base(screen, button, { BoonEditConcaveStoneDouble = true })
+	modutil.mod.Path.Wrap('DoubleRewardPresentation', function(base, args)
+		if not concaveStoneCopied then return base(args) end
+		concaveStoneCopied = false
+		return concave_stone_presentation(args)
 	end)
 end)

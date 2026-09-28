@@ -70,3 +70,19 @@ function mod.MeatGrinderPlasma(victim, functionArgs, triggerArgs)
 
 	game.thread(game.CreateBloodDrop, victim, functionArgs)
 end
+
+
+once('MeatGrinderPlasmaDisplay', function()
+	modutil.mod.Path.Wrap('CheckBloodDropDisplay', function(base, ...)
+		base(...)
+		meat_grinder_plasma_display()
+	end)
+end)
+
+
+function meat_grinder_plasma_display()
+	if not config.BoonChanges.MeatGrinder.Enabled then return end
+	if not game.HeroHasTrait('AresExCastBoon') then return end
+
+	game.SetupBloodDropDisplay()
+end

@@ -41,14 +41,9 @@ function passion_rush_splash()
 end
 
 
-function fire_passion_rush_wave(args, triggerArgs)
-	if args and args.CheckSprint and game.ConfigOptionCache.SprintAutoHold and game.SessionMapState.SprintActive then
-		return
-	end
-	if not game.ConfigOptionCache.SprintAutoHold
-		and ((triggerArgs and triggerArgs.Canceled) or (args and args.CheckSprint and game.SessionMapState.SprintActive)) then
-		return
-	end
+function fire_passion_rush_wave(args, _triggerArgs)
+	---@diagnostic disable-next-line: undefined-global
+	if rush_end_suppressed(args) then return end
 
 	passion_rush_splash()
 	game.SessionMapState.BoonEditPassionRushStarted = nil
@@ -58,10 +53,18 @@ end
 ---@diagnostic disable-next-line: unused-local
 function mod.PassionRushStart(weaponData, _args, _triggerArgs)
 	if weaponData and weaponData.Name == 'WeaponSprint' then
-		if game.CheckCooldown('BoonEditPassionRushTrail', mod.tuning.PassionRush.TrailInterval) then
+		---@diagnostic disable-next-line: undefined-global
+		if game.CheckCooldown('BoonEditPassionRushTrail', stutter_step_interval(mod.tuning.PassionRush.TrailInterval)) then
 			passion_rush_splash()
 		end
 		return
+	end
+
+	if game.SessionMapState.BoonEditPassionRushStarted then
+		game.thread(function()
+			game.wait(mod.tuning.PassionRush.ChainDelay, game.RoomThreadName)
+			passion_rush_splash()
+		end)
 	end
 
 	passion_rush_splash()

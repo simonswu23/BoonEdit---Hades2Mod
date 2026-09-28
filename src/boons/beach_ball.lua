@@ -32,7 +32,7 @@ function mod.BeachBallWaves(triggerArgs, _args)
 	if not hero then return end
 
 	---@diagnostic disable-next-line: undefined-global
-	local scale, count, graphic = poseidon_splash_cone()
+	local scale, count, graphic = poseidon_splash_cone(mod.tuning.PoseidonSplash.RedNova)
 	if count < 2 then return end
 
 	local tuning = mod.tuning.BeachBall

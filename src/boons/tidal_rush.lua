@@ -10,10 +10,13 @@ once('BreakerRushWaves', function()
 
 	local breaker = game.TraitData.PoseidonSprintBoon
 
-	local waveDamage = game.GetBaseDataValue({ Type = 'Projectile', Name = 'PoseidonCastSplashSplinter', Property = 'Damage' })
+	local wave = mod.tuning.TidalRush.WaveProjectile
+	local waveDamage = game.GetBaseDataValue({ Type = 'Projectile', Name = wave, Property = 'Damage' })
 	if type(waveDamage) ~= 'number' or waveDamage <= 0 then
 		waveDamage = 60
 	end
+
+	local vanillaRarity = breaker.RarityLevels
 
 	breaker.RarityLevels = {}
 	for rarity, damage in pairs(mod.tuning.TidalRush.WaveDamage) do
@@ -26,7 +29,7 @@ once('BreakerRushWaves', function()
 		ExcludeLinked = true,
 		FunctionName = _PLUGIN.guid .. '.BreakerRushStart',
 		FunctionArgs = {
-			ProjectileName = 'PoseidonCastSplashSplinter',
+			ProjectileName = wave,
 			DamageMultiplier = {
 				BaseValue = 1,
 				DecimalPlaces = 3,
@@ -51,60 +54,59 @@ once('BreakerRushWaves', function()
 	}
 
 	breaker.StatLines = { 'SplashDamageStatDisplay1' }
-	breaker.ExtractValues = with_keyword_extracts({
+	breaker.ExtractValues = {
 		{
 			Key = 'ReportedMultiplier',
 			ExtractAs = 'Damage',
 			Format = 'MultiplyByBase',
 			BaseType = 'Projectile',
-			BaseName = 'PoseidonCastSplashSplinter',
+			BaseName = wave,
 			BaseProperty = 'Damage',
 		},
-	}, 'KnockbackAmplify')
-
-	breaker.OnEnemyDamagedAction = {
-		ValidProjectiles = { 'PoseidonCastSplashSplinter' },
-		ValidProjectilesLookup = game.ToLookup({ 'PoseidonCastSplashSplinter' }),
-		FunctionName = _PLUGIN.guid .. '.BreakerRushFroth',
-		Args = {},
 	}
+
+	local spend = breaker.OnEnemyDamagedAction
+	spend.ValidProjectilesLookup = game.ToLookup(spend.ValidProjectiles)
+	spend.Args.DamageMultiplier.CustomRarityMultiplier = vanillaRarity
 end)
 
 
----@diagnostic disable-next-line: unused-local
-function mod.BreakerRushFroth(victim, _args, triggerArgs)
-	if not config.BoonChanges.BreakerRush.Enabled then return end
-	if not victim or not victim.ObjectId then return end
-
-	local hero = game.CurrentRun and game.CurrentRun.Hero
-	if not hero then return end
-
-	local effectName = 'AmplifyKnockbackEffect'
-	local effect = game.EffectData[effectName]
-	if not effect then return end
-
-	game.ApplyEffect({
-		DestinationId = victim.ObjectId,
-		Id = hero.ObjectId,
-		EffectName = effectName,
-		ImpactAngle = math.rad((triggerArgs and triggerArgs.ImpactAngle) or 0),
-		DataProperties = effect.EffectData,
-	})
-end
-
-
-function fire_breaker_rush_wave(args, triggerArgs)
-	if args and args.CheckSprint and game.ConfigOptionCache.SprintAutoHold and game.SessionMapState.SprintActive then
-		return
-	end
-	if not game.ConfigOptionCache.SprintAutoHold
-		and ((triggerArgs and triggerArgs.Canceled) or (args and args.CheckSprint and game.SessionMapState.SprintActive)) then
-		return
-	end
+function fire_breaker_rush_wave(args, _triggerArgs)
+	---@diagnostic disable-next-line: undefined-global
+	if rush_end_suppressed(args) then return end
 
 	breaker_rush_splash()
 
 	game.SessionMapState.BoonEditBreakerRushStarted = nil
+end
+
+
+function breaker_rush_caught(radius)
+	local hero = game.CurrentRun and game.CurrentRun.Hero
+	local caught = {}
+	if not hero then return caught end
+
+	local nearby = game.GetClosestIds({
+		Id = hero.ObjectId,
+		DestinationName = 'EnemyTeam',
+		IgnoreInvulnerable = true,
+		StopsProjectiles = true,
+		IgnoreHomingIneligible = true,
+		IgnoreSelf = true,
+		Distance = radius,
+		PreciseCollision = true,
+	}) or {}
+
+	for _, id in pairs(nearby) do
+		local unit = game.ActiveEnemies[id]
+		---@diagnostic disable-next-line: undefined-global
+		if unit and not unit.IsDead and not boon_ignores(unit)
+			---@diagnostic disable-next-line: undefined-global
+			and not is_allied_summon(unit) then
+			table.insert(caught, unit)
+		end
+	end
+	return caught
 end
 
 
@@ -116,29 +118,42 @@ function breaker_rush_splash()
 	local traitArgs = trait and trait.OnWeaponFiredFunctions and trait.OnWeaponFiredFunctions.FunctionArgs
 	if not traitArgs then return end
 
+	local tuning = mod.tuning.TidalRush
+	local reach = tuning.ImpactRadius * tuning.RingScale
+
 	---@diagnostic disable-next-line: undefined-global
 	local scale, count, graphic = poseidon_splash_cone()
+
+	---@diagnostic disable-next-line: undefined-global
+	rush_impact_ring(tuning.ImpactFx, reach, tuning.ImpactPulses, tuning.ImpactPulseDelay)
+
+	local caught = breaker_rush_caught(reach)
+	if game.IsEmpty(caught) then return end
 
 	---@diagnostic disable-next-line: undefined-global
 	arterial_spray_begin({ ProjectileName = traitArgs.ProjectileName })
 
 	local ok, err = pcall(function()
-		for i = 1, count do
-			game.CreateProjectileFromUnit({
-				Name = traitArgs.ProjectileName,
-				Id = hero.ObjectId,
-				DestinationId = hero.ObjectId,
-				FireFromTarget = true,
-				DamageMultiplier = traitArgs.DamageMultiplier,
-				ScaleMultiplier = scale,
-				SpeedMultiplier = scale,
-				DataProperties = {
-					DamageRadius = mod.tuning.TidalRush.Radius,
-					ImpactVelocity = mod.tuning.TidalRush.Knockback,
-					StartFx = graphic,
-					StartDelay = (i - 1) * mod.tuning.PoseidonSplash.WaveDelay,
-				},
-			})
+		for _, unit in ipairs(caught) do
+			local angle = game.GetAngleBetween({ DestinationId = unit.ObjectId, Id = hero.ObjectId })
+
+			for i = 1, count do
+				game.CreateProjectileFromUnit({
+					Name = traitArgs.ProjectileName,
+					Id = hero.ObjectId,
+					Angle = angle,
+					DestinationId = hero.ObjectId,
+					FireFromTarget = true,
+					DamageMultiplier = traitArgs.DamageMultiplier,
+					ScaleMultiplier = scale,
+					DataProperties = {
+						StartFx = graphic,
+						StartDelay = (i - 1) * mod.tuning.PoseidonSplash.WaveDelay,
+					},
+				})
+			end
+
+			game.ApplyForce({ Id = unit.ObjectId, Angle = angle, Speed = tuning.Knockback })
 		end
 	end)
 
@@ -150,10 +165,18 @@ end
 
 function mod.BreakerRushStart(weaponData, _args, _triggerArgs)
 	if weaponData and weaponData.Name == 'WeaponSprint' then
-		if game.CheckCooldown('BoonEditBreakerRushTrail', mod.tuning.TidalRush.TrailInterval) then
+		---@diagnostic disable-next-line: undefined-global
+		if game.CheckCooldown('BoonEditBreakerRushTrail', stutter_step_interval(mod.tuning.TidalRush.TrailInterval)) then
 			breaker_rush_splash()
 		end
 		return
+	end
+
+	if game.SessionMapState.BoonEditBreakerRushStarted then
+		game.thread(function()
+			game.wait(mod.tuning.TidalRush.ChainDelay, game.RoomThreadName)
+			breaker_rush_splash()
+		end)
 	end
 
 	breaker_rush_splash()

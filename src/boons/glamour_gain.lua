@@ -9,6 +9,8 @@ once('GlamourGainPulse', function()
 
 	glamour.SetupFunction.Name = _PLUGIN.guid .. '.GlamourGainPulse'
 
+	glamour.SetupFunction.RequiredContext = nil
+
 	glamour.SetupFunction.Args.Interval = game.EffectData.WeakEffect.EffectData.Duration
 
 	glamour.SetupFunction.Args.ActiveFx = nil
@@ -23,6 +25,9 @@ local GLAMOUR_PULSE_FX = 'AphroditeDashNova'
 local GLAMOUR_UNLIMITED_RANGE = 3000
 
 function glamour_pulse_active()
+	---@diagnostic disable-next-line: undefined-global
+	if training_grounds() then return true end
+
 	local room = game.CurrentRun and game.CurrentRun.CurrentRoom
 	if not room then return false end
 	if game.IsCombatEncounterActive(game.CurrentRun) then return true end
@@ -35,8 +40,9 @@ function mod.GlamourGainPulse(hero, args)
 	local interval = (args and args.Interval) or 1
 	local carried = 0
 
-	while game.CurrentRun and game.CurrentRun.CurrentRoom and game.CurrentRun.Hero
-		and not game.CurrentRun.Hero.IsDead and game.HeroHasTrait('AphroditeManaBoon') do
+	---@diagnostic disable-next-line: undefined-global
+	while game.CurrentRun and game.CurrentRun.CurrentRoom and hero_live()
+		and game.HeroHasTrait('AphroditeManaBoon') do
 
 		if glamour_pulse_active() then
 			local range = args.Range
@@ -58,7 +64,8 @@ function mod.GlamourGainPulse(hero, args)
 			local struck = 0
 			for _, id in pairs(nearby) do
 				local enemy = game.ActiveEnemies[id]
-				if enemy and not enemy.IsDead and not enemy.SkipModifiers then
+				---@diagnostic disable-next-line: undefined-global
+				if enemy and not enemy.IsDead and not boon_ignores(enemy) then
 					game.ApplyEffect({
 						Id = game.CurrentRun.Hero.ObjectId,
 						DestinationId = enemy.ObjectId,

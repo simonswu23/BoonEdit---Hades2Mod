@@ -119,11 +119,26 @@ function in_run()
 	return game.CurrentRun ~= nil and game.CurrentRun.Hero ~= nil
 end
 
+function training_grounds()
+	local hub = game.CurrentHubRoom
+	return hub ~= nil and hub.AllowEnemyAIActive == true
+end
+
+function hero_live()
+	local hero = game.CurrentRun and game.CurrentRun.Hero
+	if not hero then return false end
+	return not hero.IsDead or training_grounds()
+end
+
 function is_allied_summon(unit)
 	if not unit then return false end
 	if unit.AlwaysTraitor or unit.Charmed then return true end
 	if unit.ObjectId and game.IsCharmed({ Id = unit.ObjectId }) then return true end
 	return game.Contains(game.MapState.SpellSummons or {}, unit)
+end
+
+function boon_ignores(unit)
+	return unit.SkipModifiers and not unit.TrainingTarget
 end
 
 function apply_hitch(unit)
@@ -198,6 +213,41 @@ function with_keyword_extracts(own, ...)
 end
 
 
+function rush_end_suppressed(args)
+	if not hero_live() then return true end
+
+	if not (args and args.CheckSprint) then return false end
+	if not game.SessionMapState.SprintActive then return false end
+
+	return true
+end
+
+
+function rush_impact_ring(name, radius, pulses, delay, destinationId)
+	local hero = game.CurrentRun and game.CurrentRun.Hero
+	if not name then return end
+
+	destinationId = destinationId or (hero and hero.ObjectId)
+	if not destinationId then return end
+
+	local function draw()
+		game.CreateAnimation({
+			Name = name,
+			DestinationId = destinationId,
+			ScaleRadius = radius,
+		})
+	end
+
+	draw()
+	for _ = 2, (pulses or 1) do
+		game.thread(function()
+			game.wait(delay or 0.1, game.RoomThreadName)
+			draw()
+		end)
+	end
+end
+
+
 function create_heartthrob(burstArgs)
 	if not burstArgs then return end
 	game.thread(game.CreateManaBurst, burstArgs, 1 + game.GetTotalHeroTraitValue('BurstCount'))
@@ -237,6 +287,45 @@ function sjson_PlayerProjectiles(data)
 	end
 end
 
+function sjson_EnemyProjectiles(data)
+	if not data or not data.Projectiles then return end
+
+	local tuning = mod.tuning.VolcanicCrown
+	local order = {
+		'Name', 'InheritFrom', 'Damage', 'TotalFuse', 'SpawnOnDetonate',
+		'AffectsEnemies', 'AffectsFriends', 'AffectsSelf',
+	}
+
+	local existing = {}
+	for _, projectile in ipairs(data.Projectiles) do
+		existing[projectile.Name] = true
+	end
+
+	local copies = {
+		{
+			Name = tuning.FireProjectile,
+			InheritFrom = 'DevotionHestiaFire',
+			Damage = tuning.FireDamage,
+			TotalFuse = tuning.FireDuration,
+		},
+		{
+			Name = tuning.FireballProjectile,
+			InheritFrom = 'DevotionHestia',
+			Damage = tuning.FireballDamage.Common,
+			SpawnOnDetonate = tuning.FireProjectile,
+		},
+	}
+
+	for _, copy in ipairs(copies) do
+		if not existing[copy.Name] then
+			copy.AffectsEnemies = true
+			copy.AffectsFriends = false
+			copy.AffectsSelf = false
+			table.insert(data.Projectiles, sjson.to_object(copy, order))
+		end
+	end
+end
+
 function sjson_PoseidonVfx(data)
 	if not data or not data.Animations then return end
 
@@ -258,6 +347,39 @@ function sjson_PoseidonVfx(data)
 		'Name', 'InheritFrom', 'ClearCreateAnimations',
 		'StartRed', 'StartGreen', 'StartBlue', 'EndRed', 'EndGreen', 'EndBlue',
 	}))
+end
+
+
+function sjson_CastVfx(data)
+	if not data or not data.Animations then return end
+
+	local existing = {}
+	for _, animation in ipairs(data.Animations) do
+		existing[animation.Name] = true
+	end
+
+	local circles = {
+		{ Name = mod.tuning.TidalRush.ImpactFx, InheritFrom = 'CastCircleOutPoseidon', Bare = true },
+		{ Name = mod.tuning.AnvilRush.ImpactFx, InheritFrom = 'CastCircleOutHephaestus', Bare = true },
+	}
+
+	for _, circle in ipairs(circles) do
+		if circle.Name and not existing[circle.Name] then
+			local entry = {
+				Name = circle.Name,
+				InheritFrom = circle.InheritFrom,
+				Sound = 'null',
+			}
+			local order = { 'Name', 'InheritFrom', 'Sound' }
+
+			if circle.Bare then
+				entry.ClearCreateAnimations = true
+				table.insert(order, 'ClearCreateAnimations')
+			end
+
+			table.insert(data.Animations, sjson.to_object(entry, order))
+		end
+	end
 end
 
 
@@ -382,13 +504,14 @@ import 'boons/cherished_heirloom.lua'
 
 import 'boons/post_haste.lua'
 import 'boons/second_wind.lua'
+import 'boons/stutter_step.lua'
 
 import 'boons/burning_meteor.lua'
 import 'boons/cardio_gain.lua'
 import 'boons/scalding_vapor.lua'
+import 'boons/volcanic_crown.lua'
 
 import 'boons/tidal_rush.lua'
-import 'boons/tidal_ring.lua'
 import 'boons/easy_shot.lua'
 import 'boons/beach_ball.lua'
 import 'boons/arterial_spray.lua'
@@ -398,6 +521,7 @@ import 'boons/shocking_loss.lua'
 import 'boons/killer_current.lua'
 import 'boons/air_quality.lua'
 import 'boons/power_surge.lua'
+import 'boons/arc_flash.lua'
 
 import 'boons/thermal_dynamics.lua'
 
@@ -412,6 +536,8 @@ import 'keepsakes/calling_card.lua'
 import 'keepsakes/white_antler.lua'
 import 'keepsakes/metallic_droplet.lua'
 
+import 'aspects/aspect_of_supay.lua'
+
 import 'hammeredit/dual_moonshot.lua'
 import 'hammeredit/reaper_knives.lua'
 import 'hammeredit/enduring_coil.lua'
@@ -424,7 +550,7 @@ import 'hammeredit/whirling_helix.lua'
 import 'requirements.lua'
 import 'text.lua'
 
-function poseidon_splash_cone()
+function poseidon_splash_cone(waveFx)
 	local scale = 1
 	local count = 1
 	local graphic = nil
@@ -439,7 +565,7 @@ function poseidon_splash_cone()
 		if data.DoubleWaveChance and game.RandomChance(data.DoubleWaveChance
 			* game.GetTotalHeroTraitValue('LuckMultiplier', { IsMultiplier = true })) then
 			count = count + 1
-			graphic = mod.tuning.PoseidonSplash.RedNova
+			graphic = waveFx or data.DoubleWaveGraphic
 		end
 	end
 

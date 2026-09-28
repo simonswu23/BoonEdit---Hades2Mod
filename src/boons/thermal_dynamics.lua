@@ -2,17 +2,9 @@
 ---@diagnostic disable: lowercase-global
 
 
-local LIGHTNING = {
-	'ZeusEchoStrike',
-	'ZeusCastStrike',
-	'ZeusRootStrike',
-	'ZeusSprintStrike',
-	'ProjectileZeusSpark',
-	'ZeusZeroManaStrike',
-	'ZeusRetaliateStrike',
-}
+local BLITZ = { 'ZeusEchoStrike' }
 
-once('ThermalDynamicsAllLightning', function()
+once('ThermalDynamicsBlitz', function()
 	if not config.BoonChanges.ThermalDynamics.Enabled then return end
 
 	local thermal = game.TraitData.EchoBurnBoon
@@ -22,7 +14,7 @@ once('ThermalDynamicsAllLightning', function()
 	thermal.OnDamageEnemyFunction = {
 		FunctionName = _PLUGIN.guid .. '.ThermalDynamics',
 		FunctionArgs = {
-			ValidProjectilesLookup = game.ToLookup(LIGHTNING),
+			ValidProjectilesLookup = game.ToLookup(BLITZ),
 		},
 	}
 
@@ -48,8 +40,8 @@ function mod.ThermalDynamics(args, attacker, victim, triggerArgs)
 
 	if not triggerArgs or triggerArgs.EffectName then return end
 
-	local lightning = args and args.ValidProjectilesLookup
-	if not lightning or not lightning[triggerArgs.SourceProjectile] then return end
+	local blitz = args and args.ValidProjectilesLookup
+	if not blitz or not blitz[triggerArgs.SourceProjectile] then return end
 
 	local damage = triggerArgs.DamageAmount
 	if type(damage) ~= 'number' or damage <= 0 then return end

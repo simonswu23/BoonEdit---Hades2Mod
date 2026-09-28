@@ -26,7 +26,8 @@ function power_surge_on_restore(before)
 	if type(before) ~= 'number' then return end
 
 	local hero = game.CurrentRun and game.CurrentRun.Hero
-	if not hero or hero.IsDead then return end
+	---@diagnostic disable-next-line: undefined-global
+	if not hero or not hero_live() then return end
 	if type(hero.Mana) ~= 'number' or hero.Mana <= before then return end
 
 	local args = power_surge_bolt_args()

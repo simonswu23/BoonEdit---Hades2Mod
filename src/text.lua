@@ -98,15 +98,13 @@ if config.BoonChanges.ExtraDose.Enabled then
 end
 
 if config.BoonChanges.CarnalPleasure.Enabled then
+	local certain = mod.tuning.CarnalPleasure.HeartthrobChance >= 1
 	boon_text({
 		Traits = {
 			BloodManaBurstBoon = {
-				Description = 'Whenever you collect {!Icons.BloodDropIcon}, restore {!Icons.Health} ' ..
-					'and you may create a {$Keywords.HeartBurst}.',
+				Description = 'Whenever you collect {!Icons.BloodDropIcon}, ' ..
+					(certain and 'create' or 'you may create') .. ' a {$Keywords.HeartBurst}.',
 			},
-		},
-		StatLines = {
-			BoonEditCarnalPleasureHealStatDisplay = { Name = 'Health Restored per {$Keywords.BloodDrop_NoTooltip}:', Index = 2 },
 		},
 	})
 end
@@ -419,7 +417,7 @@ if config.KeepsakeChanges.ConcaveStone.Enabled then
 	boon_text({
 		Traits = {
 			UnpickedBoonKeepsake = {
-				Description = 'After choosing a {$Keywords.GodBoon} or {!Icons.Hammer}, {#AltUpgradeFormat}{$TooltipData.ExtractData.Chance}% {#Prev}of the time it is doubled, once this night.',
+				Description = 'Each {$Keywords.GodBoon}, Hammer, Pom, Centaur Heart, Soul Tonic or Path of Stars you collect has a {#AltUpgradeFormat}{$TooltipData.ExtractData.Chance}% {#Prev}chance to appear again, once this night.',
 			},
 		},
 	})
@@ -439,7 +437,7 @@ if config.KeepsakeChanges.WhiteAntler.Enabled then
 	boon_text({
 		Traits = {
 			LowHealthCritKeepsake = {
-				Description = 'Gain {#AltUpgradeFormat}+{$TooltipData.ExtractData.Chance}% {#Prev}{$Keywords.Crit} damage chance for the rest of the night, but you are limited to {#AltPenaltyFormat}{$TooltipData.ExtractData.Health}{!Icons.HealthDown}{#Prev}.',
+				Description = 'Gain {#AltUpgradeFormat}+{$TooltipData.ExtractData.Chance}% {#Prev}{$Keywords.Crit} damage chance while you wear this, but you are limited to {#AltPenaltyFormat}{$TooltipData.ExtractData.Health}{!Icons.HealthDown}{#Prev}.',
 			},
 		},
 	})
@@ -463,6 +461,16 @@ if config.BoonChanges.PostHaste.Enabled then
 			SlowProjectileBoon = {
 				DisplayName = 'Post Haste',
 				Description = 'Any {$Keywords.GodBoon} effects that recharge over time recharge faster.',
+			},
+		},
+	})
+end
+
+if config.BoonChanges.StutterStep.Enabled then
+	boon_text({
+		Traits = {
+			SorcerySpeedBoon = {
+				Description = 'You can {$Keywords.Dash} more frequently, and your Rush boons strike more often while you {$Keywords.Sprint}.',
 			},
 		},
 	})
@@ -509,11 +517,25 @@ if config.BoonChanges.CardioGain.Enabled then
 	})
 end
 
+if config.BoonChanges.VolcanicCrown.Enabled then
+	boon_text({
+		Traits = {
+			AloneDamageBoon = {
+				DisplayName = 'Volcanic Crown',
+				Description = 'After your {$Keywords.CastEX} expires, it releases a ring of ' ..
+					'{#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipFireballs} {#Prev}fireballs from its ' ..
+					'center. Each bounces {#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipBounces} {#Prev}' ..
+					'times, leaving burning ground wherever it lands.',
+			},
+		},
+	})
+end
+
 if config.BoonChanges.BreakerRush.Enabled then
 	boon_text({
 		Traits = {
 			PoseidonSprintBoon = {
-				Description = '{$Keywords.DashSet} damages surrounding foes and inflicts {$Keywords.KnockbackAmplify}, and again once you stop.',
+				Description = '{$Keywords.DashSet} launches a splash at each surrounding foe, and again once you stop.',
 			},
 		},
 	})
@@ -546,12 +568,31 @@ if config.BoonChanges.RippleEffect.Enabled then
 	})
 end
 
+if config.BoonChanges.ArcFlash.Enabled then
+	boon_text({
+		Traits = {
+			EchoExpirationBoon = {
+				Description = 'Your {$Keywords.Echo} effects are stronger, and damage from {$Keywords.Omega} ' ..
+					'immediately activates them.',
+			},
+		},
+		StatLines = {
+			BoonEditArcFlashStatDisplay = { Name = 'Bonus {$Keywords.Echo} Damage:', Index = 1 },
+		},
+	})
+end
+
 if config.BoonChanges.ShockingLoss.Enabled then
 	boon_text({
 		Traits = {
 			SpawnKillBoon = {
-				Description = 'Whenever you first deal damage to susceptible foes, you may destroy them outright.',
+				Description = 'Whenever you deal damage to susceptible foes, you may destroy them outright. ' ..
+					'The first hit on each has a {#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipFirstHitChance}% ' ..
+					'{#Prev}chance.',
 			},
+		},
+		StatLines = {
+			BoonEditShockingLossStatDisplay = { Name = 'Destruction Chance per Hit:', Index = 1 },
 		},
 	})
 end
@@ -593,8 +634,8 @@ if config.BoonChanges.ThermalDynamics.Enabled then
 	boon_text({
 		Traits = {
 			EchoBurnBoon = {
-				Description = 'Your lightning effects from {#BoldFormatGraft}Zeus {#Prev}inflict ' ..
-					'{$Keywords.Burn} for a share of the damage they deal.',
+				Description = 'Your {$Keywords.Echo} effects also inflict {$Keywords.Burn} for the damage ' ..
+					'they deal.',
 			},
 		},
 		StatLines = {
@@ -643,7 +684,8 @@ if config.BoonChanges.ScaldingVapor.Enabled then
 		Traits = {
 			SteamBoon = {
 				Description = 'If foes with {$Keywords.KnockbackAmplify} are struck by your fireball effects ' ..
-					'from {#BoldFormatGraft}Hestia{#Prev}, they are engulfed in {$Keywords.Steam}.',
+					'from {#BoldFormatGraft}Hestia{#Prev}, they are engulfed in {$Keywords.Steam}, which stacks up to ' ..
+					mod.tuning.ScaldingVapor.MaxClouds .. ' times.',
 			},
 		},
 		Keywords = {

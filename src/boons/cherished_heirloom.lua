@@ -2,12 +2,37 @@
 ---@diagnostic disable: lowercase-global
 
 
+HEIRLOOM_USE_KEYS = { 'Uses', 'RemainingUses' }
+
+
 function heirloom_requip_fresh(trait)
 	local traitName = trait.Name
 	local rarity = game.GetRarityKey(game.GetKeepsakeLevel(traitName, true))
+
+	local carried = {}
+	if mod.tuning.CherishedHeirloom.CarryUses then
+		for _, key in ipairs(HEIRLOOM_USE_KEYS) do
+			local held = trait[key]
+			if type(held) == 'number' and held > 0 then carried[key] = held end
+		end
+	end
+
 	game.UnequipKeepsake(game.CurrentRun.Hero, traitName, { SkipValidateHealth = true, AdvanceKeepsakeMoment = true })
 	game.EquipKeepsake(game.CurrentRun.Hero, traitName, { ForceRarity = rarity, FromLoot = true })
-	return game.GetHeroTrait(traitName)
+
+	local fresh = game.GetHeroTrait(traitName)
+	if not fresh then return fresh end
+
+	local restored = false
+	for key, amount in pairs(carried) do
+		if type(fresh[key]) == 'number' then
+			fresh[key] = fresh[key] + amount
+			restored = true
+		end
+	end
+	if restored then game.UpdateTraitNumber(fresh) end
+
+	return fresh
 end
 
 

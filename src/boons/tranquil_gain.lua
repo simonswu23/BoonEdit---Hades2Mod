@@ -39,15 +39,20 @@ local function tranquil_gain_hold(base)
 
 	if not fastest then return base end
 
-	local global = 1
 	for _, value in pairs((game.SessionMapState or {}).GlobalAttackSpecialSpeed or {}) do
-		global = global * value
-	end
-	if global > 0 then
-		fastest = fastest / global
+		fastest = fastest * value
 	end
 
 	return base * fastest
+end
+
+
+local function tranquil_gain_charged()
+	local reached = game.MapState.WeaponCharge or {}
+	for weaponName in pairs(game.MapState.ChargedManaWeapons or {}) do
+		if (reached[weaponName] or 0) >= 1 then return true end
+	end
+	return false
 end
 
 function tranquil_gain_stop(args)
@@ -64,13 +69,14 @@ function mod.TranquilGainChannel(hero, args)
 	local carried = 0
 	local flowing = false
 
-	while game.CurrentRun and game.CurrentRun.CurrentRoom and game.CurrentRun.Hero
-		and not game.CurrentRun.Hero.IsDead and game.HeroHasTrait('DemeterManaBoon') do
+	---@diagnostic disable-next-line: undefined-global
+	while game.CurrentRun and game.CurrentRun.CurrentRoom and hero_live()
+		and game.HeroHasTrait('DemeterManaBoon') do
 
 		if tranquil_gain_channelling() then
 			channelled = channelled + TRANQUIL_POLL_INTERVAL
 
-			if channelled >= tranquil_gain_hold(hold) then
+			if channelled >= tranquil_gain_hold(hold) or tranquil_gain_charged() then
 				if not flowing then
 					flowing = true
 					if args.ManaRegenStartSound then

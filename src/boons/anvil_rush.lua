@@ -64,6 +64,8 @@ once('SmithyRush', function()
 			ReportValues = { ReportedMultiplier = 'DamageMultiplier' },
 		},
 	}
+	local vanillaBlast = dash.OnBlinkEndAction.FunctionArgs.DamageMultiplier
+
 	dash.OnSprintEndAction = { FunctionName = _PLUGIN.guid .. '.AnvilRushEnd' }
 	dash.OnBlinkEndAction = {
 		FunctionName = _PLUGIN.guid .. '.AnvilRushEnd',
@@ -72,8 +74,11 @@ once('SmithyRush', function()
 			TraitName = 'HephaestusSprintBoon',
 			Name = 'AnvilRushNoCooldown',
 			Cooldown = 0,
+			DamageMultiplier = vanillaBlast,
 		},
 	}
+
+	dash.BoonEditUnmodifiedCooldown = 10
 
 	dash.StatLines = { 'BlastDamageStatDisplay1' }
 	dash.ExtractValues = with_keyword_extracts({
@@ -85,6 +90,7 @@ once('SmithyRush', function()
 			BaseName = 'HephCastBlast',
 			BaseProperty = 'Damage',
 		},
+		{ Key = 'BoonEditUnmodifiedCooldown', ExtractAs = 'UnmodifiedCooldown', SkipAutoExtract = true },
 	}, 'DelayedKnockback')
 end)
 
@@ -99,6 +105,10 @@ function anvil_rush_presentation(locationX, locationY)
 	game.SetAnimation({ Name = 'HephMassiveHitHammerCast', DestinationId = centerId, Scale = ANVIL_RUSH_SCALE, PlaySpeed = playSpeed })
 	game.waitUnmodified(ANVIL_RUSH_WINDUP)
 	game.SetAnimation({ Name = 'HephMassiveHitFixed', DestinationId = centerId, Scale = ANVIL_RUSH_SCALE, PlaySpeed = playSpeed })
+
+	local tuning = mod.tuning.AnvilRush
+	---@diagnostic disable-next-line: undefined-global
+	rush_impact_ring(tuning.ImpactFx, tuning.ImpactRadius, tuning.ImpactPulses, tuning.ImpactPulseDelay, centerId)
 	game.DestroyOnDelay({ centerId }, 1)
 end
 
@@ -128,14 +138,9 @@ function anvil_rush_strike()
 	end
 end
 
-function fire_anvil_rush_strike(args, triggerArgs)
-	if args and args.CheckSprint and game.ConfigOptionCache.SprintAutoHold and game.SessionMapState.SprintActive then
-		return
-	end
-	if not game.ConfigOptionCache.SprintAutoHold
-		and ((triggerArgs and triggerArgs.Canceled) or (args and args.CheckSprint and game.SessionMapState.SprintActive)) then
-		return
-	end
+function fire_anvil_rush_strike(args, _triggerArgs)
+	---@diagnostic disable-next-line: undefined-global
+	if rush_end_suppressed(args) then return end
 
 	anvil_rush_strike()
 	game.SessionMapState.BoonEditAnvilRushStarted = nil
@@ -144,10 +149,18 @@ end
 ---@diagnostic disable-next-line: unused-local
 function mod.AnvilRushStart(weaponData, _args, _triggerArgs)
 	if weaponData and weaponData.Name == 'WeaponSprint' then
-		if game.CheckCooldown('BoonEditAnvilRushTrail', mod.tuning.AnvilRush.TrailInterval) then
+		---@diagnostic disable-next-line: undefined-global
+		if game.CheckCooldown('BoonEditAnvilRushTrail', stutter_step_interval(mod.tuning.AnvilRush.TrailInterval)) then
 			anvil_rush_strike()
 		end
 		return
+	end
+
+	if game.SessionMapState.BoonEditAnvilRushStarted then
+		game.thread(function()
+			game.wait(mod.tuning.AnvilRush.ChainDelay, game.RoomThreadName)
+			anvil_rush_strike()
+		end)
 	end
 
 	anvil_rush_strike()

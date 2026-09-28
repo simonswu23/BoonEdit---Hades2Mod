@@ -2,6 +2,12 @@ local config = {
   version = 1;
   enabled = true;
 
+  AspectChanges = {
+    AspectOfSupay = {
+      Enabled = true;
+    };
+  };
+
   BoonChanges = {
     AirQuality = {
       Enabled = true;
@@ -12,6 +18,10 @@ local config = {
     };
 
     AnvilRing = {
+      Enabled = true;
+    };
+
+    ArcFlash = {
       Enabled = true;
     };
 
@@ -108,10 +118,6 @@ local config = {
     };
 
     HeavyMetal = {
-      Enabled = true;
-    };
-
-    HighSurf = {
       Enabled = true;
     };
 
@@ -220,6 +226,10 @@ local config = {
       Enabled = true;
     };
 
+    StutterStep = {
+      Enabled = true;
+    };
+
     SunWorshiper = {
       Enabled = true;
     };
@@ -228,15 +238,15 @@ local config = {
       Enabled = true;
     };
 
-    TidalRing = {
-      Enabled = true;
-    };
-
     TranquilGain = {
       Enabled = true;
     };
 
     UnseenIre = {
+      Enabled = true;
+    };
+
+    VolcanicCrown = {
       Enabled = true;
     };
 

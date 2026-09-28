@@ -20,6 +20,18 @@ sjson.hook(playerProjectiles, function(data)
 	return sjson_PlayerProjectiles(data)
 end)
 
+local enemyProjectiles = rom.path.combine(rom.paths.Content, 'Game/Projectiles/Enemy_General_Projectiles.sjson')
+sjson.hook(enemyProjectiles, function(data)
+	---@diagnostic disable-next-line: undefined-global
+	return sjson_EnemyProjectiles(data)
+end)
+
+local castVfx = rom.path.combine(rom.paths.Content, 'Game/Animations/Melinoe_Cast_VFX.sjson')
+sjson.hook(castVfx, function(data)
+	---@diagnostic disable-next-line: undefined-global
+	return sjson_CastVfx(data)
+end)
+
 local poseidonVfx = rom.path.combine(rom.paths.Content, 'Game/Animations/Melinoe_Poseidon_VFX.sjson')
 sjson.hook(poseidonVfx, function(data)
 	---@diagnostic disable-next-line: undefined-global

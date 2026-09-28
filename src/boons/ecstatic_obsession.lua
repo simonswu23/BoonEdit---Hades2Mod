@@ -57,6 +57,15 @@ once('EcstaticObsession', function()
 	}, 'Weak')
 
 	game.EffectData.WeakEffect.OnApplyFunctionName = _PLUGIN.guid .. '.EcstaticObsessionWeak'
+
+	modutil.mod.Path.Wrap('CharmClear', function(base, triggerArgs)
+		local victim = triggerArgs and triggerArgs.Victim
+		if victim then
+			---@diagnostic disable-next-line: undefined-global
+			game.RemoveOutgoingDamageModifier(victim, CHARM_MODIFIER_NAME)
+		end
+		return base(triggerArgs)
+	end)
 end)
 
 
@@ -87,23 +96,63 @@ local function obsession_charm_ready(unit)
 
 	if not obsession_guardian(unit) then return true end
 
-	return game.CheckCooldown('BoonEditObsessionCharm' .. tostring(unit.ObjectId),
-		mod.tuning.EcstaticObsession.GuardianCharmCooldown)
+	local tuning = mod.tuning.EcstaticObsession
+	return game.CheckCooldownNoTrigger('BoonEditObsessionCharm' .. tostring(unit.ObjectId),
+		tuning.CharmDuration + tuning.GuardianCharmCooldown, true)
+end
+
+
+CHARM_MODIFIER_NAME = 'BoonEditObsessionCharmed'
+
+
+local function obsession_break_pattern(unit)
+	local weaponData = unit.WeaponName and game.WeaponData[unit.WeaponName]
+	if weaponData and weaponData.BlockInterrupt then return false end
+
+	unit.ForcedWeaponInterrupt = unit.WeaponName or true
+
+	if unit.PreAttackLoopingSoundId then
+		game.StopSound({ Id = unit.PreAttackLoopingSoundId, Duration = 0.2 })
+		unit.PreAttackLoopingSoundId = nil
+	end
+
+	return true
 end
 
 
 local function obsession_charm(unit)
+	local tuning = mod.tuning.EcstaticObsession
+
 	game.ApplyEffect({
 		Id = game.CurrentRun.Hero.ObjectId,
 		DestinationId = unit.ObjectId,
 		EffectName = 'Charm',
 		DataProperties = {
 			Type = 'CHARM',
-			Duration = mod.tuning.EcstaticObsession.CharmDuration,
+			Duration = tuning.CharmDuration,
 			Active = true,
 			TimeModifierFraction = 0,
 		},
 	})
+
+	local multiplier = tuning.CharmedDamageMultiplier
+	local friendly = tuning.CharmedFriendlyFireMultiplier
+
+	if (multiplier and multiplier > 1) or friendly then
+		game.RemoveOutgoingDamageModifier(unit, CHARM_MODIFIER_NAME)
+		game.AddOutgoingDamageModifier(unit, {
+			Name = CHARM_MODIFIER_NAME,
+			NonPlayerMultiplier = (multiplier and multiplier > 1) and multiplier or nil,
+			FriendMultiplier = friendly,
+		})
+	end
+
+	obsession_break_pattern(unit)
+
+	if obsession_guardian(unit) then
+		game.CheckCooldown('BoonEditObsessionCharm' .. tostring(unit.ObjectId),
+			tuning.CharmDuration + tuning.GuardianCharmCooldown, true)
+	end
 end
 
 
@@ -159,8 +208,9 @@ end
 function mod.EcstaticObsession(hero, args)
 	local interval = (args and args.Interval) or 0.3
 
-	while game.CurrentRun and game.CurrentRun.CurrentRoom and game.CurrentRun.Hero
-		and not game.CurrentRun.Hero.IsDead and game.HeroHasTrait(OBSESSION_TRAIT) do
+	---@diagnostic disable-next-line: undefined-global
+	while game.CurrentRun and game.CurrentRun.CurrentRoom and hero_live()
+		and game.HeroHasTrait(OBSESSION_TRAIT) do
 
 		local friendly = 0
 		if config.BoonChanges.EcstaticObsession.Enabled then

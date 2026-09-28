@@ -26,8 +26,6 @@ once('ScaldingVapor', function()
 		steam.OnEnemyDamagedAction.Args.ValidEffect = nil
 	end
 
-	local keepingFroth = false
-
 	modutil.mod.Path.Wrap("CheckSteam", function(base, victim, functionArgs, triggerArgs)
 		if not config.BoonChanges.ScaldingVapor.Enabled then
 			return base(victim, functionArgs, triggerArgs)
@@ -38,19 +36,44 @@ once('ScaldingVapor', function()
 		end
 		scalding_vapor_log('firing', victim, triggerArgs)
 
-		keepingFroth = true
-		local ok, err = pcall(base, victim, functionArgs, triggerArgs)
-		keepingFroth = false
-		if not ok then error(err) end
-	end)
-
-	modutil.mod.Path.Wrap("ClearEffect", function(base, args)
-		if keepingFroth and args and args.Name == FROTH then
-			return
-		end
-		return base(args)
+		scalding_vapor_stack(victim)
 	end)
 end)
+
+
+function scalding_vapor_stack(victim)
+	if not victim or not victim.ObjectId or not victim.ActiveEffects then return end
+	if not victim.ActiveEffects[FROTH] then return end
+
+	local hero = game.CurrentRun and game.CurrentRun.Hero
+	if not hero then return end
+
+	local clouds = {}
+	for _, id in ipairs(victim.BoonEditSteamIds or {}) do
+		if game.ProjectileExists({ Id = id }) then
+			table.insert(clouds, id)
+		end
+	end
+
+	if #clouds >= mod.tuning.ScaldingVapor.MaxClouds then
+		local oldest = table.remove(clouds, 1)
+		game.RefreshProjectile({ Id = oldest })
+		table.insert(clouds, oldest)
+	else
+		local id = game.CreateProjectileFromUnit({
+			Name = 'SteamBlast',
+			Id = hero.ObjectId,
+			DestinationId = victim.ObjectId,
+		})
+		if id then
+			game.AttachProjectiles({ Ids = { id }, DestinationId = victim.ObjectId })
+			table.insert(clouds, id)
+		end
+	end
+
+	victim.BoonEditSteamIds = clouds
+	victim.ActiveSteamId = clouds[#clouds]
+end
 
 
 function scalding_vapor_fireball(triggerArgs)

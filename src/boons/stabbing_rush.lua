@@ -28,6 +28,6 @@ end
 
 function stabbing_rush_sprinting()
 	if not game.SessionMapState or not game.SessionMapState.SprintActive then return false end
-	local hero = game.CurrentRun and game.CurrentRun.Hero
-	return hero ~= nil and not hero.IsDead and game.CurrentRun.CurrentRoom ~= nil
+	---@diagnostic disable-next-line: undefined-global
+	return hero_live() and game.CurrentRun.CurrentRoom ~= nil
 end

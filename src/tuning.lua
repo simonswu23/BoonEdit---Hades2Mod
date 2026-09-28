@@ -4,6 +4,19 @@
 
 mod.tuning = {}
 
+mod.tuning.AspectOfSupay = {
+	SprintDamageBonus = 0.15,
+
+	RarityMultipliers = {
+		Common = 1,
+		Rare = 2,
+		Epic = 3,
+		Heroic = 4,
+		Legendary = 5,
+		Perfect = 6.5,
+	},
+}
+
 mod.tuning.ReaperKnives = {
 	HitVulnerabilityMultiplier = 1.5,
 	ReturnDelay = 0.138,
@@ -32,9 +45,7 @@ mod.tuning.WhirlingHelix = {
 }
 
 mod.tuning.CarnalPleasure = {
-	HeartthrobChance = 0.35,
-
-	HealPerPlasma = 1,
+	HeartthrobChance = 1.0,
 }
 
 mod.tuning.FestiveFog = {
@@ -69,6 +80,9 @@ mod.tuning.EcstaticObsession = {
 	CharmDuration = 5,
 	InterruptCooldown = 5,
 
+	CharmedDamageMultiplier = 10,
+	CharmedFriendlyFireMultiplier = 0,
+
 	GuardianCharmCooldown = 5,
 	DamagePerFriendly = 0.10,
 	MaxDamageBonus = 0.50,
@@ -79,8 +93,8 @@ mod.tuning.EcstaticObsession = {
 }
 
 mod.tuning.MeatGrinder = {
-	PlasmaChance = 0.10,
-	PlasmaCooldown = 0.5,
+	PlasmaChance = 0.20,
+	PlasmaCooldown = 0.25,
 }
 
 mod.tuning.ProfuseBleeding = {
@@ -169,6 +183,11 @@ mod.tuning.AnvilRush = {
 	GlowPerStack = 0.05,
 	GlowMax = 1.35,
 	TrailInterval = 0.5,
+
+	ChainDelay = 0.15,
+
+	ImpactFx = 'SWuSmithyRushCircle',
+	ImpactRadius = 260,
 }
 
 mod.tuning.CryoPounder = {
@@ -225,6 +244,7 @@ mod.tuning.CherishedHeirloom = {
 	ExtraKeepsakeInMenuOnly = true,
 	KeepAllKeepsakes = false,
 	RefreshHeldKeepsake = true,
+	CarryUses = true,
 }
 
 mod.tuning.SecondWind = {
@@ -244,9 +264,24 @@ mod.tuning.CardioGain = {
 	SprintManaGain = 0.75,
 }
 
+mod.tuning.VolcanicCrown = {
+	FireballDamage = { Common = 100, Rare = 125, Epic = 150, Heroic = 175 },
+	PomDamage = { 25, 20, 15 },
+
+	Fireballs = 5,
+	Bounces = 2,
+
+	FireDamage = 6,
+	FireDuration = 5,
+
+	FireballProjectile = 'SWuVolcanicCrownFireball',
+	FireProjectile = 'SWuVolcanicCrownFire',
+}
+
 mod.tuning.Fireballs = {
 	Projectiles = {
-		'ProjectileCastFireball', 'ProjectileFireball', 'SWuHestiaFireball', 'SWuVolcanicFireball',
+		'ProjectileCastFireball', 'ProjectileFireball', 'SWuHestiaFireball',
+		mod.tuning.VolcanicCrown.FireballProjectile,
 	},
 
 	Traits = { 'FireballRendBoon', 'SteamBoon' },
@@ -263,19 +298,24 @@ mod.tuning.PoseidonSplash = {
 	WaveDelay = 0.1,
 }
 
-mod.tuning.TidalRing = {
-	Radius = 430,
-}
-
 mod.tuning.TidalRush = {
-	WaveDamage = { Common = 50, Rare = 55, Epic = 60, Heroic = 65 },
+	WaveDamage = { Common = 20, Rare = 25, Epic = 30, Heroic = 35 },
 
 	PomDamage = { First = 20, Rest = 10 },
 
 	TrailInterval = 0.5,
 
-	Radius = 400,
-	Knockback = 2000,
+	Knockback = 900,
+
+	WaveProjectile = 'PoseidonSplashSplinter',
+
+	ChainDelay = 0.15,
+
+	ImpactFx = 'SWuBreakerRushCircle',
+	ImpactRadius = 260,
+	RingScale = 1.0,
+	ImpactPulses = 2,
+	ImpactPulseDelay = 0.12,
 }
 
 mod.tuning.BurningDesire = {
@@ -283,8 +323,18 @@ mod.tuning.BurningDesire = {
 	ScorchCap = 9999,
 }
 
+mod.tuning.ScaldingVapor = {
+	MaxClouds = 5,
+}
+
+mod.tuning.StutterStep = {
+	RushInterval = 0.8,
+}
+
 mod.tuning.PassionRush = {
 	TrailInterval = 0.2,
+
+	ChainDelay = 0.15,
 }
 
 mod.tuning.ArterialSpray = {
@@ -303,6 +353,9 @@ mod.tuning.RippleEffect = {
 }
 
 mod.tuning.ShockingLoss = {
+	HitChance = 0.01,
+	FirstHitMultiplier = 25,
+
 	GuardianDamage = 9999,
 }
 
@@ -314,18 +367,25 @@ mod.tuning.KillerCurrent = {
 }
 
 mod.tuning.ThermalDynamics = {
-	ScorchFraction = 0.30,
+	ScorchFraction = 1.00,
 }
 
 mod.tuning.HarmForTheAfflicted = {
 	Interval = 0.3,
 }
 
-mod.tuning.ConcaveStone = {}
+mod.tuning.ConcaveStone = {
+	Rewards = {
+		'StackUpgrade', 'StackUpgradeBig', 'StackUpgradeTriple', 'WeaponUpgrade',
+		'MaxHealthDrop', 'MaxHealthDropBig', 'MaxManaDrop', 'MaxManaDropBig', 'TalentDrop', 'TalentBigDrop',
+	},
+}
 
 mod.tuning.CallingCard = {}
 
-mod.tuning.WhiteAntler = {}
+mod.tuning.WhiteAntler = {
+	HeirloomOnly = true,
+}
 
 mod.tuning.AromaticPhial = {
 	Blessings = 1,
