@@ -22,26 +22,44 @@ function tranquil_gain_channelling()
 end
 
 
+local function tranquil_gain_staged(hero, weaponName)
+	if (game.MapState.WeaponCharge or {})[weaponName] ~= nil then return true end
+
+	local data = game.GetWeaponData(hero, weaponName)
+	for _, functionName in ipairs((data or {}).OnChargeFunctionNames or {}) do
+		if functionName == 'DoWeaponCharge' then return true end
+	end
+	return false
+end
+
+
+local function tranquil_gain_scale(hero, weaponName)
+	local multiplier = game.GetLuaWeaponSpeedMultiplier(weaponName) or 1
+	if tranquil_gain_staged(hero, weaponName) then return multiplier end
+
+	local current = game.GetWeaponDataValue({ Id = hero.ObjectId, WeaponName = weaponName, Property = 'ChargeTime' })
+	local baseCharge = game.GetBaseDataValue({ Type = 'Weapon', Name = weaponName, Property = 'ChargeTime' })
+	if not current or not baseCharge or baseCharge <= 0 then return nil end
+
+	multiplier = multiplier * (current / baseCharge)
+	for _, value in pairs((game.SessionMapState or {}).GlobalAttackSpecialSpeed or {}) do
+		multiplier = multiplier * value
+	end
+	return multiplier
+end
+
+
 local function tranquil_gain_hold(base)
 	local hero = game.CurrentRun and game.CurrentRun.Hero
 	if not hero or base <= 0 then return base end
 
 	local fastest = nil
 	for weaponName in pairs(game.MapState.ChargedManaWeapons or {}) do
-		local current = game.GetWeaponDataValue({ Id = hero.ObjectId, WeaponName = weaponName, Property = 'ChargeTime' })
-		local baseCharge = game.GetBaseDataValue({ Type = 'Weapon', Name = weaponName, Property = 'ChargeTime' })
-
-		if current and baseCharge and baseCharge > 0 then
-			local ratio = (current / baseCharge) * (game.GetLuaWeaponSpeedMultiplier(weaponName) or 1)
-			if not fastest or ratio < fastest then fastest = ratio end
-		end
+		local scale = tranquil_gain_scale(hero, weaponName)
+		if scale and (not fastest or scale < fastest) then fastest = scale end
 	end
 
 	if not fastest then return base end
-
-	for _, value in pairs((game.SessionMapState or {}).GlobalAttackSpecialSpeed or {}) do
-		fastest = fastest * value
-	end
 
 	return base * fastest
 end
