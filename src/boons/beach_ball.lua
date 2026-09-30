@@ -20,6 +20,15 @@ once('BeachBallCone', function()
 		ValidProjectilesLookup = game.ToLookup({ 'ProjectileSprintBall' }),
 		Args = {},
 	}
+
+	local slope = game.TraitData.PoseidonStatusBoon
+	local froth = slope and slope.OnEnemyDamagedAction
+	if froth and froth.ValidProjectiles and not game.Contains(froth.ValidProjectiles, 'ProjectileSprintBall') then
+		table.insert(froth.ValidProjectiles, 'ProjectileSprintBall')
+		if froth.ValidProjectilesLookup then
+			froth.ValidProjectilesLookup.ProjectileSprintBall = true
+		end
+	end
 end)
 
 

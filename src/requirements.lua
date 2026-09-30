@@ -2,6 +2,26 @@
 ---@diagnostic disable: lowercase-global
 
 
+function boon_edit_on(name)
+	if config.enabled == false then return false end
+	local change = config.BoonChanges[name]
+	return change ~= nil and change.Enabled == true
+end
+
+
+function boon_edit_when(when)
+	if when == nil then return true end
+	if type(when) == 'function' then return when() == true end
+
+	for _, name in ipairs(when) do
+		local negated = string.sub(name, 1, 1) == '!'
+		local on = boon_edit_on(negated and string.sub(name, 2) or name)
+		if on == negated then return false end
+	end
+	return true
+end
+
+
 function boon_list_set(list, traitName, wanted)
 	if not list then return end
 
@@ -21,22 +41,309 @@ function boon_list_set(list, traitName, wanted)
 end
 
 
-function boon_group_set(groupName, traitName, wanted)
-	boon_list_set(game.LinkedTraitData[groupName], traitName, wanted)
+local function Group(name) return { SWuGroup = name } end
+local function If(traitName, when) return { SWuTrait = traitName, When = when } end
+
+
+BOON_EDIT_ROLES = {
+	{
+		Name = 'SWuFireballTraits',
+		Base = { 'CastProjectileBoon', 'FireballManaSpecialBoon' },
+		Add = { If('AloneDamageBoon', { 'VolcanicCrown' }) },
+	},
+	{
+		Name = 'SWuGlowTraits',
+		Base = { 'MassiveKnockupBoon' },
+		Add = {
+			If('HephaestusCastBoon', { 'AnvilRing' }),
+			If('HephaestusSprintBoon', { 'AnvilRing', 'SmithyRush' }),
+		},
+	},
+	{
+		Name = 'SWuSplashBonusTraits',
+		Base = { 'PoseidonWeaponBoon', 'PoseidonSpecialBoon' },
+		Add = {
+			If('PoseidonSprintBoon', { 'BreakerRush' }),
+			If('PoseidonSplashSprintBoon', { 'BeachBall' }),
+		},
+	},
+	{
+		Name = 'SWuHammerTraits',
+		Base = { 'HephaestusCastBoon' },
+		Add = { If('HephaestusSprintBoon', { 'SmithyRush' }) },
+	},
+	{
+		Name = 'AresBloodDropTraits',
+		Add = {
+			If('AresExCastBoon', { 'MeatGrinder' }),
+			If('RendBloodDropBoon', { 'ProfuseBleeding' }),
+		},
+	},
+	{
+		Name = 'AresSwordTraits',
+		Remove = { If('RendBloodDropBoon', { 'ProfuseBleeding' }) },
+	},
+	{
+		Name = 'PoseidonSplashTraits',
+		Add = { If('PoseidonSprintBoon', { 'BreakerRush' }) },
+	},
+	{
+		Name = 'HeraLinkTraits',
+		Add = { If('SpawnCastDamageBoon', { 'RousingReception' }) },
+	},
+	{
+		Name = 'HephaestusMassiveTraits',
+		Remove = { If('HephaestusSprintBoon', { 'SmithyRush' }) },
+	},
+}
+
+
+local DUO_REQUIREMENTS = { 'DuoRequirements' }
+
+BOON_EDIT_REQUIREMENTS = {
+	{ Trait = 'SpawnCastDamageBoon', When = { 'RousingReception' }, Set = { OneOf = { 'HeraCastBoon' } } },
+
+	{ Trait = 'PoseidonSplashSprintBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'ApolloSprintBoon', 'PoseidonSprintBoon' },
+		{ 'PoseidonWeaponBoon', 'PoseidonSpecialBoon', If('PoseidonSprintBoon', { 'BreakerRush' }) },
+		{ 'ApolloWeaponBoon', 'ApolloSpecialBoon', 'ApolloSprintBoon' },
+	} } },
+	{ Trait = 'ManaShieldBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'DamageShareRetaliateBoon', 'BoonDecayBoon', 'CommonGlobalDamageBoon' },
+		{ 'ArmorBoon', 'HeavyArmorBoon', 'EncounterStartDefenseBuffBoon', 'ManaToHealthBoon' },
+	} } },
+	{ Trait = 'KeepsakeLevelBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'ReserveManaHitShieldBoon', 'PlantHealthBoon', 'BoonGrowthBoon' },
+		{ 'CommonGlobalDamageBoon', 'BoonDecayBoon', 'DamageShareRetaliateBoon' },
+	} } },
+	{ Trait = 'ClearRootBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		Group('HephaestusCoreTraits'),
+		{ 'DemeterWeaponBoon', 'DemeterSpecialBoon', 'DemeterCastBoon' },
+	} } },
+	{ Trait = 'FireballRendBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'AresWeaponBoon', 'AresSpecialBoon' },
+		Group('SWuFireballTraits'),
+	} } },
+	{ Trait = 'MaxHealthDamageBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'AphroditeWeaponBoon', 'AphroditeSpecialBoon', 'DemeterWeaponBoon', 'DemeterSpecialBoon' },
+		{ 'HealthRewardBonusBoon', 'FocusRawDamageBoon', 'HighHealthOffenseBoon' },
+		{ 'PlantHealthBoon', 'ReserveManaHitShieldBoon', 'BoonGrowthBoon' },
+	} } },
+	{ Trait = 'SelfCastBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'AresExCastBoon', 'AresCastBoon' },
+		{ 'CastNovaBoon', 'DemeterCastBoon' },
+	} } },
+	{ Trait = 'AllCloseBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		Group('PoseidonCoreTraits'),
+		{ 'AphroditeWeaponBoon', 'AphroditeSpecialBoon', 'AphroditeManaBoon' },
+	} } },
+	{ Trait = 'LightningVulnerabilityBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		Group('PoseidonKnockbackAmplifyTraits'),
+		{ 'ZeusWeaponBoon', 'ZeusSpecialBoon' },
+	} } },
+	{ Trait = 'GoodStuffBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'RoomRewardBonusBoon', 'DoubleRewardBoon' },
+		{ 'PlantHealthBoon', 'BoonGrowthBoon', 'ReserveManaHitShieldBoon' },
+	} } },
+	{ Trait = 'RaiseDeadBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		Group('HeraCoreTraits'),
+		Group('ApolloCoreTraits'),
+	} } },
+	{ Trait = 'CoverRegenerationBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'ApolloCastBoon', 'ApolloSprintBoon', 'ApolloRetaliateBoon', 'BlindChanceBoon' },
+		{ 'BurnArmorBoon', 'BurnExplodeBoon', If('AloneDamageBoon', { 'VolcanicCrown' }) },
+	} } },
+	{ Trait = 'AllElementalBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'HeraWeaponBoon', 'HeraSpecialBoon', 'HeraCastBoon', 'HeraSprintBoon' },
+		{ 'BoonDecayBoon', 'CommonGlobalDamageBoon', 'DamageShareRetaliateBoon' },
+		{ 'DamageSharePotencyBoon', 'LinkedDeathDamageBoon', 'SpawnCastDamageBoon' },
+	} } },
+	{ Trait = 'CharmCrowdBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		Group('HeraCoreTraits'),
+		{ 'AphroditeManaBoon', 'AphroditeSprintBoon', 'AphroditeCastBoon' },
+	} } },
+	{ Trait = 'RandomStatusBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'AphroditeWeaponBoon', 'AphroditeSpecialBoon' },
+		{ 'AphroditeManaBoon', 'AphroditeSprintBoon', 'AphroditeCastBoon' },
+		{ 'WeakVulnerabilityBoon', 'WeakPotencyBoon' },
+	} } },
+	{ Trait = 'DoubleBloodDropBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
+		{ 'AresWeaponBoon', 'AresSpecialBoon' },
+		Group('AresBloodDropTraits'),
+		{ 'LowHealthLifestealBoon', 'AresStatusDoubleDamageBoon', 'MissingHealthCritBoon' },
+	} } },
+
+	{ Trait = 'BloodManaBurstBoon', When = { 'CarnalPleasure' }, Set = { OneFromEachSet = {
+		Group('AresBloodDropTraits'),
+		{ 'ManaBurstBoon' },
+	} } },
+	{ Trait = 'SlamManaBurstBoon', When = { 'SmolderingForge' }, Set = { OneFromEachSet = {
+		Group('AphroditeCoreTraits'),
+		Group('SWuGlowTraits'),
+	} } },
+	{ Trait = 'ClearRootBoon', When = { 'CryoPounder' }, Set = { OneFromEachSet = {
+		Group('SWuGlowTraits'),
+		Group('DemeterRootTraits'),
+	} } },
+	{ Trait = 'BlindChanceBoon', When = { 'DazzlingDisplay' }, Set = {
+		PriorityChance = 0.25,
+		OneOf = { 'ApolloWeaponBoon', 'ApolloSpecialBoon' },
+	} },
+	{ Trait = 'ApolloSecondStageCastBoon', When = { 'GloriousDisaster' }, Set = { OneFromEachSet = {
+		{ 'ApolloExCastBoon' },
+		{ 'ZeusWeaponBoon', 'ZeusSpecialBoon', 'ZeusCastBoon', 'ZeusSprintBoon', 'ZeusManaBoon' },
+	} } },
+	{ Trait = 'SteamBoon', When = { 'ScaldingVapor' }, Set = { OneFromEachSet = {
+		Group('PoseidonKnockbackAmplifyTraits'),
+		Group('SWuFireballTraits'),
+	} } },
+	{ Trait = 'MassiveCastBoon', When = { 'SeismicHammer' }, Set = { OneFromEachSet = {
+		{ 'HephaestusWeaponBoon', 'HephaestusSpecialBoon' },
+		{ 'PoseidonExCastBoon' },
+	} } },
+	{ Trait = 'SlowProjectileBoon', When = { 'PostHaste' }, Set = { OneOf = {
+		'TimedCritVulnerabilityBoon', 'RetaliateInvulnerabilityBoon', 'AthenaProjectileBoon', 'PowerDrinkBoon',
+		'FogDamageBonusBoon', 'HephaestusWeaponBoon', 'HephaestusSpecialBoon', 'PoseidonManaBoon',
+		'ZeusManaBoon', 'AutoRevengeBoon', 'HadesInvisibilityRetaliateBoon',
+	} } },
+	{ Trait = 'BurnSprintBoon', When = { 'BurningMeteor' }, Set = { OneFromEachSet = {
+		{ 'HestiaWeaponBoon', 'HestiaSpecialBoon', 'HestiaCastBoon' },
+		Group('SWuFireballTraits'),
+		{ 'BurnExplodeBoon', 'BurnArmorBoon', If('AloneDamageBoon', { '!VolcanicCrown' }) },
+	} } },
+
+	{ Trait = 'AmplifyConeBoon', When = { 'BreakerRush' }, Set = { OneFromEachSet = {
+		{ 'PoseidonWeaponBoon', 'PoseidonSpecialBoon', 'PoseidonSprintBoon' },
+		{ 'PoseidonStatusBoon', 'PoseidonCastBoon' },
+		{ 'PoseidonExCastBoon', 'FocusDamageShaveBoon', 'OmegaPoseidonProjectileBoon' },
+	} } },
+
+	{ Trait = 'RendBloodDropBoon', When = { 'ProfuseBleeding' }, Set = { OneOf = Group('AresRendTraits') } },
+	{ Trait = 'RendBloodDropBoon', When = { '!ProfuseBleeding' }, Set = function()
+		return { OneOf = game.CombineTables(game.LinkedTraitData.AresRendTraits, game.LinkedTraitData.AresBloodDropTraits) }
+	end },
+
+	{ Trait = 'LuckyBoon', Patch = function(requirement) boon_edit_success_rate(requirement.OneOf) end },
+
+	{ Trait = 'TimeStopLastStandBoon', When = { 'SecondWind' }, Patch = function(requirement)
+		requirement.PriorityChance = mod.tuning.SecondWind.KeepsakeOfferChance
+	end },
+}
+
+for _, traitName in ipairs({ 'MassiveDamageBoon', 'MassiveKnockupBoon', 'DoubleMassiveAttackBoon', 'BlindClearBoon', 'ClearRootBoon' }) do
+	table.insert(BOON_EDIT_REQUIREMENTS, {
+		Trait = traitName,
+		When = traitName == 'ClearRootBoon' and { 'SmithyRush', '!CryoPounder' } or { 'SmithyRush' },
+		Patch = function(requirement) boon_edit_without(requirement, 'HephaestusSprintBoon') end,
+	})
 end
 
 
-local BOON_EDIT_GROUPS = {
-	'AresSwordTraits', 'AresBloodDropTraits', 'PoseidonSplashTraits', 'HeraLinkTraits',
-	'HephaestusMassiveTraits',
+local function rolls(name, chance)
+	return function()
+		local value = chance()
+		return boon_edit_on(name) and type(value) == 'number' and value > 0 and value < 1
+	end
+end
+
+local function uncertain(name, chance)
+	return function() return not boon_edit_on(name) or chance() < 1 end
+end
+
+BOON_EDIT_SUCCESS_RATE = {
+	{ 'DoubleMassiveAttackBoon', rolls('ChainReaction', function() return mod.tuning.ChainReaction.SkipChance end) },
+	{ 'AresExCastBoon', rolls('MeatGrinder', function() return mod.tuning.MeatGrinder.PlasmaChance end) },
+	{ 'RendBloodDropBoon', rolls('ProfuseBleeding', function() return mod.tuning.ProfuseBleeding.SpillChance end) },
+	{ 'LowHealthLifestealBoon', rolls('BloodSpree', function() return mod.tuning.BloodSpree.KillHealChance end) },
+	{ 'LightningVulnerabilityBoon', rolls('KillerCurrent', function() return mod.tuning.KillerCurrent.BoltChance end) },
+	{ 'RandomStatusBoon', rolls('EcstaticObsession', function() return mod.tuning.EcstaticObsession.CharmChance end) },
+	{ 'SlamManaBurstBoon', rolls('SmolderingForge', function() return mod.tuning.SmolderingForge.HeartthrobChance end) },
+	{ 'RaiseDeadBoon', rolls('SunWorshiper', function() return mod.tuning.SunWorshiper.RepeatChance end) },
+	{ 'DoubleSplashBoon', function() return not boon_edit_on('ArterialSpray') end },
+	{ 'BlindChanceBoon', uncertain('DazzlingDisplay', function() return mod.tuning.DazzlingDisplay.Chance end) },
+	{ 'BloodManaBurstBoon', function()
+		local chance = mod.tuning.CarnalPleasure.PickupHeartthrobChance
+		return not boon_edit_on('CarnalPleasure') or (type(chance) == 'number' and chance > 0 and chance < 1)
+	end },
 }
 
-once('BoonEditGroupShapes', function()
-	mod.BoonEditGroupShapes = {}
-	for _, groupName in ipairs(BOON_EDIT_GROUPS) do
-		mod.BoonEditGroupShapes[groupName] = game.ShallowCopyTable(game.LinkedTraitData[groupName] or {})
+function boon_edit_success_rate(list)
+	for _, entry in ipairs(BOON_EDIT_SUCCESS_RATE) do
+		boon_list_set(list, entry[1], entry[2]())
 	end
-end)
+end
+
+
+BOON_EDIT_BROAD_RULES = {
+	{ When = { 'VolcanicCrown' }, Any = { 'CastProjectileBoon', 'FireballManaSpecialBoon' }, Add = 'AloneDamageBoon' },
+}
+
+
+BOON_EDIT_INFECTION = {
+	DelayedKnockbackEffect = Group('SWuGlowTraits'),
+	DamageShareEffect = { If('SpawnCastDamageBoon', { 'RousingReception' }) },
+}
+
+
+local function group_names()
+	local names = {}
+	for name, group in pairs(game.LinkedTraitData) do
+		if type(group) == 'table' then names[group] = name end
+	end
+	return names
+end
+
+
+function boon_edit_resolve(value)
+	if type(value) ~= 'table' then return value end
+
+	if value.SWuGroup then
+		game.LinkedTraitData[value.SWuGroup] = game.LinkedTraitData[value.SWuGroup] or {}
+		return game.LinkedTraitData[value.SWuGroup]
+	end
+
+	local out = {}
+	for _, item in ipairs(value) do
+		if type(item) == 'table' and item.SWuTrait then
+			if boon_edit_when(item.When) then table.insert(out, item.SWuTrait) end
+		else
+			table.insert(out, boon_edit_resolve(item))
+		end
+	end
+	for key, item in pairs(value) do
+		if type(key) ~= 'number' then out[key] = boon_edit_resolve(item) end
+	end
+	return out
+end
+
+
+local function capture(value, names)
+	if type(value) ~= 'table' then return value end
+	if names[value] then return Group(names[value]) end
+
+	local out = {}
+	for key, item in pairs(value) do out[key] = capture(item, names) end
+	return out
+end
+
+
+local function explicit_lists(requirement, names)
+	local lists = {}
+	if type(requirement.OneOf) == 'table' and not names[requirement.OneOf] then
+		table.insert(lists, requirement.OneOf)
+	end
+	for _, set in ipairs(requirement.OneFromEachSet or {}) do
+		if type(set) == 'table' and not names[set] then table.insert(lists, set) end
+	end
+	return lists
+end
+
+
+function boon_edit_without(requirement, traitName)
+	for _, list in ipairs(explicit_lists(requirement, group_names())) do
+		boon_list_set(list, traitName, false)
+	end
+end
 
 
 local function same_members(a, b)
@@ -50,30 +357,134 @@ local function same_members(a, b)
 end
 
 
-local function boon_edit_live_group(set, groups)
-	if groups[set] then return set end
-
-	for groupName, shape in pairs(mod.BoonEditGroupShapes or {}) do
-		local live = game.LinkedTraitData[groupName]
-		if live and (same_members(set, shape) or same_members(set, live)) then return live end
+local function relink(names)
+	local function live(set)
+		if type(set) ~= 'table' or names[set] then return set end
+		for _, role in ipairs(BOON_EDIT_ROLES) do
+			local base = mod.BoonEditGroupBase[role.Name]
+			local group = game.LinkedTraitData[role.Name]
+			if not role.Base and base and group and (same_members(set, base) or same_members(set, group)) then
+				return group
+			end
+		end
+		return set
 	end
-	return set
+
+	for traitName, requirement in pairs(game.TraitRequirements) do
+		if type(requirement) == 'table' and not string.find(traitName, '-', 1, true) then
+			requirement.OneOf = live(requirement.OneOf)
+			for i, set in ipairs(requirement.OneFromEachSet or {}) do
+				requirement.OneFromEachSet[i] = live(set)
+			end
+		end
+	end
 end
 
 
-function boon_edit_relink_groups()
-	local groups = {}
-	for _, group in pairs(game.LinkedTraitData) do
-		if type(group) == 'table' then groups[group] = true end
-	end
+local function rebuild_roles()
+	mod.BoonEditGroupBase = mod.BoonEditGroupBase or {}
 
-	for _, requirement in pairs(game.TraitRequirements) do
-		if type(requirement) == 'table' then
-			if type(requirement.OneOf) == 'table' then
-				requirement.OneOf = boon_edit_live_group(requirement.OneOf, groups)
+	for _, role in ipairs(BOON_EDIT_ROLES) do
+		local base = mod.BoonEditGroupBase[role.Name]
+		if not base then
+			base = game.ShallowCopyTable(role.Base or game.LinkedTraitData[role.Name] or {})
+			mod.BoonEditGroupBase[role.Name] = base
+		end
+
+		game.LinkedTraitData[role.Name] = game.LinkedTraitData[role.Name] or {}
+		local group = game.LinkedTraitData[role.Name]
+		for i = #group, 1, -1 do group[i] = nil end
+		for _, name in ipairs(base) do table.insert(group, name) end
+
+		for _, member in ipairs(role.Remove or {}) do
+			if boon_edit_when(member.When) then boon_list_set(group, member.SWuTrait, false) end
+		end
+		for _, member in ipairs(role.Add or {}) do
+			if boon_edit_when(member.When) then boon_list_set(group, member.SWuTrait, true) end
+		end
+	end
+end
+
+
+local function remember(traitName, names)
+	mod.BoonEditRequirementBase = mod.BoonEditRequirementBase or {}
+	local base = mod.BoonEditRequirementBase
+	if base[traitName] == nil then
+		local current = game.TraitRequirements[traitName]
+		base[traitName] = current and capture(current, names) or false
+	end
+	mod.BoonEditTouched[traitName] = true
+end
+
+
+local function restore()
+	mod.BoonEditTouched = mod.BoonEditTouched or {}
+	for traitName in pairs(mod.BoonEditTouched) do
+		local base = mod.BoonEditRequirementBase[traitName]
+		game.TraitRequirements[traitName] = base and boon_edit_resolve(base) or nil
+	end
+	mod.BoonEditTouched = {}
+end
+
+
+local function rebuild_infection()
+	local infection = game.TraitData.PolymorphCurseTalent
+	local args = infection and infection.SetupFunction and infection.SetupFunction.Args
+	local curses = args and args.StatusTraitNames
+	if not curses then return end
+
+	mod.BoonEditInfectionBase = mod.BoonEditInfectionBase or {}
+	for effectName, extra in pairs(BOON_EDIT_INFECTION) do
+		local list = curses[effectName]
+		if list then
+			local base = mod.BoonEditInfectionBase[effectName]
+			if not base then
+				base = game.ShallowCopyTable(list)
+				mod.BoonEditInfectionBase[effectName] = base
 			end
-			for i, set in ipairs(requirement.OneFromEachSet or {}) do
-				requirement.OneFromEachSet[i] = boon_edit_live_group(set, groups)
+
+			for i = #list, 1, -1 do list[i] = nil end
+			for _, name in ipairs(base) do table.insert(list, name) end
+			if config.enabled ~= false then
+				for _, name in ipairs(boon_edit_resolve(extra)) do boon_list_set(list, name, true) end
+			end
+		end
+	end
+end
+
+
+local function apply_rules(names)
+	for _, rule in ipairs(BOON_EDIT_REQUIREMENTS) do
+		if boon_edit_when(rule.When) then
+			remember(rule.Trait, names)
+			if rule.Set then
+				local set = type(rule.Set) == 'function' and rule.Set() or rule.Set
+				game.TraitRequirements[rule.Trait] = boon_edit_resolve(set)
+			end
+			local requirement = game.TraitRequirements[rule.Trait]
+			if rule.Patch and requirement then rule.Patch(requirement) end
+		end
+	end
+end
+
+
+local function apply_broad_rules(names)
+	for _, rule in ipairs(BOON_EDIT_BROAD_RULES) do
+		if boon_edit_when(rule.When) then
+			for traitName, requirement in pairs(game.TraitRequirements) do
+				if type(requirement) == 'table' and not string.find(traitName, '-', 1, true) then
+					for _, list in ipairs(explicit_lists(requirement, names)) do
+						local members = game.ToLookup(list)
+						local match = rule.All ~= nil
+						for _, name in ipairs(rule.Any or {}) do match = match or members[name] == true end
+						for _, name in ipairs(rule.All or {}) do match = match and members[name] == true end
+
+						if match and not members[rule.Add] then
+							remember(traitName, names)
+							table.insert(list, rule.Add)
+						end
+					end
+				end
 			end
 		end
 	end
@@ -81,468 +492,14 @@ end
 
 
 function boon_edit_sync_groups()
-	local changes = config.BoonChanges
+	restore()
+	rebuild_roles()
 
-	boon_edit_relink_groups()
+	local names = group_names()
+	relink(names)
+	rebuild_infection()
 
-	boon_group_set('AresBloodDropTraits', 'AresExCastBoon', changes.MeatGrinder.Enabled == true)
-
-	local rewritten = changes.ProfuseBleeding.Enabled == true
-	boon_group_set('AresBloodDropTraits', 'RendBloodDropBoon', rewritten)
-	boon_group_set('AresSwordTraits', 'RendBloodDropBoon', not rewritten)
-
-	boon_group_set('PoseidonSplashTraits', 'PoseidonSprintBoon', changes.BreakerRush.Enabled == true)
-
-	boon_group_set('PoseidonSplashTraits', 'PoseidonSplashSprintBoon', changes.BeachBall.Enabled == true)
-
-	boon_group_set('HeraLinkTraits', 'SpawnCastDamageBoon', changes.RousingReception.Enabled == true)
-
-	boon_group_set('HephaestusMassiveTraits', 'HephaestusSprintBoon', changes.SmithyRush.Enabled ~= true)
-
-	boon_edit_splash_no_duo()
-	boon_edit_splash_requirement()
-	boon_edit_blood_requirement()
-	boon_edit_chance_requirement()
+	if config.enabled == false then return end
+	apply_rules(names)
+	apply_broad_rules(names)
 end
-
-
-function boon_edit_blood_requirement()
-	local rend = game.LinkedTraitData.AresRendTraits
-
-	if config.BoonChanges.ProfuseBleeding.Enabled then
-		game.TraitRequirements.RendBloodDropBoon = { OneOf = rend }
-	else
-		game.TraitRequirements.RendBloodDropBoon = {
-			OneOf = game.CombineTables(rend, game.LinkedTraitData.AresBloodDropTraits),
-		}
-	end
-end
-
-
-local function boon_edit_rolls(change, chance)
-	return change.Enabled == true and type(chance) == 'number' and chance > 0 and chance < 1
-end
-
-function boon_edit_chance_requirement()
-	local lucky = game.TraitRequirements.LuckyBoon and game.TraitRequirements.LuckyBoon.OneOf
-	if not lucky then return end
-
-	local changes = config.BoonChanges
-	local tuning = mod.tuning
-
-	boon_list_set(lucky, 'DoubleMassiveAttackBoon', boon_edit_rolls(changes.ChainReaction, tuning.ChainReaction.SkipChance))
-	boon_list_set(lucky, 'AresExCastBoon', boon_edit_rolls(changes.MeatGrinder, tuning.MeatGrinder.PlasmaChance))
-	boon_list_set(lucky, 'RendBloodDropBoon', boon_edit_rolls(changes.ProfuseBleeding, tuning.ProfuseBleeding.SpillChance))
-	boon_list_set(lucky, 'LowHealthLifestealBoon', boon_edit_rolls(changes.BloodSpree, tuning.BloodSpree.KillHealChance))
-	boon_list_set(lucky, 'LightningVulnerabilityBoon', boon_edit_rolls(changes.KillerCurrent, tuning.KillerCurrent.BoltChance))
-	boon_list_set(lucky, 'RandomStatusBoon', boon_edit_rolls(changes.EcstaticObsession, tuning.EcstaticObsession.CharmChance))
-	boon_list_set(lucky, 'SlamManaBurstBoon', boon_edit_rolls(changes.SmolderingForge, tuning.SmolderingForge.HeartthrobChance))
-	boon_list_set(lucky, 'RaiseDeadBoon', boon_edit_rolls(changes.SunWorshiper, tuning.SunWorshiper.RepeatChance))
-
-	boon_list_set(lucky, 'DoubleSplashBoon', changes.ArterialSpray.Enabled ~= true)
-	boon_list_set(lucky, 'BlindChanceBoon',
-		changes.DazzlingDisplay.Enabled ~= true or tuning.DazzlingDisplay.Chance < 1)
-	boon_list_set(lucky, 'BloodManaBurstBoon',
-		changes.CarnalPleasure.Enabled ~= true or tuning.CarnalPleasure.HeartthrobChance < 1)
-end
-
-
-function boon_edit_glow_traits()
-	local traits = { 'MassiveKnockupBoon' }
-
-	if config.BoonChanges.AnvilRing.Enabled then
-		table.insert(traits, 'HephaestusCastBoon')
-		if config.BoonChanges.SmithyRush.Enabled then
-			table.insert(traits, 'HephaestusSprintBoon')
-		end
-	end
-
-	return traits
-end
-
-
-function boon_edit_splash_requirement()
-	if config.BoonChanges.DuoRequirements.Enabled then
-		game.TraitRequirements.DoubleSplashBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.AresCoreTraits,
-				boon_edit_splash_no_duo(),
-			},
-		}
-	else
-		game.TraitRequirements.DoubleSplashBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.AresCoreTraits,
-				game.LinkedTraitData.PoseidonSplashTraits,
-			},
-		}
-	end
-end
-
-
-SPLASH_NO_DUO = 'BoonEditSplashNoDuoTraits'
-
-
-function boon_edit_splash_no_duo()
-	game.LinkedTraitData[SPLASH_NO_DUO] = game.LinkedTraitData[SPLASH_NO_DUO] or {}
-	local list = game.LinkedTraitData[SPLASH_NO_DUO]
-
-	for i = #list, 1, -1 do
-		list[i] = nil
-	end
-
-	for _, name in ipairs(game.LinkedTraitData.PoseidonSplashTraits or {}) do
-		local data = game.TraitData[name]
-		if not (data and data.IsDuoBoon) then
-			table.insert(list, name)
-		end
-	end
-
-	return list
-end
-
-
-once('BoonRequirements', function()
-
-	if config.BoonChanges.RousingReception.Enabled then
-		game.TraitRequirements.SpawnCastDamageBoon = {
-			OneOf = { 'HeraCastBoon' },
-		}
-	end
-
-	if config.BoonChanges.DuoRequirements.Enabled then
-		game.TraitRequirements.PoseidonSplashSprintBoon = {
-			OneFromEachSet = {
-				{ 'ApolloSprintBoon', 'PoseidonSprintBoon' },
-				{ 'PoseidonWeaponBoon', 'PoseidonSpecialBoon', 'PoseidonSprintBoon' },
-				{ 'ApolloWeaponBoon', 'ApolloSpecialBoon', 'ApolloSprintBoon' },
-			},
-		}
-
-		game.TraitRequirements.ManaShieldBoon = {
-			OneFromEachSet = {
-				{ 'DamageShareRetaliateBoon', 'BoonDecayBoon', 'CommonGlobalDamageBoon' },
-				{ 'ArmorBoon', 'HeavyArmorBoon', 'EncounterStartDefenseBuffBoon', 'ManaToHealthBoon' },
-			},
-		}
-
-		game.TraitRequirements.KeepsakeLevelBoon = {
-			OneFromEachSet = {
-				{ 'ReserveManaHitShieldBoon', 'PlantHealthBoon', 'BoonGrowthBoon' },
-				{ 'CommonGlobalDamageBoon', 'BoonDecayBoon', 'DamageShareRetaliateBoon' },
-			},
-		}
-
-		game.TraitRequirements.ClearRootBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.HephaestusCoreTraits,
-				{ 'DemeterWeaponBoon', 'DemeterSpecialBoon', 'DemeterCastBoon' },
-			},
-		}
-
-		game.TraitRequirements.FireballRendBoon = {
-			OneFromEachSet = {
-				{ 'AresWeaponBoon', 'AresSpecialBoon' },
-				{ 'FireballManaSpecialBoon', 'CastProjectileBoon' },
-			},
-		}
-
-		game.TraitRequirements.MaxHealthDamageBoon = {
-			OneFromEachSet = {
-				{ 'AphroditeWeaponBoon', 'AphroditeSpecialBoon', 'DemeterWeaponBoon', 'DemeterSpecialBoon' },
-				{ 'HealthRewardBonusBoon', 'FocusRawDamageBoon', 'HighHealthOffenseBoon' },
-				{ 'PlantHealthBoon', 'ReserveManaHitShieldBoon', 'BoonGrowthBoon' },
-			},
-		}
-
-		game.TraitRequirements.SelfCastBoon = {
-			OneFromEachSet = {
-				{ 'AresExCastBoon', 'AresCastBoon' },
-				{ 'CastNovaBoon', 'DemeterCastBoon' },
-			},
-		}
-
-		game.TraitRequirements.AllCloseBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.PoseidonCoreTraits,
-				{ 'AphroditeWeaponBoon', 'AphroditeSpecialBoon', 'AphroditeManaBoon' },
-			},
-		}
-
-		game.TraitRequirements.LightningVulnerabilityBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.PoseidonKnockbackAmplifyTraits,
-				{ 'ZeusWeaponBoon', 'ZeusSpecialBoon' },
-			},
-		}
-
-		game.TraitRequirements.GoodStuffBoon = {
-			OneFromEachSet = {
-				{ 'RoomRewardBonusBoon', 'DoubleRewardBoon' },
-				{ 'PlantHealthBoon', 'BoonGrowthBoon', 'ReserveManaHitShieldBoon' },
-			},
-		}
-
-		game.TraitRequirements.RaiseDeadBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.HeraCoreTraits,
-				game.LinkedTraitData.ApolloCoreTraits,
-			},
-		}
-
-		game.TraitRequirements.BloodRetentionBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.AresBloodDropTraits,
-				game.LinkedTraitData.HeraCoreTraits,
-			},
-		}
-
-		game.TraitRequirements.CoverRegenerationBoon = {
-			OneFromEachSet = {
-				{ 'ApolloCastBoon', 'ApolloSprintBoon', 'ApolloRetaliateBoon', 'BlindChanceBoon' },
-				{ 'BurnArmorBoon', 'BurnExplodeBoon', 'AloneDamageBoon' },
-			},
-		}
-
-		game.TraitRequirements.AllElementalBoon = {
-			OneFromEachSet = {
-				{ 'HeraWeaponBoon', 'HeraSpecialBoon', 'HeraCastBoon', 'HeraSprintBoon' },
-				{ 'BoonDecayBoon', 'CommonGlobalDamageBoon', 'DamageShareRetaliateBoon' },
-				{ 'DamageSharePotencyBoon', 'LinkedDeathDamageBoon', 'SpawnCastDamageBoon' },
-			},
-		}
-
-		game.TraitRequirements.CharmCrowdBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.HeraCoreTraits,
-				{ 'AphroditeManaBoon', 'AphroditeSprintBoon', 'AphroditeCastBoon' },
-			},
-		}
-
-		game.TraitRequirements.RandomStatusBoon = {
-			OneFromEachSet = {
-				{ 'AphroditeWeaponBoon', 'AphroditeSpecialBoon' },
-				{ 'AphroditeManaBoon', 'AphroditeSprintBoon', 'AphroditeCastBoon' },
-				{ 'WeakVulnerabilityBoon', 'WeakPotencyBoon' },
-			},
-		}
-
-		game.TraitRequirements.DoubleBloodDropBoon = {
-			OneFromEachSet = {
-				{ 'AresWeaponBoon', 'AresSpecialBoon' },
-				game.LinkedTraitData.AresBloodDropTraits,
-				{ 'LowHealthLifestealBoon', 'AresStatusDoubleDamageBoon', 'MissingHealthCritBoon' },
-			},
-		}
-	end
-
-	if config.BoonChanges.SmolderingForge.Enabled then
-		game.TraitRequirements.SlamManaBurstBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.AphroditeCoreTraits,
-				boon_edit_glow_traits(),
-			},
-		}
-	end
-
-	if config.BoonChanges.CryoPounder.Enabled then
-		game.TraitRequirements.ClearRootBoon = {
-			OneFromEachSet = {
-				boon_edit_glow_traits(),
-				game.LinkedTraitData.DemeterRootTraits,
-			},
-		}
-	end
-
-	if config.BoonChanges.DazzlingDisplay.Enabled then
-		game.TraitRequirements.BlindChanceBoon = {
-			PriorityChance = 0.25,
-			OneOf = { 'ApolloWeaponBoon', 'ApolloSpecialBoon' },
-		}
-	end
-
-	if config.BoonChanges.GloriousDisaster.Enabled then
-		game.TraitRequirements.ApolloSecondStageCastBoon = {
-			OneFromEachSet = {
-				{ 'ApolloExCastBoon' },
-				{ 'ZeusWeaponBoon', 'ZeusSpecialBoon', 'ZeusCastBoon', 'ZeusSprintBoon', 'ZeusManaBoon' },
-			},
-		}
-	end
-
-	if config.BoonChanges.CarnalPleasure.Enabled then
-		game.TraitRequirements.BloodManaBurstBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.AresBloodDropTraits,
-				game.LinkedTraitData.AphroditeCoreTraits,
-			},
-		}
-	end
-
-	if config.BoonChanges.ScaldingVapor.Enabled then
-		game.TraitRequirements.SteamBoon = {
-			OneFromEachSet = {
-				game.LinkedTraitData.PoseidonKnockbackAmplifyTraits,
-				{ 'CastProjectileBoon', 'FireballManaSpecialBoon' },
-			},
-		}
-	end
-
-	if config.BoonChanges.SeismicHammer.Enabled then
-		game.TraitRequirements.MassiveCastBoon = {
-			OneFromEachSet = {
-				{ 'HephaestusWeaponBoon', 'HephaestusSpecialBoon' },
-				{ 'PoseidonExCastBoon' },
-			},
-		}
-	end
-
-	if config.BoonChanges.PostHaste.Enabled then
-		game.TraitRequirements.SlowProjectileBoon = {
-			OneOf = {
-				'TimedCritVulnerabilityBoon',
-				'RetaliateInvulnerabilityBoon',
-				'AthenaProjectileBoon',
-				'PowerDrinkBoon',
-				'FogDamageBonusBoon',
-				'HephaestusWeaponBoon',
-				'HephaestusSpecialBoon',
-				'PoseidonManaBoon',
-				'ZeusManaBoon',
-				'AutoRevengeBoon',
-				'HadesInvisibilityRetaliateBoon',
-			},
-		}
-	end
-
-	if config.BoonChanges.BurningMeteor.Enabled then
-		local extras = { 'BurnExplodeBoon', 'BurnArmorBoon' }
-		if not config.BoonChanges.VolcanicCrown.Enabled then
-			table.insert(extras, 'AloneDamageBoon')
-		end
-
-		game.TraitRequirements.BurnSprintBoon = {
-			OneFromEachSet = {
-				{ 'HestiaWeaponBoon', 'HestiaSpecialBoon', 'HestiaCastBoon' },
-				{ 'CastProjectileBoon', 'FireballManaSpecialBoon' },
-				extras,
-			},
-		}
-	end
-
-	if config.BoonChanges.BreakerRush.Enabled then
-		game.TraitRequirements.AmplifyConeBoon = {
-			OneFromEachSet = {
-				{
-					'PoseidonWeaponBoon',
-					'PoseidonSpecialBoon',
-					'PoseidonSprintBoon',
-				},
-				{
-					'PoseidonStatusBoon',
-					'PoseidonCastBoon',
-				},
-				{
-					'PoseidonExCastBoon',
-					'FocusDamageShaveBoon',
-					'OmegaPoseidonProjectileBoon',
-				},
-			},
-		}
-	else
-		game.TraitRequirements.AmplifyConeBoon.OneFromEachSet[1] = { 'PoseidonWeaponBoon', 'PoseidonSpecialBoon' }
-	end
-
-	game.TraitRequirements.PoseidonStatusBoon = {
-		PriorityChance = 0.25,
-		OneOf = { 'PoseidonWeaponBoon', 'PoseidonSpecialBoon' },
-	}
-	if config.BoonChanges.BreakerRush.Enabled then
-		table.insert(game.TraitRequirements.PoseidonStatusBoon.OneOf, 'PoseidonSprintBoon')
-	end
-
-	if config.BoonChanges.VolcanicCrown.Enabled then
-		local fireballBoons = game.ToLookup({ 'CastProjectileBoon', 'FireballManaSpecialBoon' })
-
-		for _, requirements in pairs(game.TraitRequirements) do
-			local lists = { requirements.OneOf }
-			for _, set in ipairs(requirements.OneFromEachSet or {}) do
-				table.insert(lists, set)
-			end
-
-			for _, list in pairs(lists) do
-				local asks = false
-				for _, name in ipairs(list) do
-					asks = asks or fireballBoons[name] == true
-				end
-				if asks and not game.Contains(list, 'AloneDamageBoon') then
-					table.insert(list, 'AloneDamageBoon')
-				end
-			end
-		end
-	end
-
-	if config.BoonChanges.BreakerRush.Enabled then
-		for _, requirements in pairs(game.TraitRequirements) do
-			local lists = { requirements.OneOf }
-			for _, set in ipairs(requirements.OneFromEachSet or {}) do
-				table.insert(lists, set)
-			end
-
-			for _, list in pairs(lists) do
-				if game.Contains(list, 'PoseidonWeaponBoon') and game.Contains(list, 'PoseidonSpecialBoon') then
-					boon_list_set(list, 'PoseidonSprintBoon', true)
-				end
-			end
-		end
-	end
-
-	local infection = game.TraitData.PolymorphCurseTalent
-	local curses = infection and infection.SetupFunction and infection.SetupFunction.Args
-		and infection.SetupFunction.Args.StatusTraitNames
-	if curses then
-		for _, traitName in ipairs(boon_edit_glow_traits()) do
-			boon_list_set(curses.DelayedKnockbackEffect, traitName, true)
-		end
-		boon_list_set(curses.DamageShareEffect, 'SpawnCastDamageBoon', config.BoonChanges.RousingReception.Enabled == true)
-	end
-
-	if config.BoonChanges.SmithyRush.Enabled then
-		local function withoutAnvilRush(list)
-			local kept, dropped = {}, false
-			for _, candidate in ipairs(list) do
-				if candidate == 'HephaestusSprintBoon' then
-					dropped = true
-				else
-					table.insert(kept, candidate)
-				end
-			end
-			return kept, dropped
-		end
-
-		local massiveTraits = { 'MassiveDamageBoon', 'MassiveKnockupBoon', 'DoubleMassiveAttackBoon' }
-		if not config.BoonChanges.CryoPounder.Enabled then
-			table.insert(massiveTraits, 'ClearRootBoon')
-		end
-		table.insert(massiveTraits, 'BlindClearBoon')
-
-		for _, traitName in ipairs(massiveTraits) do
-			local requirements = game.TraitRequirements[traitName]
-			if requirements then
-				if requirements.OneOf then
-					local kept, dropped = withoutAnvilRush(requirements.OneOf)
-					if dropped then
-						requirements.OneOf = kept
-					end
-				end
-				local sets = requirements.OneFromEachSet
-				for i, set in ipairs(sets or {}) do
-					local kept, dropped = withoutAnvilRush(set)
-					if dropped then
-						sets[i] = kept
-					end
-				end
-			end
-		end
-	end
-end)

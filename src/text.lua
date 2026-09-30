@@ -6,11 +6,11 @@ if config.BoonChanges.GlamourGain.Enabled then
 	boon_text({
 		Traits = {
 			AphroditeManaBoon = {
-				Description = 'Every second, inflict {$Keywords.Weak} on nearby foes, restoring {!Icons.Mana} for {#ItalicFormat}each {#Prev}.',
+				Description = 'Every {#BoldFormatGraft}1 Sec.{#Prev}, automatically inflict {$Keywords.Weak} on nearby foes and restore {!Icons.Mana} for {#ItalicFormat}each{#Prev}.',
 			},
 		},
 		StatLines = {
-			BoonEditGlamourManaStatDisplay = { Name = 'Magick per Foe:', Index = 1 },
+			BoonEditGlamourManaStatDisplay = { Name = 'Magick Restored per Foe:', Index = 1 },
 		},
 	})
 end
@@ -19,10 +19,11 @@ if config.BoonChanges.FestiveFog.Enabled then
 	boon_text({
 		Traits = {
 			FogDamageBonusBoon = {
-				Description = 'A fog appears now and again. While you are in it, you deal more ' ..
-					'damage and take {#AltUpgradeFormat}' ..
+				Description = 'Every {#BoldFormatGraft}{$TooltipData.ExtractData.Interval} Sec. {#Prev}in each ' ..
+					'{$Keywords.EncounterAlt}, {$Keywords.Cloud} appears. While you are in it, you deal more ' ..
+					'damage and take {#BoldFormatGraft}-' ..
 					math.floor((1 - mod.tuning.FestiveFog.Shelter) * 100 + 0.5) ..
-					'% {#Prev}less.',
+					'% {#Prev}damage.',
 			},
 		},
 	})
@@ -46,12 +47,13 @@ if config.BoonChanges.HeartyAppetite.Enabled then
 		Traits = {
 			MaxHealthDamageBoon = {
 				Description = 'You deal more damage with your {$Keywords.WeaponSet} the more {!Icons.HealthUpTotal} ' ..
-					'you have. Gain a healing reward now and every ' ..
-					'{$TooltipData.ExtractData.TooltipEncountersPerFood} {$Keywords.EncounterPlural}.',
+					'you have, and restore more {!Icons.Health} this night. Gain a healing reward now, and ' ..
+					'another every {#BoldFormatGraft}{$TooltipData.ExtractData.TooltipEncountersPerFood} ' ..
+					'{$Keywords.EncounterPlural}{#Prev}.',
 			},
 		},
 		StatLines = {
-			BoonEditHeartyAppetiteHealingStatDisplay = { Name = 'Healing Bonus:', Index = 2 },
+			BoonEditHeartyAppetiteHealingStatDisplay = { Name = 'Bonus Healing:', Index = 2 },
 		},
 	})
 end
@@ -72,8 +74,8 @@ if config.BoonChanges.DazzlingDisplay.Enabled then
 	boon_text({
 		Traits = {
 			BlindChanceBoon = {
-				Description = 'Your {#BoldFormatGraft}Nova Strike{#Prev} and {#BoldFormatGraft}Nova Flourish' ..
-					'{#Prev} inflict {$Keywords.Blind}, {#UpgradeFormat}+{$TooltipData.ExtractData.MissBonus}% ' ..
+				Description = 'Your {#BoldFormatGraft}Nova Strike {#Prev}and {#BoldFormatGraft}Nova Flourish ' ..
+					'{#Prev}inflict {$Keywords.Blind}, which is {#UpgradeFormat}{$TooltipData.ExtractData.MissBonus}% ' ..
 					'{#Prev}more likely to make foes miss.',
 			},
 		},
@@ -98,13 +100,17 @@ if config.BoonChanges.ExtraDose.Enabled then
 end
 
 if config.BoonChanges.CarnalPleasure.Enabled then
-	local certain = mod.tuning.CarnalPleasure.HeartthrobChance >= 1
 	boon_text({
 		Traits = {
 			BloodManaBurstBoon = {
-				Description = 'Whenever you collect {!Icons.BloodDropIcon}, ' ..
-					(certain and 'create' or 'you may create') .. ' a {$Keywords.HeartBurst}.',
+				Description = 'Each {!Icons.BloodDropIcon} you collect counts toward ' ..
+					'{$TraitData.ManaBurstBoon.Name} as {!Icons.Mana} used. Your {$Keywords.HeartBurstPlural} ' ..
+					'deal more damage for each {!Icons.BloodDropIcon} you have.',
 			},
+		},
+		StatLines = {
+			BoonEditCarnalManaStatDisplay = { Name = 'Magick per Plasma:', Index = 1 },
+			BoonEditCarnalDamageStatDisplay = { Name = '{$Keywords.HeartBurst} Power per Plasma:', Index = 2 },
 		},
 	})
 end
@@ -114,8 +120,8 @@ if config.BoonChanges.SmolderingForge.Enabled then
 		Traits = {
 			SlamManaBurstBoon = {
 				DisplayName = 'Smoldering Forge',
-				Description = 'Your {$Keywords.Attack} and {$Keywords.Special} against a foe with ' ..
-					'{$Keywords.DelayedKnockback} may create a {$Keywords.HeartBurst}.',
+				Description = 'Your {$Keywords.Attack} and {$Keywords.Special} may create a ' ..
+					'{$Keywords.HeartBurst} when they strike foes with {$Keywords.DelayedKnockback}.',
 			},
 		},
 		StatLines = {
@@ -132,7 +138,7 @@ if config.BoonChanges.EcstaticObsession.Enabled then
 		Traits = {
 			RandomStatusBoon = {
 				DisplayName = 'Ecstatic Obsession',
-				Description = 'When you inflict {$Keywords.Weak}, you may inflict {$Keywords.Charm} ' ..
+				Description = 'Whenever you inflict {$Keywords.Weak}, you may inflict {$Keywords.Charm} ' ..
 					'instead. You deal more damage for each nearby character fighting for you.',
 			},
 			CharmCrowdBoon = {
@@ -174,14 +180,14 @@ if config.BoonChanges.ProfuseBleeding.Enabled then
 	boon_text({
 		Traits = {
 			RendBloodDropBoon = {
-				Description = 'Whenever a foe afflicted by {$Keywords.Rend} takes damage, they may spill {!Icons.BloodDropIcon}.',
+				Description = '{$Keywords.Rend}-afflicted foes may spill {!Icons.BloodDropIcon} whenever they take damage.',
 			},
 			RendBloodDropBoon_Tray = {
-				Description = 'Whenever a foe afflicted by {$Keywords.Rend} takes damage, they may spill {!Icons.BloodDropWithCountIcon}.',
+				Description = '{$Keywords.Rend}-afflicted foes may spill {!Icons.BloodDropWithCountIcon} whenever they take damage.',
 			},
 		},
 		StatLines = {
-			BoonEditBloodSpillChanceStatDisplay = { Name = 'Spill Chance:', Index = 1 },
+			BoonEditBloodSpillChanceStatDisplay = { Name = '{$Keywords.BloodDrop_NoTooltip} Chance:', Index = 1 },
 		},
 	})
 end
@@ -193,9 +199,8 @@ if config.BoonChanges.BloodSpree.Enabled then
 				Description = 'While you have less than ' ..
 					'{$TooltipData.ExtractData.ReportedRequirement}{!Icons.Health}, your ' ..
 					'{$Keywords.AttackSet} and {$Keywords.SpecialSet} restore {!Icons.Health}. ' ..
-					'Whenever you slay a foe, you have a {#AltUpgradeFormat}' ..
-					'{$TooltipData.ExtractData.TooltipKillHealChance}% {#Prev}chance to restore ' ..
-					'that much {!Icons.Health}.',
+					'Whenever you slay a foe, restore that much {!Icons.Health} {#BoldFormatGraft}' ..
+					'{$TooltipData.ExtractData.TooltipKillHealChance}% {#Prev}of the time.',
 			},
 		},
 	})
@@ -205,7 +210,7 @@ if config.BoonChanges.HostileEnvironment.Enabled then
 	boon_text({
 		Traits = {
 			SelfCastBoon = {
-				Description = 'Your {$Keywords.CastEX} is stronger, and your {$Keywords.CastSet} always follows you.',
+				Description = 'Your {$Keywords.CastEX} is stronger, and all your {$Keywords.CastSet} follow you.',
 			},
 		},
 	})
@@ -215,8 +220,8 @@ if config.BoonChanges.SunWorshiper.Enabled then
 	boon_text({
 		Traits = {
 			RaiseDeadBoon = {
-				Description = 'In each {$Keywords.EncounterAlt}, the first foe you slay returns to fight for you'
-					.. '; later ones may as well.',
+				Description = 'In each {$Keywords.EncounterAlt}, the first foe you slay returns to fight for you, '
+					.. 'and others may as well.',
 			},
 		},
 		StatLines = {
@@ -239,7 +244,7 @@ if config.BoonChanges.TranquilGain.Enabled then
 	boon_text({
 		Traits = {
 			DemeterManaBoon = {
-				Description = 'While channeling an {$Keywords.OmegaAlt} for {#BoldFormat}{$TooltipData.ExtractData.TooltipMovePenaltyDuration} Sec.{#Prev}, rapidly restore {!Icons.Mana} until you release it.',
+				Description = 'After you {$Keywords.HoldNoTooltip} your {$Keywords.Omega} for {#BoldFormat}{$TooltipData.ExtractData.TooltipMovePenaltyDuration} Sec.{#Prev}, rapidly restore {!Icons.Mana} until you release them.',
 			},
 		},
 	})
@@ -249,15 +254,15 @@ if config.BoonChanges.NaturalSelection.Enabled then
 	boon_text({
 		Traits = {
 			GoodStuffBoon = {
-				Description = 'Gain {#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipPoms}' ..
-					'{#Prev}{!Icons.Pom} worth {#AltUpgradeFormat}+' ..
+				Description = 'Gain {#BoldFormatGraft}{$TooltipData.ExtractData.TooltipPoms}' ..
+					'{#Prev}{!Icons.Pom} worth {#BoldFormatGraft}+' ..
 					'{$TooltipData.ExtractData.TooltipLevelsPerPom} {#Prev}{$Keywords.PomLevel} each, ' ..
-					'then {#BoldFormatGraft}1 {#Prev}more every {#AltUpgradeFormat}' ..
-					'{$TooltipData.ExtractData.TooltipEncounters} {#Prev}{$Keywords.EncounterPlural}.',
+					'then {#BoldFormatGraft}1 {#Prev}more every {#BoldFormatGraft}' ..
+					'{$TooltipData.ExtractData.TooltipEncounters} {$Keywords.EncounterPlural}{#Prev}.',
 			},
 		},
 		StatLines = {
-			BoonEditNaturalSelectionStatDisplay = { Name = '{$Keywords.EncounterPlural} per {$Keywords.PomLevel}:', Index = 1 },
+			BoonEditNaturalSelectionStatDisplay = { Name = '{$Keywords.EncounterPlural} per Pom:', Index = 1 },
 		},
 	})
 end
@@ -267,7 +272,7 @@ if config.BoonChanges.CryoPounder.Enabled then
 		Traits = {
 			ClearRootBoon = {
 				Description = '{$Keywords.Root}-afflicted foes with {$Keywords.DelayedKnockback} take ' ..
-					'{#UpgradeFormat}{$TooltipData.ExtractData.TooltipDamageBonus} {#Prev}damage from any source.',
+					'{#BoldFormatGraft}{$TooltipData.ExtractData.TooltipDamageBonus} {#Prev}damage from any source.',
 			},
 		},
 	})
@@ -335,7 +340,8 @@ if config.BoonChanges.PremiumService.Enabled then
 		Traits = {
 			WeaponUpgradeBoon = {
 				Description = 'Your {$Keywords.Aspect} of the {#BoldFormatGraft}Nocturnal Arms {#Prev}is even stronger, '
-					.. 'your {!Icons.RandomHammer} upgrades all gain rank if possible. Gain an {#BoldFormatGraft}Anvil of Fate {#Prev}.',
+					.. 'and your {!Icons.RandomHammer} upgrades gain rank {#ItalicFormat}(if possible){#Prev}. '
+					.. 'Gain an {#BoldFormatGraft}Anvil of Fates {#Prev}now.',
 			},
 		},
 	})
@@ -397,27 +403,38 @@ if config.BoonChanges.AllTogether.Enabled then
 end
 
 if config.BoonChanges.CherishedHeirloom.Enabled then
-	local hold = mod.tuning.CherishedHeirloom.KeepAllKeepsakes and
-		' {#ItalicFormat}(if possible) {#Prev}and do not expire this night' or ''
-	local extra = mod.tuning.CherishedHeirloom.ExtraKeepsake and ' Equip one now.' or ''
-	if mod.tuning.CherishedHeirloom.ExtraKeepsake and mod.tuning.CherishedHeirloom.RefreshHeldKeepsake then
-		extra = extra .. ' Choosing your own refreshes it.'
-	end
-
 	boon_text({
 		Traits = {
 			KeepsakeLevelBoon = {
-				Description = 'Your {$Keywords.Keepsakes} are stronger' .. hold .. '.' .. extra,
+				Description = 'Your {$Keywords.Keepsakes} are upgraded this night {#ItalicFormat}{#Prev}. ' ..
+					'Choose another now to keep for the rest of this night.',
 			},
 		},
 	})
+
+	local olympianKeepsakes = {}
+	for keepsakeName, god in pairs({
+		ForceZeusBoonKeepsake = { 'Zeus', 'his' }, ForceHeraBoonKeepsake = { 'Hera', 'her' },
+		ForceAresBoonKeepsake = { 'Ares', 'his' }, ForcePoseidonBoonKeepsake = { 'Poseidon', 'his' },
+		ForceApolloBoonKeepsake = { 'Apollo', 'his' }, ForceDemeterBoonKeepsake = { 'Demeter', 'her' },
+		ForceAphroditeBoonKeepsake = { 'Aphrodite', 'her' }, ForceHephaestusBoonKeepsake = { 'Hephaestus', 'his' },
+		ForceHestiaBoonKeepsake = { 'Hestia', 'her' },
+	}) do
+		local name, pronoun = god[1], god[2]
+		olympianKeepsakes[keepsakeName] = {
+			Description = 'A {$Keywords.GodBoon} of {#BoldFormat}' .. name .. ' {#Prev}is likely. You can {$Keywords.RarityUpgrade} ' ..
+				pronoun .. ' {#AltUpgradeFormat}{$TooltipData.ExtractData.RarityLevel} {#Prev}blessings once this night. ' ..
+				'At {#BoldFormat}Heroic{#Prev}, turn any of ' .. pronoun .. ' blessings into ' .. pronoun .. ' Legendary instead.',
+		}
+	end
+	boon_text({ Traits = olympianKeepsakes })
 end
 
 if config.KeepsakeChanges.ConcaveStone.Enabled then
 	boon_text({
 		Traits = {
 			UnpickedBoonKeepsake = {
-				Description = 'Each {$Keywords.GodBoon}, Hammer, Pom, Centaur Heart, Soul Tonic or Path of Stars you collect has a {#AltUpgradeFormat}{$TooltipData.ExtractData.Chance}% {#Prev}chance to appear again, once this night.',
+				Description = 'After you collect your next {$Keywords.GodBoon} or Hammer, {#AltUpgradeFormat}{$TooltipData.ExtractData.Chance}% {#Prev}of the time it appears again.',
 			},
 		},
 	})
@@ -437,7 +454,7 @@ if config.KeepsakeChanges.WhiteAntler.Enabled then
 	boon_text({
 		Traits = {
 			LowHealthCritKeepsake = {
-				Description = 'Gain {#AltUpgradeFormat}+{$TooltipData.ExtractData.Chance}% {#Prev}{$Keywords.Crit} damage chance while you wear this, but you are limited to {#AltPenaltyFormat}{$TooltipData.ExtractData.Health}{!Icons.HealthDown}{#Prev}.',
+				Description = 'Gain {#AltUpgradeFormat}+{$TooltipData.ExtractData.Chance}% {#Prev}{$Keywords.Crit} damage chance while you wear this {$Keywords.KeepsakeAlt}, but you are limited to {#AltPenaltyFormat}{$TooltipData.ExtractData.Health}{!Icons.HealthDown}{#Prev}.',
 			},
 		},
 	})
@@ -447,9 +464,9 @@ if config.KeepsakeChanges.MetallicDroplet.Enabled then
 	boon_text({
 		Traits = {
 			TimedBuffKeepsake = {
-				Description = 'You move, strike, and {$Keywords.HoldAlt} {#BoldFormatGraft}{$TooltipData.ExtractData.Speed}% {#Prev}faster for the next {#UpgradeFormat}{$TooltipData.ExtractData.Duration} Sec{#Prev}, keeping {#AltUpgradeFormat}' ..
+				Description = 'You move, strike, and {$Keywords.HoldAlt} {#BoldFormatGraft}{$TooltipData.ExtractData.Speed}% {#Prev}faster for the next {#UpgradeFormat}{$TooltipData.ExtractData.Duration} Sec.{#Prev}, then keep {#AltUpgradeFormat}' ..
 					math.floor(mod.tuning.MetallicDroplet.ResidualFraction * 100 + 0.5) ..
-					'% {#Prev}of that boost for the rest of the night after it ends.',
+					'% {#Prev}of that boost while you hold this {$Keywords.KeepsakeAlt}.',
 			},
 		},
 	})
@@ -470,7 +487,7 @@ if config.BoonChanges.StutterStep.Enabled then
 	boon_text({
 		Traits = {
 			SorcerySpeedBoon = {
-				Description = 'You can {$Keywords.Dash} more frequently, and your Rush boons strike more often while you {$Keywords.Sprint}.',
+				Description = 'You can {$Keywords.Dash} more frequently, and your {$Keywords.SprintBoonAlt} effects strike more often while you {$Keywords.Sprint}.',
 			},
 		},
 	})
@@ -508,11 +525,11 @@ if config.BoonChanges.CardioGain.Enabled then
 	boon_text({
 		Traits = {
 			HestiaManaBoon = {
-				Description = 'Whenever your {$Keywords.Attack} or {$Keywords.Special} deal damage, or you {$Keywords.Dash}, restore {!Icons.Mana}.',
+				Description = 'Whenever your {$Keywords.Attack} or {$Keywords.Special} deal damage, or you {$Keywords.Sprint}, restore {!Icons.Mana}.',
 			},
 		},
 		StatLines = {
-			BoonEditCardioGainSprintStatDisplay = { Name = 'Magick on Sprint:', Index = 2 },
+			BoonEditCardioGainSprintStatDisplay = { Name = 'Magick Restored on Sprint:', Index = 2 },
 		},
 	})
 end
@@ -523,8 +540,8 @@ if config.BoonChanges.VolcanicCrown.Enabled then
 			AloneDamageBoon = {
 				DisplayName = 'Volcanic Crown',
 				Description = 'After your {$Keywords.CastEX} expires, it releases a ring of ' ..
-					'{#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipFireballs} {#Prev}fireballs from its ' ..
-					'center. Each bounces {#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipBounces} {#Prev}' ..
+					'{#BoldFormatGraft}{$TooltipData.ExtractData.TooltipFireballs} {#Prev}fireballs from its ' ..
+					'center. Each bounces {#BoldFormatGraft}{$TooltipData.ExtractData.TooltipBounces} {#Prev}' ..
 					'times, leaving burning ground wherever it lands.',
 			},
 		},
@@ -559,7 +576,7 @@ if config.BoonChanges.RippleEffect.Enabled then
 		Traits = {
 			MoneyDamageBoon = {
 				Description = 'The bonus effects your {$Keywords.Omega} trigger may occur again, up to ' ..
-					'{#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipMaxRepeats} {#Prev}more times.',
+					'{#BoldFormatGraft}{$TooltipData.ExtractData.TooltipMaxRepeats} {#Prev}more times.',
 			},
 		},
 		StatLines = {
@@ -586,13 +603,11 @@ if config.BoonChanges.ShockingLoss.Enabled then
 	boon_text({
 		Traits = {
 			SpawnKillBoon = {
-				Description = 'Whenever you deal damage to susceptible foes, you may destroy them outright. ' ..
-					'The first hit on each has a {#AltUpgradeFormat}{$TooltipData.ExtractData.TooltipFirstHitChance}% ' ..
-					'{#Prev}chance.',
+				Description = 'Your lightning bolt effects may destroy susceptible foes outright. '
 			},
 		},
 		StatLines = {
-			BoonEditShockingLossStatDisplay = { Name = 'Destruction Chance per Hit:', Index = 1 },
+			BoonEditShockingLossStatDisplay = { Name = 'First-Hit Destruction Chance:', Index = 1 },
 		},
 	})
 end
@@ -624,7 +639,7 @@ if config.BoonChanges.AirQuality.Enabled then
 	boon_text({
 		Traits = {
 			ElementalDamageFloorBoon = {
-				Description = 'While you have at least {$TraitData.ElementalDamageFloorBoon.ActivationRequirements.1.Value}{!Icons.CurseAir}, your base damage is never less than the limit.',
+				Description = 'While you have at least {$TraitData.ElementalDamageFloorBoon.ActivationRequirements.1.Value}{!Icons.CurseAir}, you can never deal less damage than the limit, before any bonuses.',
 			},
 		},
 	})
@@ -639,7 +654,7 @@ if config.BoonChanges.ThermalDynamics.Enabled then
 			},
 		},
 		StatLines = {
-			BoonEditThermalScorchStatDisplay = { Name = 'Scorch per Damage Dealt:', Index = 1 },
+			BoonEditThermalScorchStatDisplay = { Name = '{$Keywords.Burn} per Damage Dealt:', Index = 1 },
 		},
 	})
 end

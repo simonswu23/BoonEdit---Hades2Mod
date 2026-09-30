@@ -20,20 +20,24 @@ local function concave_stone_major(source)
 end
 
 
-local function concave_stone_roll(source)
+local function concave_stone_eligible(source)
 	if not source or source.CanDuplicate == false or not concave_stone_active() then return false end
 	if not concave_stone_major(source) then return false end
 
 	local trait = game.GetHeroTrait(STONE)
-	if not trait.BoonEditRewardChance or not trait.Uses or trait.Uses <= 0 then return false end
-
-	local luck = game.GetTotalHeroTraitValue('LuckMultiplier', { IsMultiplier = true })
-	return game.RandomChance(trait.BoonEditRewardChance * luck)
+	return trait.BoonEditRewardChance ~= nil and trait.Uses ~= nil and trait.Uses > 0
 end
 
 
 local function concave_stone_copy(source, base, ...)
-	if not concave_stone_roll(source) then return base(...) end
+	if not concave_stone_eligible(source) then return base(...) end
+
+	local trait = game.GetHeroTrait(STONE)
+	local luck = game.GetTotalHeroTraitValue('LuckMultiplier', { IsMultiplier = true })
+	if not game.RandomChance(trait.BoonEditRewardChance * luck) then
+		game.ReduceTraitUses(trait)
+		return base(...)
+	end
 
 	local couldDuplicate = source.CanDuplicate
 	source.CanDuplicate = true
@@ -88,10 +92,6 @@ once('ConcaveStone', function()
 	modutil.mod.Path.Wrap('HandleUpgradeChoiceSelection', function(base, screen, button, args)
 		if args and args.DoubleBoonChance then return base(screen, button, args) end
 		return concave_stone_copy(screen and screen.Source, base, screen, button, args)
-	end)
-
-	modutil.mod.Path.Wrap('UseConsumableItem', function(base, consumableItem, args, user)
-		return concave_stone_copy(consumableItem, base, consumableItem, args, user)
 	end)
 
 	modutil.mod.Path.Wrap('DoubleRewardPresentation', function(base, args)

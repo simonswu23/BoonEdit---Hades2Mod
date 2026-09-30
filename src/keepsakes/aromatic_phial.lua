@@ -15,15 +15,6 @@ once('AromaticPhial', function()
 end)
 
 
-if config.KeepsakeChanges.AromaticPhial.Enabled then
-	---@diagnostic disable-next-line: undefined-global
-	HEIRLOOM_KEEPSAKE_REFRESH[PHIAL] = function(trait)
-		trait.Uses = (trait.Uses or 0) + mod.tuning.AromaticPhial.RefreshUses
-		game.UpdateTraitNumber(trait)
-	end
-end
-
-
 function aromatic_phial_apply()
 	if not config.KeepsakeChanges.AromaticPhial.Enabled then return end
 

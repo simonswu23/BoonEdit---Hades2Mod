@@ -45,13 +45,16 @@ function shocking_loss_hit(enemy, traitArgs, triggerArgs)
 	if not hero or not enemy or not enemy.ObjectId or enemy == hero then return true end
 	if enemy.IsDead or enemy.BoonEditShockingLossPending or traitArgs.VictimWillBeAlive == false then return true end
 
+	local tuning = mod.tuning.ShockingLoss
+
 	local source = triggerArgs and triggerArgs.SourceProjectile
-	if source and (source == STRIKE or source == traitArgs.ExcludeProjectileName) then return true end
+	if not source or not game.Contains(tuning.Lightning, source) then return true end
 
 	local record = game.SessionMapState and game.SessionMapState.SpawnKillRecord
 	if not record then return true end
 
-	local tuning = mod.tuning.ShockingLoss
+	if not game.CheckCooldown('BoonEditShockingLoss' .. enemy.ObjectId, tuning.RollInterval) then return true end
+
 	local chance = tuning.HitChance
 	if not record[enemy.ObjectId] then
 		record[enemy.ObjectId] = true

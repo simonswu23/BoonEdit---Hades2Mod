@@ -73,18 +73,12 @@ end
 
 
 function second_wind_keepsake()
-	return config.BoonChanges.SecondWind.Enabled and game.HeroHasTrait('TimedBuffKeepsake')
+	---@diagnostic disable-next-line: undefined-global
+	return boon_edit_on('SecondWind') and game.HeroHasTrait('TimedBuffKeepsake')
 end
 
 
 once('SecondWindKeepsake', function()
-	if not config.BoonChanges.SecondWind.Enabled then return end
-
-	local requirements = game.TraitRequirements.TimeStopLastStandBoon
-	if requirements then
-		requirements.PriorityChance = mod.tuning.SecondWind.KeepsakeOfferChance
-	end
-
 	modutil.mod.Path.Wrap("HasTraitRequirements", function(base, traitName)
 		if traitName == 'TimeStopLastStandBoon' and second_wind_keepsake() then return true end
 		return base(traitName)
@@ -92,7 +86,8 @@ once('SecondWindKeepsake', function()
 
 	modutil.mod.Path.Wrap("GetPriorityDependentTraits", function(base, lootData)
 		local linked = base(lootData)
-		if second_wind_keepsake() then return linked end
+		---@diagnostic disable-next-line: undefined-global
+		if not boon_edit_on('SecondWind') or second_wind_keepsake() then return linked end
 
 		for index = #(linked or {}), 1, -1 do
 			if linked[index].TraitName == 'TimeStopLastStandBoon' then

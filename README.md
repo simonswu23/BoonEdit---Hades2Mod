@@ -50,7 +50,7 @@ referenced from Hades II's own data.
 
 - **Blood Spree** — Additionally, killing a foe has a 20% chance to restore health (equal to the base health restoration amount).
 - **Meat Grinder** — Additionally, each hit of the blade rift per foe has a 20% chance to spill plasma. Counts as a plasma boon.
-- **Profuse Bleeding** — New(?) Effect: foes with wounds have a small chance to drop plasma after taking damage. Counts as a plasma boon.
+- **Profuse Bleeding** — New(?) Effect: Foes with wounds have a small chance to drop plasma after taking damage. Also works when inflicting wounds with double the chance. Counts as a plasma boon.
 - **Stabbing Rush** — Falling blades drop for the entire duration of your sprint.
 
 ### Athena
@@ -114,8 +114,8 @@ referenced from Hades II's own data.
 - **Brave Face** (Hephaestus × Hera) — Resists up to 50% of any damage rather than 30%, and each point resisted costs 5 Magick instead of 10.
 - **Burning Desire** — additionally lifts the ceiling on Scorch, from vanilla's 999.
 - **Chain Reaction** (Hestia × Hephaestus) — New Effect: Boon effect cooldowns have a 50% chance of being skipped.
-- **Carnal Pleasure** (Aphrodite × Ares) — 100% chance of creating heartthrobs on plasma pickup.
-- **Cherished Heirloom** (Demeter × Hera) — When upgrading your current keepsake to Heroic, double-dip on its ability. Additionally, equip an extra keepsake on pickup, and gain its effects for the rest of the night.
+- **Carnal Pleasure** (Aphrodite × Ares) — Reworked: each Plasma collected counts as 20 Magick used toward Heart Breaker, and Heartthrobs gain +1 power for each Plasma you have.
+- **Cherished Heirloom** (Demeter × Hera) — Every keepsake is upgraded by one rarity this night, and your current one is refreshed at its new rarity. Additionally, choose another to keep for the rest of the night on pickup.
 - **Cryo Pounder** (Demeter × Hephaestus) — Reworked: Frozen foes with Glow take 50% extra damage.
 - **Ecstatic Obsession** replaced with **Nervous Wreck** (Aphrodite x Hera): same effect as before (as Aphrodite's legendary), but kept Ecstatic Obession's old requirements.
 - **Glorious Disaster** (Apollo × Zeus) — No longer needs the extra channeled Magick, and bolts hit for 50 each (up fro 20).
@@ -137,7 +137,7 @@ referenced from Hades II's own data.
 - **Fire Away** replaced with **Burning Meteor** (Hestia): Fireball effects from Hestia are 50% larger and stronger, and inflict Scorch equal to the damage they deal.
 - **Paid Dues** replaced with **Second Wind** (Hermes): You can cast and dash an additional time.
 - **Premium Service** (Hephaestus) — Additionally, all weapon upgrades increase in rank tonight, and gain an Anvil of Fates on pickup.
-- **Shocking Loss** (Zeus) — 1% chance to destroy foes outright when they take damage from lightning, the first strike has a 25% chance instead. Now deals 9999 damage to guardians instead of destroying them.
+- **Shocking Loss** (Zeus) — 1% chance to destroy foes outright when your lightning (not chain lightning) strikes them, at most once per foe every 0.5 seconds; the first strike on each has a 25% chance instead. Now deals 9999 damage to guardians instead of destroying them.
 - **Winter Harvest** (Demeter) — Executes from 15% rather than 10%, and sums boss HP across all phases for calculation. Can now skip more boss phases (Prometheus, Zagreus, Typhon).
 - **Nervous Wreck** replaced with **Ecstatic Obsession** (Aphrodite): when you inflict Weak, you have a 30% chance to inflict Charm for 5 seconds instead. 5-second cooldown between Charming the same foe again, and Charmed foes cannot damage Melinoe.
 
@@ -149,6 +149,123 @@ referenced from Hades II's own data.
 ### Other
 - **Anvil of Fates** — Instead of random chance, choose from up to 3 hammer upgrades to sacrifice / gain.
 - **Glow** — Now stacks: each further stack makes the target take 5% more damage, up to 35%, and expires independently.
+
+### Offer Requirements
+
+Boons whose offer requirements differ from the base game. Where a boon has several groups (sub-bullets), it needs one boon from each.
+
+- **All Together**
+  - Sworn Strike, Sworn Flourish, Engagement Ring, Nexus Rush
+  - Bridal Glow, Uncommon Grace, Extended Family
+  - Hereditary Bane, Dying Wish, Rousing Reception
+- **Arterial Spray**
+  - Vicious Strike, Vicious Flourish, Sword Ring, Stabbing Rush, Grisly Gain
+  - Wave Strike, Wave Flourish, Breaker Rush
+- **Beach Ball**
+  - Blinding Rush, Breaker Rush
+  - Wave Strike, Wave Flourish, Breaker Rush
+  - Nova Strike, Nova Flourish, Blinding Rush
+- **Brave Face**
+  - Extended Family, Bridal Glow, Uncommon Grace
+  - Trusty Shield, Heavy Metal, Security System, Uncanny Fortitude
+- **Burning Meteor**
+  - Flame Strike, Flame Flourish, Smolder Ring
+  - Glowing Coal, Controlled Burn, Volcanic Crown
+  - Flash Fry, Hot Pot
+- **Carnal Pleasure**
+  - Grisly Gain, Visceral Impact, Meat Grinder, Profuse Bleeding
+  - Heart Breaker
+- **Chain Reaction**
+  - Volcanic Strike, Volcanic Flourish
+  - Flame Strike, Flame Flourish, Smolder Ring, Heat Rush, Cardio Gain
+- **Cherished Heirloom**
+  - Snow Queen, Plentiful Forage, Steady Growth
+  - Uncommon Grace, Bridal Glow, Extended Family
+- **Coffin Nail**
+  - Sword Ring, Stabbing Rush, Cut Above
+  - Volcanic Strike, Volcanic Flourish, Anvil Ring, Smithy Rush, Tough Gain
+- **Cryo Pounder**
+  - Furnace Blast, Anvil Ring, Smithy Rush
+  - Ice Strike, Ice Flourish, Arctic Ring
+- **Cutting Edge**
+  - Sword Ring, Stabbing Rush, Cut Above
+  - Nova Strike, Nova Flourish, Solar Ring, Blinding Rush, Lucid Gain
+- **Dazzling Display** — Nova Strike or Nova Flourish.
+- **Dying Wish** — Sworn Strike, Sworn Flourish, Engagement Ring, Nexus Rush or Rousing Reception.
+- **Ecstatic Obsession**
+  - Flutter Strike, Flutter Flourish
+  - Glamour Gain, Passion Rush, Rapture Ring
+  - Sweet Surrender, Broken Resolve
+- **Fourth Degree**
+  - Vicious Strike, Vicious Flourish
+  - Glowing Coal, Controlled Burn, Volcanic Crown
+- **Furnace Blast** — Volcanic Strike or Volcanic Flourish.
+- **Glorious Disaster**
+  - Prominence Flare
+  - Heaven Strike, Heaven Flourish, Storm Ring, Thunder Rush, Ionic Gain
+- **Grand Caldera** — Volcanic Strike or Volcanic Flourish.
+- **Hearty Appetite**
+  - Flutter Strike, Flutter Flourish, Ice Strike, Ice Flourish
+  - Spiritual Affirmation, Secret Crush, Shameless Attitude
+  - Plentiful Forage, Snow Queen, Steady Growth
+- **Hereditary Bane** — Sworn Strike, Sworn Flourish, Engagement Ring, Nexus Rush or Rousing Reception.
+- **Hostile Environment**
+  - Meat Grinder, Sword Ring
+  - Arctic Gale, Arctic Ring
+- **Incandescent Aura**
+  - Sworn Strike, Sworn Flourish, Engagement Ring, Nexus Rush, Rousing Reception
+  - Flame Strike, Flame Flourish, Smolder Ring, Heat Rush, Cardio Gain
+- **Island Getaway**
+  - Wave Strike, Wave Flourish, Tidal Ring, Breaker Rush, Flood Gain
+  - Flutter Strike, Flutter Flourish, Glamour Gain
+- **Killer Current**
+  - Tidal Ring, Slippery Slope
+  - Heaven Strike, Heaven Flourish
+- **King Tide**
+  - Wave Strike, Wave Flourish, Breaker Rush
+  - Slippery Slope, Tidal Ring
+  - Geyser Spout, High Surf, Ocean Swell
+- **Natural Selection**
+  - Buried Treasure, Sea Star
+  - Plentiful Forage, Steady Growth, Snow Queen
+- **Nervous Wreck**
+  - Sworn Strike, Sworn Flourish, Engagement Ring, Nexus Rush, Born Gain
+  - Glamour Gain, Passion Rush, Rapture Ring
+- **Post Haste** — Death Warrant, Defensive Posture, Phalanx Shot, Bottomless Drink, Happy Haze, Volcanic Strike, Volcanic Flourish, Flood Gain, Ionic Gain, Heinous Affront or Unseen Ire.
+- **Premium Service**
+  - Volcanic Strike, Volcanic Flourish
+  - Heavy Metal, Trusty Shield, Security System
+  - Grand Caldera, Molten Touch, Furnace Blast
+- **Profuse Bleeding** — Vicious Strike or Vicious Flourish.
+- **Rousing Reception** — Engagement Ring.
+- **Rude Awakening**
+  - Volcanic Strike, Volcanic Flourish
+  - Solar Ring, Blinding Rush, Light Smite, Dazzling Display
+- **Sanguinary Savor**
+  - Vicious Strike, Vicious Flourish
+  - Grisly Gain, Visceral Impact, Meat Grinder, Profuse Bleeding
+  - Blood Spree, Grievous Blow, Mutual Destruction
+- **Scalding Vapor**
+  - Tidal Ring, Slippery Slope
+  - Glowing Coal, Controlled Burn, Volcanic Crown
+- **Second Wind** — Nimble Limbs, Racing Thoughts, Winner's Circle, Nitro Boost, Stutter Step, Hasty Retreat, Post Haste, Quick Buck, Mean Streak, Travel Deal or Success Rate, or while holding Metallic Droplet.
+- **Seismic Hammer**
+  - Volcanic Strike, Volcanic Flourish
+  - Geyser Spout
+- **Slippery Slope** — Wave Strike, Wave Flourish or Breaker Rush.
+- **Smoldering Forge**
+  - Flutter Strike, Flutter Flourish, Rapture Ring, Passion Rush, Glamour Gain
+  - Furnace Blast, Anvil Ring, Smithy Rush
+- **Success Rate** — Sea Star, Tidal Ring, Slippery Slope, Divine Vengeance, Double Strike, Shocking Loss, Extra Dose, Pressure Points, Vital Signs, Lethal Snare, Death Warrant, Killing Stroke, Shadow Pounce, Whispered Prayer, Grisly Gain, Visceral Impact, Mutual Destruction, Grievous Blow, Ripple Effect, Chain Reaction, Meat Grinder, Profuse Bleeding, Blood Spree, Killer Current, Ecstatic Obsession, Smoldering Forge or Sun Worshiper.
+- **Sun Worshiper**
+  - Sworn Strike, Sworn Flourish, Engagement Ring, Nexus Rush, Born Gain
+  - Nova Strike, Nova Flourish, Solar Ring, Blinding Rush, Lucid Gain
+- **Universal Donor**
+  - Grisly Gain, Visceral Impact, Meat Grinder, Profuse Bleeding
+  - Sworn Strike, Sworn Flourish, Engagement Ring, Nexus Rush, Born Gain
+- **Warm Breeze**
+  - Solar Ring, Blinding Rush, Light Smite, Dazzling Display
+  - Hot Pot, Flash Fry, Volcanic Crown
 
 ## Experimental
 
@@ -169,7 +286,7 @@ referenced from Hades II's own data.
 - **Aspect of Supay** (Umbral Flames) — Rush-boon damage bonus restored to EA levels.
 
 ### Keepsakes
-- **Concave Stone** (Echo) — New Effect: Chance to copy your next major reward instead.
+- **Concave Stone** (Echo) — New Effect: Chance to copy your next Boon or Hammer instead.
 - **Calling Card** (Zagreus) — Now rarifies all boons straight to Heroic.
-- **Metallic Droplet** (Hermes) — Now keeps half its move/strike/cast speed boost once the timer runs out.
+- **Metallic Droplet** (Hermes) — Now keeps half its move/strike/cast speed boost once the timer runs out while held.
 - **White Antler** (Artemis) — Keeps its effects as long as its held.

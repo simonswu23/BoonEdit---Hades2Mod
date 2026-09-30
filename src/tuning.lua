@@ -45,7 +45,9 @@ mod.tuning.WhirlingHelix = {
 }
 
 mod.tuning.CarnalPleasure = {
-	HeartthrobChance = 1.0,
+	ManaPerPlasma = 20,
+	DamagePerPlasma = 1,
+	PickupHeartthrobChance = 0,
 }
 
 mod.tuning.FestiveFog = {
@@ -100,6 +102,7 @@ mod.tuning.MeatGrinder = {
 
 mod.tuning.ProfuseBleeding = {
 	SpillChance = 0.10,
+	FreshRendMultiplier = 2,
 }
 
 mod.tuning.BloodSpree = {
@@ -244,7 +247,7 @@ mod.tuning.CherishedHeirloom = {
 	ExtraKeepsake = true,
 	ExtraKeepsakeInMenuOnly = true,
 	KeepAllKeepsakes = false,
-	RefreshHeldKeepsake = true,
+	RefreshHeldKeepsake = false,
 	CarryUses = true,
 }
 
@@ -357,6 +360,21 @@ mod.tuning.ShockingLoss = {
 	HitChance = 0.01,
 	FirstHitMultiplier = 25,
 
+	RollInterval = 0.2,
+
+	Lightning = {
+		'ZeusEchoStrike',
+		'ZeusCastStrike',
+		'ZeusRootStrike',
+		'ZeusSprintStrike',
+		'ZeusZeroManaStrike',
+		'ZeusRetaliateStrike',
+		'ZeusCastAnywhereBlast',
+		'ZeusApolloSynergyStrike',
+		'ZeusPolymorphStrike',
+		'ZeusManaBolt',
+	},
+
 	GuardianDamage = 9999,
 }
 
@@ -376,10 +394,7 @@ mod.tuning.HarmForTheAfflicted = {
 }
 
 mod.tuning.ConcaveStone = {
-	Rewards = {
-		'StackUpgrade', 'StackUpgradeBig', 'StackUpgradeTriple', 'WeaponUpgrade',
-		'MaxHealthDrop', 'MaxHealthDropBig', 'MaxManaDrop', 'MaxManaDropBig', 'TalentDrop', 'TalentBigDrop',
-	},
+	Rewards = { 'WeaponUpgrade' },
 }
 
 mod.tuning.CallingCard = {}
@@ -391,8 +406,6 @@ mod.tuning.WhiteAntler = {
 mod.tuning.AromaticPhial = {
 	Blessings = 1,
 	HeroicBlessings = 2,
-
-	RefreshUses = 1,
 }
 
 mod.tuning.MetallicDroplet = {
