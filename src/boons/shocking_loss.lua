@@ -53,6 +53,12 @@ function shocking_loss_hit(enemy, traitArgs, triggerArgs)
 	local record = game.SessionMapState and game.SessionMapState.SpawnKillRecord
 	if not record then return true end
 
+	local guardian = enemy.IsBoss or enemy.UseBossHealthBar
+	local guardianCooldown = 'BoonEditShockingLossGuardian' .. enemy.ObjectId
+	if guardian and not game.CheckCooldownNoTrigger(guardianCooldown, shocking_loss_guardian_interval()) then
+		return true
+	end
+
 	if not game.CheckCooldown('BoonEditShockingLoss' .. enemy.ObjectId, tuning.RollInterval) then return true end
 
 	local chance = tuning.HitChance
@@ -62,9 +68,15 @@ function shocking_loss_hit(enemy, traitArgs, triggerArgs)
 	end
 	if not rolls(chance) then return true end
 
+	if guardian then game.CheckCooldown(guardianCooldown, shocking_loss_guardian_interval()) end
+
 	enemy.BoonEditShockingLossPending = true
 	game.thread(mod.ShockingLossStrike, enemy, traitArgs)
 	return true
+end
+
+function shocking_loss_guardian_interval()
+	return post_haste_recharge({ Cooldown = mod.tuning.ShockingLoss.GuardianInterval }).Cooldown
 end
 
 function mod.ShockingLossStrike(enemy, traitArgs)

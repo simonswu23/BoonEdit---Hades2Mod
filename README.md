@@ -137,7 +137,7 @@ referenced from Hades II's own data.
 - **Fire Away** replaced with **Burning Meteor** (Hestia): Fireball effects from Hestia are 50% larger and stronger, and inflict Scorch equal to the damage they deal.
 - **Paid Dues** replaced with **Second Wind** (Hermes): You can cast and dash an additional time.
 - **Premium Service** (Hephaestus) — Additionally, all weapon upgrades increase in rank tonight, and gain an Anvil of Fates on pickup.
-- **Shocking Loss** (Zeus) — 1% chance to destroy foes outright when your lightning (not chain lightning) strikes them, at most once per foe every 0.5 seconds; the first strike on each has a 25% chance instead. Now deals 9999 damage to guardians instead of destroying them.
+- **Shocking Loss** (Zeus) — 2.5% chance to destroy foes outright when your lightning (not chain lightning) strikes them; the first strike on each has a 25% chance instead. Now deals 9999 damage to guardians instead of destroying them.
 - **Winter Harvest** (Demeter) — Executes from 15% rather than 10%, and sums boss HP across all phases for calculation. Can now skip more boss phases (Prometheus, Zagreus, Typhon).
 - **Nervous Wreck** replaced with **Ecstatic Obsession** (Aphrodite): when you inflict Weak, you have a 30% chance to inflict Charm for 5 seconds instead. 5-second cooldown between Charming the same foe again, and Charmed foes cannot damage Melinoe.
 

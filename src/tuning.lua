@@ -224,7 +224,7 @@ mod.tuning.DazzlingDisplay = {
 mod.tuning.ChainReaction = {
 	SkipChance = 0.50,
 
-	ExtraCooldowns = { 'SWuLandMine', 'SWuSolarEclipse' },
+	ExtraCooldowns = { 'SWuLandMine', 'SWuSolarEclipse', 'BoonEditShockingLossGuardian' },
 
 	TextDuration = 1.45,
 	TextCooldown = 0.5,
@@ -357,10 +357,10 @@ mod.tuning.RippleEffect = {
 }
 
 mod.tuning.ShockingLoss = {
-	HitChance = 0.01,
-	FirstHitMultiplier = 25,
+	HitChance = 0.025,
+	FirstHitMultiplier = 10,
 
-	RollInterval = 0.2,
+	RollInterval = 0.01,
 
 	Lightning = {
 		'ZeusEchoStrike',
@@ -376,6 +376,7 @@ mod.tuning.ShockingLoss = {
 	},
 
 	GuardianDamage = 9999,
+	GuardianInterval = 10,
 }
 
 mod.tuning.KillerCurrent = {
