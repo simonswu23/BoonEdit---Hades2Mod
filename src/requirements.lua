@@ -112,10 +112,6 @@ BOON_EDIT_REQUIREMENTS = {
 		{ 'DamageShareRetaliateBoon', 'BoonDecayBoon', 'CommonGlobalDamageBoon' },
 		{ 'ArmorBoon', 'HeavyArmorBoon', 'EncounterStartDefenseBuffBoon', 'ManaToHealthBoon' },
 	} } },
-	{ Trait = 'KeepsakeLevelBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
-		{ 'ReserveManaHitShieldBoon', 'PlantHealthBoon', 'BoonGrowthBoon' },
-		{ 'CommonGlobalDamageBoon', 'BoonDecayBoon', 'DamageShareRetaliateBoon' },
-	} } },
 	{ Trait = 'ClearRootBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
 		Group('HephaestusCoreTraits'),
 		{ 'DemeterWeaponBoon', 'DemeterSpecialBoon', 'DemeterCastBoon' },
@@ -123,11 +119,6 @@ BOON_EDIT_REQUIREMENTS = {
 	{ Trait = 'FireballRendBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
 		{ 'AresWeaponBoon', 'AresSpecialBoon' },
 		Group('SWuFireballTraits'),
-	} } },
-	{ Trait = 'MaxHealthDamageBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
-		{ 'AphroditeWeaponBoon', 'AphroditeSpecialBoon', 'DemeterWeaponBoon', 'DemeterSpecialBoon' },
-		{ 'HealthRewardBonusBoon', 'FocusRawDamageBoon', 'HighHealthOffenseBoon' },
-		{ 'PlantHealthBoon', 'ReserveManaHitShieldBoon', 'BoonGrowthBoon' },
 	} } },
 	{ Trait = 'SelfCastBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
 		{ 'AresExCastBoon', 'AresCastBoon' },
@@ -140,10 +131,6 @@ BOON_EDIT_REQUIREMENTS = {
 	{ Trait = 'LightningVulnerabilityBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
 		Group('PoseidonKnockbackAmplifyTraits'),
 		{ 'ZeusWeaponBoon', 'ZeusSpecialBoon' },
-	} } },
-	{ Trait = 'GoodStuffBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
-		{ 'RoomRewardBonusBoon', 'DoubleRewardBoon' },
-		{ 'PlantHealthBoon', 'BoonGrowthBoon', 'ReserveManaHitShieldBoon' },
 	} } },
 	{ Trait = 'RaiseDeadBoon', When = DUO_REQUIREMENTS, Set = { OneFromEachSet = {
 		Group('HeraCoreTraits'),
