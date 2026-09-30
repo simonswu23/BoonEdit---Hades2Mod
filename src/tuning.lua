@@ -236,8 +236,6 @@ mod.tuning.BraveFace = {
 }
 
 mod.tuning.RousingReception = {
-	CastDurationMultiplier = 1.5,
-
 	HitchOnly = true,
 	UseCastStrikes = true,
 	DamageScaledCurseMultiplier = 1.0,

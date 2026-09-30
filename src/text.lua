@@ -158,7 +158,7 @@ if config.BoonChanges.MeatGrinder.Enabled then
 		Traits = {
 			AresExCastBoon = {
 				Description = 'Your {$Keywords.CastEX} also creates a {$Keywords.BladeRift} in the ' ..
-					'binding circle, and your {$Keywords.BladeRift} may spill {!Icons.BloodDropIcon}.',
+					'binding circle, which may cause foes to spill {!Icons.BloodDropIcon}.',
 			},
 		}
 	})

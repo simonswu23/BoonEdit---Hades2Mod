@@ -9,32 +9,6 @@ once('RousingReceptionCastCurse', function()
 end)
 
 
-once('RousingReceptionCastDuration', function()
-	if not config.BoonChanges.RousingReception.Enabled then return end
-
-	local reception = game.TraitData.SpawnCastDamageBoon
-	local multiplier = mod.tuning.RousingReception.CastDurationMultiplier
-
-	reception.PropertyChanges = reception.PropertyChanges or {}
-	for _, property in ipairs({ 'FuseStart', 'Fuse' }) do
-		table.insert(reception.PropertyChanges, {
-			WeaponName = 'WeaponCast',
-			ProjectileProperty = property,
-			BaseValue = multiplier,
-			ChangeType = 'Multiply',
-			FalseTraitName = 'HermesCastDiscountBoon',
-		})
-	end
-
-	local discount = game.TraitData.HermesCastDiscountBoon
-	for _, change in ipairs(discount.PropertyChanges) do
-		if change.WeaponName == 'WeaponCast' and (change.ProjectileProperty == 'FuseStart' or change.ProjectileProperty == 'Fuse') then
-			change.FalseTraitName = 'SpawnCastDamageBoon'
-		end
-	end
-end)
-
-
 cast_curses = {
 	HeraCastBoon       = { EffectName = 'DamageShareEffect' };
 	AphroditeCastBoon  = { EffectName = 'WeakEffect' };
