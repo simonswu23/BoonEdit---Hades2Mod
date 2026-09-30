@@ -62,7 +62,7 @@ if config.BoonChanges.SecretCrush.Enabled then
 	boon_text({
 		Traits = {
 			FocusRawDamageBoon = {
-				Description = 'Your {$Keywords.AttackSet} and {$Keywords.SpecialSet} gain ' ..
+				Description = 'Your {$Keywords.WeaponSet} strikes gain ' ..
 					'{$Keywords.BaseDamage}, but you {$Keywords.ReserveMana} ' ..
 					'{#ManaFormat}{$TooltipData.ExtractData.TooltipCost}{#Prev}{!Icons.Mana}.',
 			},
@@ -603,7 +603,10 @@ if config.BoonChanges.ShockingLoss.Enabled then
 	boon_text({
 		Traits = {
 			SpawnKillBoon = {
-				Description = 'Your lightning bolt effects may destroy susceptible foes outright. '
+				Description = 'Your lightning bolts may destroy susceptible foes outright, most likely the ' ..
+					'first time each is struck. {$Keywords.BossPlural} instead take {#BoldFormatGraft}' ..
+					'{$TooltipData.ExtractData.TooltipGuardianDamage} {#Prev}damage, at most once every ' ..
+					'{#BoldFormatGraft}{$TooltipData.ExtractData.TooltipGuardianInterval} Sec.{#Prev}',
 			},
 		},
 		StatLines = {

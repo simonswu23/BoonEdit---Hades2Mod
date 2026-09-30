@@ -13,6 +13,8 @@ once('ShockingLossEveryHit', function()
 		local shockingLoss = game.TraitData.SpawnKillBoon
 		shockingLoss.BoonEditHitChance = tuning.HitChance
 		shockingLoss.BoonEditFirstHitChance = tuning.HitChance * tuning.FirstHitMultiplier
+		shockingLoss.BoonEditGuardianDamage = tuning.GuardianDamage
+		shockingLoss.BoonEditGuardianInterval = tuning.GuardianInterval
 		shockingLoss.StatLines = { 'BoonEditShockingLossStatDisplay' }
 		shockingLoss.ExtractValues = {
 			{
@@ -20,13 +22,16 @@ once('ShockingLossEveryHit', function()
 				ExtractAs = 'Chance',
 				Format = 'LuckModifiedPercent',
 				HideSigns = true,
+				SkipAutoExtract = true,
 			},
 			{
 				Key = 'BoonEditFirstHitChance',
 				ExtractAs = 'TooltipFirstHitChance',
 				Format = 'LuckModifiedPercent',
-				SkipAutoExtract = true,
+				HideSigns = true,
 			},
+			{ Key = 'BoonEditGuardianDamage', ExtractAs = 'TooltipGuardianDamage', SkipAutoExtract = true },
+			{ Key = 'BoonEditGuardianInterval', ExtractAs = 'TooltipGuardianInterval', SkipAutoExtract = true },
 		}
 	end
 
