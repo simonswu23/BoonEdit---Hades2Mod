@@ -75,8 +75,7 @@ if config.BoonChanges.DazzlingDisplay.Enabled then
 		Traits = {
 			BlindChanceBoon = {
 				Description = 'Your {#BoldFormatGraft}Nova Strike {#Prev}and {#BoldFormatGraft}Nova Flourish ' ..
-					'{#Prev}inflict {$Keywords.Blind}, which is {#UpgradeFormat}{$TooltipData.ExtractData.MissBonus}% ' ..
-					'{#Prev}more likely to make foes miss.',
+					'{#Prev}inflict {$Keywords.Blind}.',
 			},
 		},
 		StatLines = {
@@ -478,16 +477,6 @@ if config.BoonChanges.PostHaste.Enabled then
 			SlowProjectileBoon = {
 				DisplayName = 'Post Haste',
 				Description = 'Any {$Keywords.GodBoon} effects that recharge over time recharge faster.',
-			},
-		},
-	})
-end
-
-if config.BoonChanges.StutterStep.Enabled then
-	boon_text({
-		Traits = {
-			SorcerySpeedBoon = {
-				Description = 'You can {$Keywords.Dash} more frequently, and your {$Keywords.SprintBoonAlt} effects strike more often while you {$Keywords.Sprint}.',
 			},
 		},
 	})

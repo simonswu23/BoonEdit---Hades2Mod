@@ -96,7 +96,7 @@ mod.tuning.EcstaticObsession = {
 
 mod.tuning.MeatGrinder = {
 	PlasmaChance = 0.20,
-	PlasmaCooldown = 0.25,
+	PlasmaCooldown = 0.1,
 	PlasmaCooldownPerFoe = true,
 }
 

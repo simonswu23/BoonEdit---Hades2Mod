@@ -4,6 +4,7 @@
 
 local OBSESSION_TRAIT = 'RandomStatusBoon'
 local WRECK_TRAIT = 'CharmCrowdBoon'
+local OBSESSION_MARK = 'BoonEditObsessionMark'
 
 once('EcstaticObsession', function()
 	if not config.BoonChanges.EcstaticObsession.Enabled then return end
@@ -57,6 +58,12 @@ once('EcstaticObsession', function()
 	}, 'Weak')
 
 	game.EffectData.WeakEffect.OnApplyFunctionName = _PLUGIN.guid .. '.EcstaticObsessionWeak'
+
+	game.EffectData[OBSESSION_MARK] = {
+		Name = OBSESSION_MARK,
+		Vfx = game.EffectData.Charm and game.EffectData.Charm.Vfx,
+		EffectData = { Duration = mod.tuning.EcstaticObsession.CharmDuration },
+	}
 
 	modutil.mod.Path.Wrap('CharmClear', function(base, triggerArgs)
 		local victim = triggerArgs and triggerArgs.Victim
@@ -165,16 +172,14 @@ local function obsession_interrupt(unit)
 
 	unit.ForcedWeaponInterrupt = true
 
-	local vfx = game.EffectData.Charm and game.EffectData.Charm.Vfx
-	if not vfx then return true end
-
-	local objectId = unit.ObjectId
-	game.CreateAnimation({ Name = vfx, DestinationId = objectId })
-
-	game.thread(function()
-		game.wait(mod.tuning.EcstaticObsession.CharmDuration, game.RoomThreadName)
-		game.StopAnimation({ Name = vfx, DestinationId = objectId, PreventChain = true })
-	end)
+	if game.EffectData[OBSESSION_MARK] then
+		game.ApplyEffect({
+			Id = game.CurrentRun.Hero.ObjectId,
+			DestinationId = unit.ObjectId,
+			EffectName = OBSESSION_MARK,
+			DataProperties = { Duration = mod.tuning.EcstaticObsession.CharmDuration },
+		})
+	end
 
 	return true
 end

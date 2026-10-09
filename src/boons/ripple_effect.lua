@@ -22,13 +22,6 @@ once('RippleEffectOmegaBoons', function()
 		}
 	end
 
-	modutil.mod.Path.Wrap("CheckDionysusDebuff", function(base, victim, functionArgs, triggerArgs)
-		if ripple_effect_hangover then
-			return ripple_effect_hangover(base, victim, functionArgs, triggerArgs)
-		end
-		return base(victim, functionArgs, triggerArgs)
-	end)
-
 	modutil.mod.Path.Wrap("CreateProjectileFromUnit", function(base, args)
 		local result = base(args)
 		if ripple_effect_repeat then
@@ -44,8 +37,6 @@ local RIPPLE_PROJECTILES = {
 	ProjectileHeraOmega = true, -- Fine Line
 	ArtemisCastVolley = true,   -- Easy Shot
 	ProjectileFireball = true,  -- Controlled Burn
-	IcarusExplosion = true,     -- Explosive Intent
-	ProjectileAresSwordEx = true, -- Cut Above
 }
 
 
@@ -65,22 +56,6 @@ function ripple_effect_rolls()
 	end
 
 	return repeats
-end
-
-
-function ripple_effect_hangover(base, victim, functionArgs, triggerArgs)
-	if not config.BoonChanges.RippleEffect.Enabled then return base(victim, functionArgs, triggerArgs) end
-	if not game.HeroHasTrait('MoneyDamageBoon') then return base(victim, functionArgs, triggerArgs) end
-	if type(functionArgs and functionArgs.Damage) ~= 'number' then
-		return base(victim, functionArgs, triggerArgs)
-	end
-
-	local repeats = ripple_effect_rolls()
-	if repeats <= 0 then return base(victim, functionArgs, triggerArgs) end
-
-	local dosed = game.ShallowCopyTable(functionArgs)
-	dosed.Damage = functionArgs.Damage * (1 + repeats)
-	return base(victim, dosed, triggerArgs)
 end
 
 

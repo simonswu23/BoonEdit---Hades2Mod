@@ -133,6 +133,8 @@ function mod.VolcanicCrownBounce(triggerArgs, _args)
 	if not flight then return end
 	flights[triggerArgs.ProjectileId] = nil
 
+	volcanic_crown_fire(triggerArgs.LocationX, triggerArgs.LocationY)
+
 	if flight.Bounces >= mod.tuning.VolcanicCrown.Bounces then return end
 
 	volcanic_crown_throw(triggerArgs.LocationX, triggerArgs.LocationY, flight.Angle, flight.Bounces + 1)
@@ -154,12 +156,31 @@ function volcanic_crown_throw(x, y, angle, bounces)
 		OffsetX = x - origin.X,
 		OffsetY = y - origin.Y,
 		DamageMultiplier = volcanic_crown_power(),
+		---@diagnostic disable-next-line: undefined-global
+		BlastRadiusModifier = cast_area_multiplier(),
 	})
 	if not id then return end
 
 	local session = game.SessionMapState
 	session.BoonEditVolcanicCrown = session.BoonEditVolcanicCrown or {}
 	session.BoonEditVolcanicCrown[id] = { Angle = angle, Bounces = bounces }
+end
+
+
+function volcanic_crown_fire(x, y)
+	local hero = game.CurrentRun and game.CurrentRun.Hero
+	if not hero then return end
+
+	local spotId = game.SpawnObstacle({ Name = 'InvisibleTarget', LocationX = x, LocationY = y })
+	game.CreateProjectileFromUnit({
+		Name = FIRE,
+		Id = hero.ObjectId,
+		DestinationId = spotId,
+		FireFromTarget = true,
+		---@diagnostic disable-next-line: undefined-global
+		BlastRadiusModifier = cast_area_multiplier(),
+	})
+	game.thread(game.DestroyOnDelay, { spotId }, 1)
 end
 
 

@@ -91,7 +91,7 @@ referenced from Hades II's own data.
 
 - **Cardio Gain** — Additionally, restores mana while sprinting.
 - **Controlled Burn** — Also applies to omega attack.
-- **Snuffed Candle** replaced with: **Volcanic Crown**: when your Omega Cast fires, release a ring of 5 fireballs from the center that hit for 100 / 125 / 150 / 175 damage each bounce.
+- **Snuffed Candle** replaced with: **Volcanic Crown**: when your Omega Cast fires, release a ring of 5 fireballs from the center that hit for 100 / 125 / 150 / 175 damage each bounce. Their blasts and burning ground grow with Super Nova.
 
 ### Medea
 
@@ -124,7 +124,7 @@ referenced from Hades II's own data.
 - **Killer Current** (Zeus × Poseidon) — New Effect: Froth-afflicted foes have a 30% chance of being struck by lightning after taking damage (30 damage per bolt).
 - **Love Handles** replaced with **Smoldering Forge** (Aphrodite × Hephaestus) — striking a foe with Glow with Weapon has a 25% chance to create a Heartthrob.
 - **Natural Selection** (Demeter × Poseidon) — New Effect: on pickup, gain 3 triple-poms. Every 8 encounters, gain another one.
-- **Ripple Effect** (Hera × Poseidon): Projectile repeat effect has a 50% chance to strike again, and again with 25% / 12.5% / 6.25%, up to 4 times total. Repeatable projectile list is expanded to include Ocean Swell, Fine Line, Easy Shot, Controlled Burn, Explosive Intent and Cut Above.
+- **Ripple Effect** (Hera × Poseidon): Projectile repeat effect has a 50% chance to strike again, and again with 25% / 12.5% / 6.25%, up to 4 times total. Repeatable projectile list is expanded to include Ocean Swell, Fine Line, Easy Shot and Controlled Burn.
 - **Seismic Servo** replaed with **Seismic Hammer** (Hephaestus × Poseidon) — Replaced: your Cast erupts into your Omega Cast after being struck by a Hephaestus blast. Also flatly reduces the cooldowns of Volcanic Strike and Volcanic Flourish by 1 second.
 - **Sun Worshiper** (Apollo × Hera) — Additional foes have a 30% chance to also be summoned in combat after being slain, up to 10 per encounter.
 - **Scalding Vapor** (Hestia × Poseidon) — Reworked: Steam no longer consumes Froth when activated, and steam damage can stack up to 5 times per foe + proc Froth. Steam can now only be created by Fireballs instead of any fire source.

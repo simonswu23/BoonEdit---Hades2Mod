@@ -312,7 +312,7 @@ function sjson_EnemyProjectiles(data)
 			Name = tuning.FireballProjectile,
 			InheritFrom = 'DevotionHestia',
 			Damage = tuning.FireballDamage.Common,
-			SpawnOnDetonate = tuning.FireProjectile,
+			SpawnOnDetonate = sjson.null,
 		},
 	}
 
