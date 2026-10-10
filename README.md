@@ -50,7 +50,7 @@ referenced from Hades II's own data.
 
 - **Blood Spree** — Additionally, killing a foe has a 20% chance to restore health (equal to the base health restoration amount).
 - **Meat Grinder** — Additionally, each hit of the blade rift per foe has a 20% chance to spill plasma. Counts as a plasma boon.
-- **Profuse Bleeding** — New(?) Effect: Foes with wounds have a small chance to drop plasma after taking damage. Also works when inflicting wounds with double the chance. Counts as a plasma boon.
+- **Profuse Bleeding** — New(?) Effect: Foes with wounds have a small chance to drop plasma after taking damage. Inflicting wounds also gets the same chance. Counts as a plasma boon.
 - **Stabbing Rush** — Falling blades drop for the entire duration of your sprint.
 
 ### Athena
@@ -113,7 +113,7 @@ referenced from Hades II's own data.
 - **Beach Ball** (Apollo × Poseidon) — Is now considered a Splash Boon, and max damage increased to 400.
 - **Brave Face** (Hephaestus × Hera) — Resists up to 50% of any damage rather than 30%, and each point resisted costs 5 Magick instead of 10.
 - **Burning Desire** — additionally lifts the ceiling on Scorch, from vanilla's 999.
-- **Chain Reaction** (Hestia × Hephaestus) — New Effect: Boon effect cooldowns have a 50% chance of being skipped.
+- **Chain Reaction** (Hestia × Hephaestus) — New Effect: Boon effect cooldowns have a 30% chance of being skipped.
 - **Carnal Pleasure** (Aphrodite × Ares) — Reworked: each Plasma collected counts as 20 Magick used toward Heart Breaker, and Heartthrobs gain +1 power for each Plasma you have.
 - **Cherished Heirloom** (Demeter × Hera) — Every keepsake is upgraded by one rarity this night, and your current one is refreshed at its new rarity. Additionally, choose another to keep for the rest of the night on pickup.
 - **Cryo Pounder** (Demeter × Hephaestus) — Reworked: Frozen foes with Glow take 50% extra damage.

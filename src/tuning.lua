@@ -102,7 +102,7 @@ mod.tuning.MeatGrinder = {
 
 mod.tuning.ProfuseBleeding = {
 	SpillChance = 0.10,
-	FreshRendMultiplier = 2,
+	FreshRendMultiplier = 1,
 }
 
 mod.tuning.BloodSpree = {
@@ -222,7 +222,7 @@ mod.tuning.DazzlingDisplay = {
 }
 
 mod.tuning.ChainReaction = {
-	SkipChance = 0.50,
+	SkipChance = 0.30,
 
 	ExtraCooldowns = { 'SWuLandMine', 'SWuSolarEclipse', 'BoonEditShockingLossGuardian' },
 

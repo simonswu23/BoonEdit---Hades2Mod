@@ -26,6 +26,7 @@ once('ProfuseBleedingBloodSpill', function()
 			ReportValues = { ReportedDropChance = 'Chance' },
 		},
 	}
+	rend.OnEffectApplyFunction = { FunctionName = _PLUGIN.guid .. '.ProfuseBleedingFreshRend' }
 
 	rend.StatLines = { 'BoonEditBloodSpillChanceStatDisplay' }
 	rend.ExtractValues = with_keyword_extracts({
@@ -39,8 +40,10 @@ once('ProfuseBleedingBloodSpill', function()
 end)
 
 
-function profuse_bleeding_fresh_rend(victim)
+---@diagnostic disable-next-line: unused-local
+function mod.ProfuseBleedingFreshRend(victim, _args, triggerArgs)
 	if not config.BoonChanges.ProfuseBleeding.Enabled or not game.CurrentRun then return end
+	if not triggerArgs or triggerArgs.EffectName ~= 'AresStatus' or triggerArgs.Reapplied then return end
 	if not victim or victim.IsDead or victim == game.CurrentRun.Hero then return end
 
 	local trait = game.GetHeroTrait('RendBloodDropBoon')
@@ -51,15 +54,3 @@ function profuse_bleeding_fresh_rend(victim)
 		game.thread(game.CreateBloodDrop, victim, args)
 	end
 end
-
-
-once('ProfuseBleedingFreshRend', function()
-	modutil.mod.Path.Wrap('EffectApply', function(base, victim, triggerArgs)
-		local fresh = victim and triggerArgs and triggerArgs.EffectName == 'AresStatus'
-			and not (victim.ActiveEffects and victim.ActiveEffects.AresStatus)
-
-		local result = base(victim, triggerArgs)
-		if fresh then profuse_bleeding_fresh_rend(triggerArgs.Victim or victim) end
-		return result
-	end)
-end)
