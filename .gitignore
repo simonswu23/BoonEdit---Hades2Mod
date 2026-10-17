@@ -1,0 +1,23 @@
+# For files used only by a symlink to the ReturnOfModding plugins folder
+/src/LICENSE
+/src/icon.png
+/src/manifest.json
+
+# For source files used to build packages
+/packages
+
+# For build artifacts created by the Thunderstore CLI
+/build
+# For the Thunderstore CLI executable itself, if you include it in your root folder
+tcli.exe
+
+# Personal reference notes, not part of the mod
+TRAIT_NAMES.md
+CLAUDE.md
+
+# Working archive of old game builds: Supergiant's scripts, the tooling that pulls and reads
+# them, and the notes written out of it. Local reference, not part of the mod.
+/archive/
+
+NOTES.md
+TODO.md
